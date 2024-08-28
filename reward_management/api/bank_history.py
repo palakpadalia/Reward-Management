@@ -7,7 +7,7 @@ def get_bank_history_details():
         logged_in_user = frappe.session.user
         user_info = frappe.get_doc("User", logged_in_user)
         user_mobile_no = user_info.mobile_no
-        customer = frappe.get_doc("Carpenter", {"mobile_number": user_mobile_no})
+        customer = frappe.get_doc("Customer", {"mobile_number": user_mobile_no})
         
         if customer:
             bank_history = frappe.get_list("Bank Balance",
