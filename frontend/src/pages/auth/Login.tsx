@@ -5,7 +5,7 @@ import { Box, Button, Callout, Card, Flex, Text } from '@radix-ui/themes';
 // import { useFrappeAuth } from 'frappe-react-sdk';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { BASE_URL, API_KEY, API_SECRET } from "../../utils/constants";
+// import { BASE_URL, API_KEY, API_SECRET } from "../../utils/constants";
 import '../../assets/css/style.css';
 import { useFrappeAuth } from 'frappe-react-sdk';
 
@@ -176,8 +176,22 @@ const Login = () => {
 
                 if (registerResponse.message.status === "success") {
                     console.log("Carpainter registered successfully:", registerResponse);
-                    alert("Carpainter Registered Successfully.");
-                    // Redirect or reset form as needed
+                    alert("Customer Registered Successfully.");
+                // Clear all input fields
+                setData({
+                    email: "",
+                    password: "",
+                    firstName: "",
+                    lastName: "",
+                    city: "",
+                    mobile: "",
+                    otp: "",
+                    mobilenumber: "",
+                    mobileotp: "",
+                });
+
+                // Optionally, reset OTP visibility state
+                setIsOtpVisible(false);
                 } else {
                     setLoginError('Failed to register. Please try again.');
                 }
