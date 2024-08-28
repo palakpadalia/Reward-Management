@@ -89,7 +89,7 @@ const ProductMaster: React.FC = () => {
             }
         } else {
             console.error('No product selected');
-            // Handle the case where no product is selected
+            // Handle the case where no product is selectedAC
         }
     };
 

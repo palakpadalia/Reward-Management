@@ -138,7 +138,7 @@ const DownloadQRCode: React.FC = () => {
                                 showProductQR={false} 
                                 editHeader='Download QR'
                                 showEdit={true} // Adjust based on your needs
-                                iconsConfig={{
+                                iconsConfig={{AC
                                     editIcon: "bi bi-download",
                                 }}
                                 onEdit={handleDownloadQR} // Pass the entire row to handleDownloadQR
