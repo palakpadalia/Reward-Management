@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import Pageheader from '@/components/common/pageheader/pageheader';
 import SunEditor from 'suneditor-react';
-
+import { useNavigate } from 'react-router-dom';
 import 'suneditor/dist/css/suneditor.min.css'; // Import SunEditor styles
 
 import '../../../assets/css/style.css';
@@ -17,6 +17,9 @@ const AddProduct: React.FC = () => {
     const [rewardPoints, setRewardPoints] = useState('');
     const [productDescription, setProductDescription] = useState('');
     const [productCategory, setProductCategory] = useState('');
+    const navigate = useNavigate(); // Initialize navigate
+
+
 
     // Handle file input change
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +75,9 @@ const AddProduct: React.FC = () => {
         try {
             const response = await axios.post(`/api/method/reward_management.api.product_master.add_product`, data);
             console.log("Product added successfully:", response.data);
+            
             alert("Product added successfully!!!");
+            navigate('/product-master');
         } catch (error) {
             console.error("Error submitting form", error);
         }
