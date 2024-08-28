@@ -40,7 +40,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Carpainter ID",
-   "options": "Carpenter",
+   "options": "Customer",
    "reqd": 1
   },
   {
@@ -93,7 +93,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-21 15:11:27.043826",
+ "modified": "2024-08-27 12:19:24.152607",
  "modified_by": "Administrator",
  "module": "Reward Management",
  "name": "Bank Balance",

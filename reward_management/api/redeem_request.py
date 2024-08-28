@@ -13,7 +13,7 @@ def get_customer_details():
     user_info = frappe.get_doc("User", logged_in_user)
     user_mobile_no = user_info.mobile_no
     # Fetch Customer document based on the email
-    customer = frappe.get_all("Carpenter", filters={"mobile_number": user_mobile_no}, fields=["name", "total_points","current_points","redeem_points","city","first_name","full_name","last_name"])
+    customer = frappe.get_all("Customer", filters={"mobile_number": user_mobile_no}, fields=["name", "total_points","current_points","redeem_points","city","first_name","full_name","last_name"])
     if customer:
         return customer[0]  # Return the first match
     else:
@@ -23,7 +23,7 @@ def get_customer_details():
 # Example backend logic to redeem points
 @frappe.whitelist(allow_guest=True)
 def redeem_points(customer_email, points_to_redeem):
-    customer = frappe.get_doc("Carpenter", {"email": customer_email})
+    customer = frappe.get_doc("Customer", {"email": customer_email})
     
     if customer and customer.total_points >= 80 and (customer.total_points - customer.redeemed_points) >= points_to_redeem:
         # Deduct points from total_points and update redeemed_points
@@ -40,7 +40,7 @@ def redeem_points(customer_email, points_to_redeem):
 def create_redeem_request(customer_id, redeemed_points):
     try:
         # Fetch current point status for the customer
-        current_point_status = frappe.get_value("Carpenter", customer_id, "total_points")
+        current_point_status = frappe.get_value("Customer", customer_id, "total_points")
         
         # Create a new instance of the document
         redeem_request = frappe.new_doc("Redeem Request")

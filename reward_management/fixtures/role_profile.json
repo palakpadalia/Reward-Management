@@ -1,0 +1,47 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Role Profile",
+  "modified": "2024-08-27 15:55:10.381172",
+  "name": "Carpenter",
+  "role_profile": "Carpenter",
+  "roles": [
+   {
+    "parent": "Carpenter",
+    "parentfield": "roles",
+    "parenttype": "Role Profile",
+    "role": "Customer"
+   }
+  ]
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Role Profile",
+  "modified": "2024-08-27 13:08:40.347130",
+  "name": "Customer",
+  "role_profile": "Customer",
+  "roles": [
+   {
+    "parent": "Customer",
+    "parentfield": "roles",
+    "parenttype": "Role Profile",
+    "role": "Customer"
+   }
+  ]
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Role Profile",
+  "modified": "2024-08-27 11:53:32.082837",
+  "name": "Admin",
+  "role_profile": "Admin",
+  "roles": [
+   {
+    "parent": "Admin",
+    "parentfield": "roles",
+    "parenttype": "Role Profile",
+    "role": "Admin"
+   }
+  ]
+ }
+]

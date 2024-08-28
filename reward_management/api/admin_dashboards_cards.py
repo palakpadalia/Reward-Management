@@ -48,7 +48,7 @@ def total_points_of_qr_code():
 def get_total_points_data():
     try:
         carpainters = frappe.get_list(
-            "Carpenter",
+            "Customer",
             fields=["name", "first_name", "full_name", "last_name", "city", "total_points", "mobile_number", "current_points", "redeem_points", "email"],
         )
 
@@ -76,6 +76,16 @@ def get_total_points_data():
 @frappe.whitelist(allow_guest=True)
 def count_total_customers():
     # Fetch count of customers from database with status "Approved"
-    total_customers = frappe.db.count("Carpenter Registration", filters={"status": "Approved"})
+    total_customers = frappe.db.count("Customer Registration", filters={"status": "Approved"})
     return total_customers
+
+
+# Product total count 
+@frappe.whitelist(allow_guest=True)
+def total_product():
+    # Fetch count of customers from database
+    total_products = frappe.db.count("Product")
+
+    return total_products
+
 

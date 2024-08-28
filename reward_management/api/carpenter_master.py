@@ -19,7 +19,7 @@ def get_carpainter_data():
             return {"status": "failed", "message": "Mobile number not found for logged-in user."}
 
         carpainters = frappe.get_list(
-            "Carpenter",
+            "Customer",
             filters={"mobile_number": user_mobile_no},
             fields=["name", "first_name", "full_name", "last_name", "city", "total_points", "mobile_number", "current_points", "redeem_points", "email"]
         )
@@ -27,7 +27,7 @@ def get_carpainter_data():
         for carpainter in carpainters:
             # Fetch child table data for each Carpainter
             point_history = frappe.get_all(
-                "Carpainter Product Detail",
+                "Customer Product Detail",
                 filters={"parent": carpainter["name"]}, 
                 fields=["earned_points", "date", "product_name", "product", "product_category"],
                 order_by="creation desc"
@@ -58,7 +58,7 @@ def show_total_points():
         user_mobile_no = user_info.mobile_no
 
         # Fetch Carpainter document based on logged-in user's mobile number
-        carpainter = frappe.get_all("Carpenter", filters={"mobile_number": user_mobile_no}, 
+        carpainter = frappe.get_all("Customer", filters={"mobile_number": user_mobile_no}, 
                                     fields=["name", "total_points", "redeem_points","current_points"])
 
         if carpainter:
@@ -79,7 +79,7 @@ def get_customer_details():
     user_info = frappe.get_doc("User", logged_in_user)
     user_mobile_no = user_info.mobile_no
     # Fetch Customer document based on the email
-    customer = frappe.get_all("Carpenter", filters={"mobile_number": user_mobile_no}, fields=["name", "total_points","mobile_number","current_points","redeem_points","city","first_name","full_name","last_name"])
+    customer = frappe.get_all("Customer", filters={"mobile_number": user_mobile_no}, fields=["name", "total_points","mobile_number","current_points","redeem_points","city","first_name","full_name","last_name"])
     if customer:
         return customer[0]  # Return the first match
     else:
@@ -103,12 +103,12 @@ def update_customer_points(points):
         frappe.throw(_("Invalid points value"))
 
     # Fetch the customer record using the mobile number
-    customer = frappe.get_list("Carpenter", filters={'mobile_number': user_mobile_no}, fields=['name', 'total_points','current_points'])
+    customer = frappe.get_list("Customer", filters={'mobile_number': user_mobile_no}, fields=['name', 'total_points','current_points'])
     if not customer:
         frappe.throw(_("Customer not found"))
 
     # Assuming there's only one customer with this mobile number
-    customer_doc = frappe.get_doc("Carpenter", customer[0].name)
+    customer_doc = frappe.get_doc("Customer", customer[0].name)
 
     # Update the total points
     customer_doc.total_points  += points
@@ -129,13 +129,13 @@ def update_carpainter_points(product_name, points):
         user_mobile_no = user_info.mobile_no
 
         # Fetch the Carpainter record using the mobile number
-        carpainter = frappe.get_list("Carpenter", filters={'mobile_number': user_mobile_no}, fields=['name'])
+        carpainter = frappe.get_list("Customer", filters={'mobile_number': user_mobile_no}, fields=['name'])
 
         if not carpainter:
             frappe.throw(_("Carpainter not found"))
 
         # Assuming there's only one Carpainter with this mobile number
-        carpainter_doc = frappe.get_doc("Carpenter", carpainter[0].name)
+        carpainter_doc = frappe.get_doc("Customer", carpainter[0].name)
 
         # Add points to point_history child table
         carpainter_doc.append("point_history", {

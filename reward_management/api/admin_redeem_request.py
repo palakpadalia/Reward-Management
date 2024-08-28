@@ -32,7 +32,7 @@ def update_redeem_request_status(request_id, action, transaction_id=None, amount
             redeem_request.amount = amount
         
         # Fetch the carpainter associated with the redeem request by customer_id
-        carpainter = frappe.get_doc("Carpenter", {"name": redeem_request.customer_id})
+        carpainter = frappe.get_doc("Customer", {"name": redeem_request.customer_id})
         
         # Deduct redeemed points if action is Approved
         if action == "Approved":
