@@ -1,8 +1,16 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts";
 
-export class ApexChart extends React.Component {
- constructor(props) {
+interface IProps {
+  barChartLabels: string[];
+}
+interface IState {
+    series?: any;
+    options?: any;
+  }
+
+export class ApexChart extends React.Component<IProps, IState, any> {
+ constructor(props: any) {
    super(props);
 
    this.state = {

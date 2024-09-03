@@ -1,4 +1,3 @@
-import React from "react";
 import { DonutChart } from "../Charts/DonutCharts";
 import { ApexChart } from "../Charts/BarCharts";
 

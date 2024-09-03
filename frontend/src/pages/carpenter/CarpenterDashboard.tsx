@@ -8,12 +8,12 @@ const CarpenterDashboard: React.FC = () => {
     const [totalPoints, setTotalPoints] = useState<number>(0);
     const [currentPoints, setCurrentPoints] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+    const [isError, setError] = useState<string | null>(null);
 
-    const { data, isLoading, isError } = useFrappeGetCall('reward_management.api.carpenter_master.get_carpainter_data');
+    const { data, isLoading, error } = useFrappeGetCall('reward_management.api.carpenter_master.get_carpainter_data');
 
     useEffect(() => {
-        if (!isLoading && !isError && data) {
+        if (!isLoading && !error && data) {
             const responseData = data.message.data;
             console.log("Table Data:", responseData);
 
@@ -29,19 +29,19 @@ const CarpenterDashboard: React.FC = () => {
             setLoading(false);
         }
 
-        if (isError) {
-            console.error("Error fetching data:", isError);
+        if (error) {
+            console.error("Error fetching data:", error);
             setError("Error fetching data");
             setLoading(false);
         }
-    }, [data, isLoading, isError]);
+    }, [data, isLoading, error]);
 
     if (loading) {
         return <div>Loading...</div>;
     }
 
-    if (error) {
-        return <div>{error}</div>;
+    if (isError) {
+        return <div>{isError}</div>;
     }
 
     return (

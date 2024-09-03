@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import '../../assets/css/style.css';
 import '../../assets/css/sidebar.css';
 
 import sidebarLogo from '../../assets/images/Sanskar_Technolab_Logo-light.png';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { SidebarData } from '@/components/common/sidebar/sidebardata';
-import SubMenu from '@/components/common/sidebar/submenu';
+import { SidebarData } from './sidebar/sidebardata';
+import SubMenu from './sidebar/submenu';
 import { Link } from 'react-router-dom';
 
 console.log(SidebarData);
 
-const Sidebar = ({ isSidebarActive }) => {
+const Sidebar = ({ isSidebarActive }: any) => {
     // State to manage hover state
     const [isHover, setIsHover] = useState(false);
 
@@ -22,7 +21,7 @@ const Sidebar = ({ isSidebarActive }) => {
     console.log("Roles from localStorage:", roles);
 
     // Function to get the index of a specific item by title
-    const getItemIndex = (title) => SidebarData.findIndex(item => item.title === title);
+    const getItemIndex = (title: any) => SidebarData.findIndex(item => item.title === title);
 
     // Determine which items to render based on roles
     const determineItemsToRender = () => {

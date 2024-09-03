@@ -1,13 +1,12 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Pageheader from '@/components/common/pageheader/pageheader';
+import Pageheader from '../../../components/common/pageheader/pageheader';
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
 import '../../../assets/css/style.css';
 import '../../../assets/css/pages/admindashboard.css';
 import axios from 'axios';
-// import { BASE_URL, API_KEY, API_SECRET } from "../../../utils/constants";
-import SuccessAlert from '@/components/ui/alerts/SuccessAlert';
+import SuccessAlert from '../../../components/ui/alerts/SuccessAlert';
 
 interface EditProduct {
     product_name?: string;

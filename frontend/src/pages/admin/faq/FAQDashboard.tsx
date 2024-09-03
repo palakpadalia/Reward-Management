@@ -1,9 +1,9 @@
 import React, { Fragment, useState } from "react";
 import '../../../assets/css/style.css';
 import '../../../assets/css/pages/admindashboard.css';
-import Pageheader from '@/components/common/pageheader/pageheader';
-import TableComponent from '@/components/ui/tables/tablecompnent';
-import TableBoxComponent from '@/components/ui/tables/tableboxheader';
+import Pageheader from '../../../components/common/pageheader/pageheader';
+import TableComponent from '../../../components/ui/tables/tablecompnent';
+import TableBoxComponent from '../../../components/ui/tables/tableboxheader';
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; 
 import { useFrappeGetDocList, useFrappeCreateDoc, useFrappeUpdateDoc, useFrappeDeleteDoc } from 'frappe-react-sdk';

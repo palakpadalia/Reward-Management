@@ -1,7 +1,7 @@
 import { useFrappeAuth } from 'frappe-react-sdk';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
-const PrivateRoutes = ({ element }) => {
+const PrivateRoutes = () => {
 
     // ? LOGIN HOOK
     const {
@@ -18,7 +18,13 @@ const PrivateRoutes = ({ element }) => {
     // ? LOCATION HOOK 
     const location = useLocation();
 
-    return !isLoading && !isValidating && (currentUser ? element : <Navigate to="/auth/login" state={{ from: location }} />);
+    // return !isLoading && !isValidating && (currentUser ? element : <Navigate to="/auth/login" state={{ from: location }} />);
+    if (!isLoading && !isValidating && (!currentUser || currentUser === 'Guest')) {
+        return <Navigate to="/login" />
+    }
+    return (
+        <Outlet />
+    )
 }
 
 export default PrivateRoutes

@@ -1,10 +1,9 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-// import { API_KEY, API_SECRET, BASE_URL } from "../../../utils/constants";
-import Pageheader from '@/components/common/pageheader/pageheader';
-import TableComponent from '@/components/ui/tables/tablecompnent'; // Ensure correct path
-import TableBoxComponent from '@/components/ui/tables/tableboxheader';
+import Pageheader from '../../../components/common/pageheader/pageheader';
+import TableComponent from '../../../components/ui/tables/tablecompnent'; // Ensure correct path
+import TableBoxComponent from '../../../components/ui/tables/tableboxheader';
 import '../../../assets/css/style.css';
 import '../../../assets/css/pages/admindashboard.css';
 
@@ -40,7 +39,6 @@ const DownloadQRCode: React.FC = () => {
             try {
                 const response = await axios.get(`/api/method/reward_management.api.print_qr_code.get_product_by_name`, {
                     params: { productName },
-                   
                 });
 
                 if (response.data.message && Array.isArray(response.data.message.message)) {

@@ -1,13 +1,12 @@
 import '../../assets/css/style.css';
 import '../../assets/css/pages/admindashboard.css';
-import Pageheader from '@/components/common/pageheader/pageheader';
-import TableComponent from '@/components/ui/tables/tablecompnent';
-import TableBoxComponent from '@/components/ui/tables/tableboxheader';
+import Pageheader from '../../components/common/pageheader/pageheader';
+import TableComponent from '../../components/ui/tables/tablecompnent';
+import TableBoxComponent from '../../components/ui/tables/tableboxheader';
 import React, { Fragment, useState, useEffect } from "react";
-import RedeemPointAlert from '@/components/ui/models/RedeemPoints';
-import SuccessAlert from '@/components/ui/alerts/SuccessAlert';
+import RedeemPointAlert from '../../components/ui/models/RedeemPoints';
+import SuccessAlert from '../../components/ui/alerts/SuccessAlert';
 import axios from 'axios';
-// import { API_KEY, API_SECRET, BASE_URL } from "../../utils/constants";
 
 interface Transaction {
     name: string;
@@ -84,7 +83,6 @@ const RedeemRequest: React.FC = () => {
     const fetchTransactionData = async () => {
         try {
             const response = await axios.get(`/api/method/reward_management.api.redeem_request_data.get_redeem_request_details`,{
-               
             });
             console.log("Redeem Request table data:", response);
             const RedeemRequestData = response.data.message.message;
@@ -286,7 +284,11 @@ const RedeemRequest: React.FC = () => {
         onPointValueChange={(e) => setPointRedeem(e.target.value)}
     />
 )}
-{showSuccessAlert && <SuccessAlert message="Redeem Request has been sent to the admin successfully!" />}
+{showSuccessAlert && <SuccessAlert message="Redeem Request has been sent to the admin successfully!" onClose={function (): void {
+                throw new Error('Function not implemented.');
+            } } onCancel={function (): void {
+                throw new Error('Function not implemented.');
+            } } />}
 
         </Fragment>
     );

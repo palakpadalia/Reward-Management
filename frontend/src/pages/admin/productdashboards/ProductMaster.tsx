@@ -1,14 +1,13 @@
 import '../../../assets/css/style.css';
 import '../../../assets/css/pages/admindashboard.css';
-import Pageheader from '@/components/common/pageheader/pageheader';
+import Pageheader from '../../../components/common/pageheader/pageheader';
 import { Link, useNavigate } from 'react-router-dom';
 import React, { Fragment, useState, useEffect } from "react";
 import { useFrappeGetDocList } from 'frappe-react-sdk';
-import CreateQRCode from '@/components/ui/models/CreateQRModel.tsx';
-import SuccessAlert from '@/components/ui/alerts/SuccessAlert';
-import TableBoxComponent from '@/components/ui/tables/tableboxheader';
+import CreateQRCode from '../../../components/ui/models/CreateQRModel.tsx';
+import SuccessAlert from '../../../components/ui/alerts/SuccessAlert';
+import TableBoxComponent from '../../../components/ui/tables/tableboxheader';
 import axios from 'axios';
-// import { BASE_URL, API_KEY, API_SECRET } from "../../../utils/constants";
 
 interface Product {
     name: string,
@@ -103,10 +102,6 @@ const ProductMaster: React.FC = () => {
         navigate('/add-product');
         // Implement add product logic here
     };
-
-
-
-  
 
 
     return (

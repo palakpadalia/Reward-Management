@@ -1,5 +1,5 @@
   import  {  Fragment, useEffect,useState } from 'react';
-import Pageheader from '@/components/common/pageheader/pageheader';
+import Pageheader from '../../components/common/pageheader/pageheader';
 import { useFrappeGetDocList } from 'frappe-react-sdk';
 
 interface FAQ {
@@ -12,7 +12,7 @@ interface FAQ {
 
 const Faqs = () => {
   const [faqData, setFaqData] = useState<FAQ[]>([]);
-  const [expandedIndex, setExpandedIndex] = useState(0);
+  const [expandedIndex, setExpandedIndex] = useState<any>(0);
   
 
   const { data } = useFrappeGetDocList<FAQ>('FAQ', {

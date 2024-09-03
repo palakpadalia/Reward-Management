@@ -1,10 +1,10 @@
 import { Fragment, useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import Pageheader from '@/components/common/pageheader/pageheader';
+import Pageheader from '../../../components/common/pageheader/pageheader';
 // import {, API_KEY, API_SECRET } from "../../../utils/constants";
 import face9 from '../../../assets/images/reward_management/9.jpg';
-import SuccessAlert from '@/components/ui/alerts/SuccessAlert';
+import SuccessAlert from '../../../components/ui/alerts/SuccessAlert';
 
 const AdminProfile = () => {
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
@@ -399,7 +399,6 @@ const AdminProfile = () => {
                                                         
 
                                                             setFullname(e.target.value)
-                                                           
 
                                                         
                                                     }

@@ -1,8 +1,8 @@
 import '../../assets/css/style.css';
 import '../../assets/css/pages/admindashboard.css';
-import Pageheader from '@/components/common/pageheader/pageheader';
-import TableComponent from '@/components/ui/tables/tablecompnent';
-import TableBoxComponent from '@/components/ui/tables/tableboxheader';
+import Pageheader from '../../components/common/pageheader/pageheader';
+import TableComponent from '../../components/ui/tables/tablecompnent';
+import TableBoxComponent from '../../components/ui/tables/tableboxheader';
 import React, { Fragment, useState, useEffect } from "react";
 
 import axios from 'axios';
@@ -164,7 +164,6 @@ const BankingHistory: React.FC = () => {
                                 showEdit={false} 
                                 showDelete={false}
                                 editHeader='Action'
-                                 
                                 columnStyles={{
                                     'Bank History ID': 'text-[var(--primaries)] font-semibold', // Example style for QR ID column
                                 }}

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 
 interface TableProps<T> {
@@ -78,7 +77,7 @@ const TableComponent = <T,>({
                     </tr>
                 </thead>
                 <tbody>
-                    {currentItems.map((item, index) => (
+                    {currentItems.map((item: any, index: any) => (
                         <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                             <td className="p-3 text-defaultsize font-medium text-defaulttextcolor whitespace-nowrap border border-gray-300 border-b-0">{indexOfFirstItem + index + 1}</td>
                             {columns.map((column) => (

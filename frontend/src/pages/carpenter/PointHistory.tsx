@@ -1,11 +1,10 @@
 import '../../assets/css/style.css';
 import '../../assets/css/pages/admindashboard.css';
-import Pageheader from '@/components/common/pageheader/pageheader';
-import TableComponent from '@/components/ui/tables/tablecompnent'; // Corrected spelling
-import TableBoxComponent from '@/components/ui/tables/tableboxheader';
+import Pageheader from '../../components/common/pageheader/pageheader';
+import TableComponent from '../../components/ui/tables/tablecompnent'; // Corrected spelling
+import TableBoxComponent from '../../components/ui/tables/tableboxheader';
 import React, { Fragment, useState, useEffect } from "react";
 import axios from 'axios';
-// import { API_KEY, API_SECRET, BASE_URL } from "../../utils/constants";
 
 interface PointHistoryItem {
     earned_points: number;
@@ -44,7 +43,6 @@ const PointHistory: React.FC = () => {
         const fetchCarpenterData = async () => {
             try {
                 const response = await axios.get(`/api/method/reward_management.api.carpenter_master.get_carpainter_data`,{
-                   
                 });
                 console.log("Carpenter data:", response);
 
@@ -74,7 +72,6 @@ const PointHistory: React.FC = () => {
         const fetchUserPoints = async () => {
             try {
                 const response = await axios.get(`/api/method/reward_management.api.carpenter_master.show_total_points`,{
-                  
                 });
                 const { redeem_points, current_points } = response.data.message; 
                 console.log("card data", response);

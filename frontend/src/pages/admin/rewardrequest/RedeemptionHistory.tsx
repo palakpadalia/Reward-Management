@@ -2,9 +2,9 @@
 
 import '../../../assets/css/style.css';
 import '../../../assets/css/pages/admindashboard.css';
-import Pageheader from '@/components/common/pageheader/pageheader';
-import TableComponent from '@/components/ui/tables/tablecompnent';
-import TableBoxComponent from '@/components/ui/tables/tableboxheader';
+import Pageheader from '../../../components/common/pageheader/pageheader';
+import TableComponent from '../../../components/ui/tables/tablecompnent';
+import TableBoxComponent from '../../../components/ui/tables/tableboxheader';
 import React, { Fragment, useState } from "react";
 import { useFrappeGetDocList } from 'frappe-react-sdk';
 import { useNavigate } from 'react-router-dom'; 
@@ -125,7 +125,6 @@ const RedeemptionHistory: React.FC = () => {
                                     { header: 'Approved Time', accessor: 'approve_time' },
                                   
                                    
-                                 
                                 ]}
                                 data={filteredData || []}
                                 currentPage={currentPage}

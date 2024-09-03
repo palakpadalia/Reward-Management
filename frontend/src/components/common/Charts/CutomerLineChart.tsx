@@ -1,8 +1,15 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts";
 
-export class LineColumnChart extends React.Component {
- constructor(props) {
+interface IProps {
+}
+interface IState {
+    series?: any;
+    options?: any;
+  }
+
+export class LineColumnChart extends React.Component<IProps, IState> {
+ constructor(props: any) {
   super(props);
 
   this.state = {

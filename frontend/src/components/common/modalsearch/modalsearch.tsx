@@ -1,12 +1,11 @@
-import React, { Fragment, useEffect, useState, useRef } from 'react';
-import { SidebarData } from '@/components/common/sidebar/sidebardata';
+import { Fragment, useEffect, useState, useRef } from 'react';
+import { SidebarData } from '../sidebar/sidebardata';
 import { Link } from 'react-router-dom';
 import '../../../assets/css/modalsearch.css';
 import '../../../assets/css/style.css';
-import { FiX } from "react-icons/fi";
 
-const Modalsearch = ({ isOpen, onClose }) => {
-  const modalRef = useRef(null);
+const Modalsearch = ({ isOpen, onClose }: any) => {
+  const modalRef: any = useRef(null);
   const [isHover, setIsHover] = useState(false);
   const [_show, setShow] = useState(isOpen);
   const [show1, setShow1] = useState(false);
@@ -32,7 +31,7 @@ const Modalsearch = ({ isOpen, onClose }) => {
   };
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (event: any) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
         handleClose();
       }
@@ -55,7 +54,7 @@ const Modalsearch = ({ isOpen, onClose }) => {
     } else if (roles.includes("Admin")) {
       const faqIndex = SidebarData.findIndex(item => item.title === "FAQ's");
       return faqIndex !== -1 ? SidebarData.slice(0, faqIndex + 1) : SidebarData;
-    } else if (carpenterrole === "Carpenter") {
+    } else if (carpenterrole === "Customer") {
       const startIndex = SidebarData.findIndex(item => item.title === 'Dashboard');
       const endIndex = SidebarData.findIndex(item => item.title === 'Help & Support');
       return startIndex !== -1 && endIndex !== -1 ? SidebarData.slice(startIndex, endIndex + 1) : [];
@@ -64,25 +63,25 @@ const Modalsearch = ({ isOpen, onClose }) => {
     }
   };
 
-  const myfunction = (inputValue) => {
+  const myfunction = (inputValue: any) => {
     document.querySelector(".search-result")?.classList.remove("d-none");
 
     const filteredSidebarData = filterSidebarData();
-    const searchResults = [];
+    const searchResults: any = [];
 
-    filteredSidebarData.forEach((item) => {
+    filteredSidebarData.forEach((item: any) => {
       if (item.title.toLowerCase().includes(inputValue.toLowerCase())) {
         searchResults.push(item);
       }
 
       if (item.subNav) {
-        item.subNav.forEach((subItem) => {
+        item.subNav.forEach((subItem: any) => {
           if (subItem.title.toLowerCase().includes(inputValue.toLowerCase())) {
             searchResults.push(subItem);
           }
 
           if (subItem.subNav) {
-            subItem.subNav.forEach((deepSubItem) => {
+            subItem.subNav.forEach((deepSubItem: any) => {
               if (deepSubItem.title.toLowerCase().includes(inputValue.toLowerCase())) {
                 searchResults.push(deepSubItem);
               }
@@ -136,7 +135,7 @@ const Modalsearch = ({ isOpen, onClose }) => {
                     </div>
                     <div className="box-body p-2 flex flex-col max-h-[250px] overflow-auto">
                       {show2 ? (
-                        NavData.map((e) => (
+                        NavData.map((e: any) => (
                           <div
                             key={Math.random()}
                             className="ti-list-group border p-2 gap-x-3.5 text-gray-800 dark:bg-bgdark dark:border-white/10 dark:text-white"

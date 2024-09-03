@@ -1,16 +1,14 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import '../../assets/css/style.css';
-// import '../../assets/css/sidebar.css';
 import sidebarLogo from '../../assets/images/logo-2.png';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { SidebarData } from '@/components/common/carpentersidebar/carpentersidebardata';
-import SubMenu from '@/components/common/carpentersidebar/carpentersubmenu';
+import { SidebarData } from './carpentersidebar/carpentersidebardata';
+import SubMenu from './carpentersidebar/carpentersubmenu';
 import { Link } from 'react-router-dom';
 
-const Sidebar = ({ isSidebarActive }) => {
+const Sidebar = ({ isSidebarActive }: any) => {
     useEffect(() => {
-        const sidebar = document.querySelector('.side-menu');
-        const header = document.querySelector('.main-sidebar-header');
+        const sidebar: any = document.querySelector('.side-menu');
+        const header: any = document.querySelector('.main-sidebar-header');
 
         const handleMouseOver = () => {
             if (header) {
@@ -50,7 +48,7 @@ const Sidebar = ({ isSidebarActive }) => {
             <div className='main-sidebar'>
                 <div className="">
                     <ul>
-                        {SidebarData.map((item, index) => {
+                        {SidebarData.map((item: any, index: any) => {
                             // Render SubMenu for items with sub-navigation
                             return item.subNav ? (
                                 <SubMenu item={item} key={index} isSidebarActive={isSidebarActive} />
