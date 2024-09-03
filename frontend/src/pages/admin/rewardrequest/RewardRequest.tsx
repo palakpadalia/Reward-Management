@@ -97,7 +97,7 @@ const CarpenterRewardRequest: React.FC = () => {
 
     const handleAddProductClick = () => {
         console.log("Add Product button clicked");
-        navigate('/redeemption-history');
+        navigate('/redeem-history');
         // Implement add product logic here
     };
 

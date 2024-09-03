@@ -8,10 +8,13 @@ import Header from './components/common/header';
 import Sidebar from './components/common/sidebar';
 import Login from './pages/auth/Login';
 import CusromerProducts from './pages/customer/CustomerProduct.tsx'
+import CustomerProductDetails from './pages/customer/ViewProduct.tsx'
 import PrivateRoutes from './routes/private-routes';
 import AdminProfile from './pages/admin/admindashboards/AdminProfile';
 import AdminDashboard from './pages/admin/admindashboards/AdminDashboard.tsx';
 import ProductMaster from './pages/admin/productdashboards/ProductMaster.tsx';
+import AddProduct from './pages/admin/productdashboards/Addproduct.tsx';
+import EditProduct from './pages/admin/productdashboards/EditProduct.tsx';
 import ProductQRHistory from './pages/admin/productdashboards/ProductQRHistory.tsx';
 import DownloadQRCode from './pages/admin/productdashboards/DownloadQR.tsx';
 import CarpenterRegistration from './pages/admin/carpenterdashboard/CarpenterRegistration.tsx';
@@ -68,20 +71,23 @@ function App() {
       <>
         <Route path='/' element={<Login />} />
         <Route path='/customer-product' element={<CusromerProducts />} />
+        <Route path='/view-product-details' element={<CustomerProductDetails/>} />
         <Route element={<AppLayout/>}>
         <Route path='/' element={<PrivateRoutes/>}>
           <Route path='/admin-profile' element={<AdminProfile />} />
           <Route path='/admin-dashboard' element={<AdminDashboard />} />
           <Route path='/product-master' element={<ProductMaster />} />
+          <Route path='/add-product' element={<AddProduct />}/>
+          <Route path='/edit-product' element={<EditProduct />}/>
           <Route path='/product-qr-history' element={<ProductQRHistory />} />
           <Route path='/download-qr-code' element={<DownloadQRCode />} />
           <Route path='/carpenter-registration' element={<CarpenterRegistration />} />
           <Route path='/carpenter-details' element={<CarpenterDetails/>} />
-          <Route path='/redeem-request' element={<CarpenterRewardRequest />} />
+          <Route path='/redeemption-request' element={<CarpenterRewardRequest />} />
           <Route path='/redeem-history' element={<RedeemptionHistory />} />
           <Route path='/announcement' element={<AdminAnnouncement />} />
           <Route path='/transaction-history' element={<TransactionHistory />} />
-          <Route path='/frequently-asked-questions' element={<FAQDashboard />} />
+          <Route path='/frequently-asked-question' element={<FAQDashboard />} />
           <Route path='/add-user' element={<AddUserDashboard />} />
           <Route path='/set-reward-points' element={<SetRewardPoint/>} />
           <Route path='/carpenter-dashboard' element={<CarpenterDashboard/>} />

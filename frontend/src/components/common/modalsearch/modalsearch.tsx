@@ -54,7 +54,7 @@ const Modalsearch = ({ isOpen, onClose }: any) => {
     } else if (roles.includes("Admin")) {
       const faqIndex = SidebarData.findIndex(item => item.title === "FAQ's");
       return faqIndex !== -1 ? SidebarData.slice(0, faqIndex + 1) : SidebarData;
-    } else if (carpenterrole === "Carpenter") {
+    } else if (carpenterrole === "Customer") {
       const startIndex = SidebarData.findIndex(item => item.title === 'Dashboard');
       const endIndex = SidebarData.findIndex(item => item.title === 'Help & Support');
       return startIndex !== -1 && endIndex !== -1 ? SidebarData.slice(startIndex, endIndex + 1) : [];
