@@ -1,12 +1,11 @@
 import '../../../assets/css/style.css';
 import '../../../assets/css/pages/admindashboard.css';
-import Pageheader from '@/components/common/pageheader/pageheader';
-import TableComponent from '@/components/ui/tables/tablecompnent';
-import TableBoxComponent from '@/components/ui/tables/tableboxheader';
+import Pageheader from '../../../components/common/pageheader/pageheader';
+import TableComponent from '../../../components/ui/tables/tablecompnent';
+import TableBoxComponent from '../../../components/ui/tables/tableboxheader';
 import React, { Fragment, useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-// import { BASE_URL, API_KEY, API_SECRET } from "../../../utils/constants";
 
 interface ProductQRHistory {
     name: string,
@@ -34,7 +33,6 @@ const ProductQRHistory: React.FC = () => {
             try {
                 const response = await axios.get(`/api/method/reward_management.api.print_qr_code.print_qr_code`,
                     {
-                       
                     }
                 );
                 console.log('Fetched data:', response.data);

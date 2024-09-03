@@ -31,7 +31,6 @@ const PointCollectedAlert: React.FC<PointCollectedAlertProps> = ({
                         aria-label="Close"
                         onClick={onPointClose}
                     >
-                      
                     </button>
                 )}
                 <div className="flex items-center justify-center mb-4">

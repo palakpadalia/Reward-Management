@@ -90,7 +90,6 @@ const RewardRequestEdit: React.FC<ViewModalProps> = ({
                                 value={status}
                                 onChange={(e) => setStatus(e.target.value)}
                             >
-                              
                                 <option value="Pending">Pending</option>
                                 <option value="Approved">Approved</option>
                                 <option value="Cancel">Cancel</option>

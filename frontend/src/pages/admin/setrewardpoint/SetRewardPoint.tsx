@@ -1,9 +1,8 @@
 import '../../../assets/css/style.css';
 import '../../../assets/css/pages/admindashboard.css';
-import Pageheader from '@/components/common/pageheader/pageheader';
+import Pageheader from '../../../components/common/pageheader/pageheader';
 import React, { Fragment, useState, useEffect } from "react";
 import axios from 'axios';
-// import { BASE_URL} from "../../../utils/constants";
 
 const SetRewardPointsDashboard: React.FC = () => {
     const [minPoints, setMinPoints] = useState<number | ''>('');

@@ -1,4 +1,3 @@
-import React from "react";
 import { Component } from 'react';
 import ReactApexChart from 'react-apexcharts';
 
@@ -67,7 +66,7 @@ export class DonutChart extends Component<DonutChartProps, DonutChartState> {
                                  show: true,
                                  label: 'Total',
                                  formatter: function (w) {
-                                     return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                                     return w.globals.seriesTotals.reduce((a: any, b: any) => a + b, 0);
                                  }
                              }
                          }

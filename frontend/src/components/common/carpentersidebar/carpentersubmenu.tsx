@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -21,10 +21,10 @@ const SidebarLink = styled(Link)`
   }
 `;
 
-const SidebarLabel = styled.span`
+const SidebarLabel: any = styled.span`
   margin-left: 10px;
   margin-right: 10px !important;
-  display: ${props => (props.$isSidebarActive ? 'none' : 'block')};
+  display: ${(props: any) => (props.$isSidebarActive ? 'none' : 'block')};
 `;
 
 const DropdownLink = styled(Link)`
@@ -46,7 +46,7 @@ const DropdownLink = styled(Link)`
   }
 `;
 
-const SubMenu = ({ item, isSidebarActive }) => {
+const SubMenu = ({ item, isSidebarActive }: any) => {
   const [subnav, setSubnav] = useState(false);
 
   const showSubnav = () => setSubnav(!subnav);
@@ -67,7 +67,7 @@ const SubMenu = ({ item, isSidebarActive }) => {
         </div>
       </SidebarLink>
       {subnav &&
-        item.subNav.map((item, index) => (
+        item.subNav.map((item: any, index: any) => (
           <DropdownLink to={item.path} key={index}>
             {item.icon}
             <SidebarLabel $isSidebarActive={isSidebarActive}>{item.title}</SidebarLabel>

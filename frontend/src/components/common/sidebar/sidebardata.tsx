@@ -1,8 +1,5 @@
-import React from 'react';
-// import * as FaIcons from 'react-icons/fa';
 import * as AiIcons from 'react-icons/ai';
 import * as IoIcons from 'react-icons/io';
-// import * as RiIcons from 'react-icons/ri';
 import { SlArrowRight, SlArrowDown } from 'react-icons/sl';
 import { VscCircle } from "react-icons/vsc";
 import { AiFillProduct } from "react-icons/ai";
@@ -51,7 +48,6 @@ export const SidebarData = [
         icon: <VscCircle />,
         cName: 'sub-nav'
       },
-     
     ]
   },
   {

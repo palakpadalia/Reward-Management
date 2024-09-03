@@ -1,9 +1,9 @@
 import '../../../assets/css/style.css';
 import '../../../assets/css/pages/admindashboard.css';
-import Pageheader from '@/components/common/pageheader/pageheader';
-import TableComponent from '@/components/ui/tables/tablecompnent';
-import TableBoxComponent from '@/components/ui/tables/tableboxheader';
-import ViewModalComponent from '@/components/ui/models/ViewModel';
+import Pageheader from '../../../components/common/pageheader/pageheader';
+import TableComponent from '../../../components/ui/tables/tablecompnent';
+import TableBoxComponent from '../../../components/ui/tables/tableboxheader';
+import ViewModalComponent from '../../../components/ui/models/ViewModel';
 import React, { Fragment, useState } from "react";
 import { useFrappeGetDocList } from 'frappe-react-sdk';
 

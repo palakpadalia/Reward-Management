@@ -1,10 +1,9 @@
 import { Fragment, useState, useEffect } from 'react';
 import axios from 'axios';
-// import { API_KEY, API_SECRET, BASE_URL } from "../../utils/constants";
 import '../../assets/css/header.css';
 import '../../assets/css/style.css';
 import '../../assets/css/pages/carpenterproducts.css';
-import Modalsearch from "@/components/common/modalsearch/modalsearch";
+import Modalsearch from "../../components/common/modalsearch/modalsearch";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'boxicons/css/boxicons.min.css';
 import sidebarLogo from '../../assets/images/sanskar-logo.png';
@@ -19,7 +18,6 @@ const CustomerProducts = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`/api/method/reward_management.api.product_master.get_all_products_data`,{
-         
       });
         
         console.log("API Response:", response.data);
@@ -92,7 +90,7 @@ const CustomerProducts = () => {
         <div className="grid grid-cols-12 gap-x-6">
           <div className="xxl:col-span-12 xl:col-span-12 lg:col-span-8 md:col-span-12 col-span-12">
             <div className="grid grid-cols-12 gap-x-6">
-              {productsData.map((product, index) => (
+              {productsData.map((product: any, index: any) => (
                 <div
                   className="xxl:col-span-3 xl:col-span-6 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12"
                   key={index}

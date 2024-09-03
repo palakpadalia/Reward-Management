@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect } from 'react';
 import sidebarLogo from '../../assets/images/sanskar-logo.png';
-import Modalsearch from "@/components/common/modalsearch/modalsearch";
+import Modalsearch from "../../components/common/modalsearch/modalsearch";
 
 import axios from 'axios';
 // import { API_KEY, API_SECRET, BASE_URL } from "../../utils/constants";
@@ -8,7 +8,7 @@ import axios from 'axios';
 const Productdetails = () => {
   const [fullScreen, setFullScreen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
-  const [productDetails, setProductDetails] = useState(null);
+  const [productDetails, setProductDetails] = useState<any>(null);
 
   // Extract product_id from URL parameters
   const urlParams = new URLSearchParams(window.location.search);
@@ -23,7 +23,6 @@ const Productdetails = () => {
     const fetchProductDetails = async () => {
       try {
         const response = await axios.get(`/api/method/reward_management.api.product_master.get_product_details?product_id=${productId}`, {
-         
         });
         console.log("data product card", response);
         setProductDetails(response.data.message.message);

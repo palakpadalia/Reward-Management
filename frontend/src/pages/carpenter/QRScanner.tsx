@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import '../../assets/css/pages/qrscanner.css';
-// import { API_KEY, API_SECRET, BASE_URL } from "../../utils/constants";
-import SuccessAlert from '@/components/ui/alerts/SuccessAlert';
-import PointCollectAlert from '@/components/ui/alerts/PointCollected';
+import SuccessAlert from '../../components/ui/alerts/SuccessAlert';
+import PointCollectAlert from '../../components/ui/alerts/PointCollected';
 
 const QRScanner = () => {
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -24,7 +23,6 @@ const QRScanner = () => {
     const fetchUserEmailAndInitScanner = async () => {
       try {
         const userResponse = await axios.get(`/api/method/frappe.auth.get_logged_user`, {
-         
         });
         const userData = userResponse.data;
 
@@ -43,7 +41,7 @@ const QRScanner = () => {
 
     const fetchAndLogCarpenterData = async () => {
       try {
-        const carpenterResponse = await axios.get(`/api/method/reward_management.api.carpenter_master.get_customer_details`,{
+        const carpenterResponse: any = await axios.get(`/api/method/reward_management.api.carpenter_master.get_customer_details`,{
         
         });
         console.log("Carpenter data:", carpenterResponse.data);
@@ -67,9 +65,6 @@ const QRScanner = () => {
         try {
           const productResponse = await axios.get(`/api/method/reward_management.api.qr_code_product_detail.get_product_details_from_qr`, {
             params: { decode_text: decodedText },
-
-          
-
           });
 
           if (productResponse.data.message?.error) {
@@ -96,7 +91,7 @@ const QRScanner = () => {
         }
       };
 
-      const html5QrCodeScanner = new Html5QrcodeScanner("my-qr-reader", { fps: 10, qrbox: 250 });
+      const html5QrCodeScanner: any = new Html5QrcodeScanner("my-qr-reader", { fps: 10, qrbox: 250 }, true);
       html5QrCodeScanner.render(onScanSuccess);
 
       const reader = qrScannerRef.current;
@@ -115,8 +110,6 @@ const QRScanner = () => {
   const handleCollectPoints = async () => {
     setIsCollectingPoints(true);
     try {
-
-
 
       if (!customerId || !productTableName || !productQrId || !productQrPoints) {
         throw new Error("Customer ID is missing");
@@ -202,20 +195,23 @@ const QRScanner = () => {
             buttonLabel="Close"
             onClose={() => setShowAlert(false)}
             showButton={true}
-            showMessage={false}
-          />
+            showMessage={false} onCancel={function (): void {
+              throw new Error('Function not implemented.');
+            } }          />
         ) : (
           <SuccessAlert
-            message={alertMessage}
-            title="QR Code Successfully Scanned"
-            collectButtonLabel="Collect"
-            showMessage={true}
-            showMessagesecond={false}
-            onClose={() => setShowAlert(false)} // You might want to set showAlert to false here to close the alert
-            showCollectButton={true}
-            onCollect={handleCollectPoints}
-            showButton={true} // Set this to true to show the close button
-          />
+              message={alertMessage}
+              title="QR Code Successfully Scanned"
+              collectButtonLabel="Collect"
+              showMessage={true}
+              showMessagesecond={false}
+              onClose={() => setShowAlert(false)} // You might want to set showAlert to false here to close the alert
+              showCollectButton={true}
+              onCollect={handleCollectPoints}
+              showButton={true} // Set this to true to show the close button
+              onCancel={function (): void {
+                throw new Error('Function not implemented.');
+              } }          />
         )
       )}
 

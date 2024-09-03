@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react';
-import Pageheader from '@/components/common/pageheader/pageheader';
+import Pageheader from '../../../components/common/pageheader/pageheader';
 import SunEditor from 'suneditor-react';
 import { useNavigate } from 'react-router-dom';
 import 'suneditor/dist/css/suneditor.min.css'; // Import SunEditor styles
@@ -8,7 +8,6 @@ import '../../../assets/css/style.css';
 import '../../../assets/css/pages/admindashboard.css';
 
 import axios from 'axios';
-// import { BASE_URL, API_KEY, API_SECRET } from "../../../utils/constants";
 
 const AddProduct: React.FC = () => {
     const [files, setFiles] = useState<File[]>([]);
@@ -45,7 +44,6 @@ const AddProduct: React.FC = () => {
             const response = await axios.post(`/api/method/upload_file`, formData, {
                 headers: {
                     'Accept': 'application/json',
-                   
                     'Content-Type': 'multipart/form-data'
                 }
             });

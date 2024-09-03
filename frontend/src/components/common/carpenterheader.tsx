@@ -1,17 +1,16 @@
-import React, { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import '../../assets/css/header.css';
-// import '../../assets/css/style.css';
 
 import ProfilePic from '../../assets/images/reward_management/9.jpg';
 import { IconAlignLeft } from '@tabler/icons-react';
 import { IconX } from '@tabler/icons-react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'boxicons/css/boxicons.min.css';
-import NotificationDropdown from '@/components/ui/notification';
+import NotificationDropdown from '../ui/notification';
 import Modalsearch from "./modalsearch/modalsearch";
 
-const Header = ({ toggleSidebar, isSidebarActive }) => {
+const Header = ({ toggleSidebar, isSidebarActive }: any) => {
     const [fullScreen, setFullScreen] = useState(false);
     const [theme, setTheme] = useState({
         dataNavLayout: 'vertical',
@@ -73,7 +72,7 @@ const Header = ({ toggleSidebar, isSidebarActive }) => {
         localStorage.removeItem("ynexHeader");
     };
 
-    const applyTheme = (theme) => {
+    const applyTheme = (theme: any) => {
         const root = document.documentElement;
         root.style.setProperty('--data-nav-layout', theme.dataNavLayout);
         root.style.setProperty('--data-vertical-style', theme.dataVerticalStyle);
@@ -81,10 +80,10 @@ const Header = ({ toggleSidebar, isSidebarActive }) => {
         root.style.setProperty('--data-toggled', theme.toggled);
         root.style.setProperty('--data-class', theme.class);
 
-        const sidemenu = document.querySelector(".side-menu");
-        const appHeader = document.querySelector(".app-header");
+        const sidemenu: any = document.querySelector(".side-menu");
+        const appHeader: any = document.querySelector(".app-header");
         if (sidemenu) {
-            const sidebarWidth = isSidebarActive ? '5rem' : '15rem'; // Width changes based on icon
+            const sidebarWidth: any = isSidebarActive ? '5rem' : '15rem'; // Width changes based on icon
             sidemenu.style.width = sidebarWidth;
             if (appHeader) {
                 appHeader.style.paddingLeft = sidebarWidth; // Adjust header padding to match sidebar width

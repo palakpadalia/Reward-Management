@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import '../../assets/css/header.css';
 import '../../assets/css/style.css';
@@ -8,11 +8,15 @@ import { IconAlignLeft } from '@tabler/icons-react';
 import { IconX } from '@tabler/icons-react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'boxicons/css/boxicons.min.css';
-import NotificationDropdown from '@/components/ui/notification';
+import NotificationDropdown from '../ui/notification';
 import Modalsearch from "./modalsearch/modalsearch";
+import { useFrappeAuth } from "frappe-react-sdk";
 
 
-const Header = ({ toggleSidebar, isSidebarActive }) => {
+
+const Header = ({ toggleSidebar, isSidebarActive }: any) => {
+
+    const { logout } = useFrappeAuth();
 
     const Profilephoto = localStorage.getItem("uploadedFileUrl") || ProfilePic;
     const username = localStorage.getItem("username");
@@ -36,19 +40,6 @@ const Header = ({ toggleSidebar, isSidebarActive }) => {
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
     };
-
-    // useEffect(() => {
-    //     const interval = setInterval(() => {
-    //         const newValue = localStorage.getItem("username");
-    //         if (newValue !== value) {
-    //             setValue(newValue);
-    //             // Perform your logic here when the value changes
-    //             console.log(`New value: ${newValue}`);
-    //         }
-    //     }, 1000); // Check every second
-
-    //     return () => clearInterval(interval); // Clear the interval when the component unmounts
-    // }, [value]);
 
     const toggleFullScreen = () => {
         const elem = document.documentElement;
@@ -93,7 +84,7 @@ const Header = ({ toggleSidebar, isSidebarActive }) => {
         localStorage.removeItem("ynexHeader");
     };
 
-    const applyTheme = (theme) => {
+    const applyTheme = (theme: any) => {
         const root = document.documentElement;
         root.style.setProperty('--data-nav-layout', theme.dataNavLayout);
         root.style.setProperty('--data-vertical-style', theme.dataVerticalStyle);
@@ -101,9 +92,9 @@ const Header = ({ toggleSidebar, isSidebarActive }) => {
         root.style.setProperty('--data-toggled', theme.toggled);
         root.style.setProperty('--data-class', theme.class);
 
-        const sidemenu = document.querySelector(".side-menu");
+        const sidemenu: any = document.querySelector(".side-menu");
         // console.log("sidemenu------",sidemenu);
-        const appHeader = document.querySelector(".app-header");
+        const appHeader: any = document.querySelector(".app-header");
         if (sidemenu) {
             const sidebarWidth = isSidebarActive ? '5rem' : '15rem'; // Width changes based on icon
             sidemenu.style.width = sidebarWidth;
@@ -214,15 +205,12 @@ const Header = ({ toggleSidebar, isSidebarActive }) => {
                                 </button>
                                 <div className="md:block hidden dropdown-profile cursor-pointer" onClick={handleDropdownToggle}>
                                     <p className="font-semibold mb-0 pt-3 leading-none text-[#536485] text-[0.813rem] ">{username}</p>
-                                   
                                 </div>
-                              
                                 <div
                                     className={`hs-dropdown-menu main-header-dropdown ti-dropdown-menu bg-white mt-3 fixed top-12 right-4 border-0 w-[10rem] p-0 border-defaultborder ${isDropdownVisible ? '' : 'hidden'}  pt-0 overflow-hidden header-profile-dropdown dropdown-menu-end`}
                                     aria-labelledby="dropdown-profile"
                                 >
                                     <ul className="text-defaulttextcolor font-medium dark:text-[#8c9097] dark:text-white/50">
-                                         
                                         {carpenterrole !== "Customer" && (
                                             <li className="user-profile-list hover:bg-[var(--bg-primary)] hover:text-[var(--primaries)]">
                                                 <a className="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0 !p-[0.65rem] !inline-flex" href={`/admin-profile`}>
@@ -239,7 +227,7 @@ const Header = ({ toggleSidebar, isSidebarActive }) => {
                                                     localStorage.removeItem('user_roles'); 
                                                     localStorage.removeItem('carpenterrole'); 
                                                     localStorage.removeItem("username");
-
+                                                    logout;
                                                 }}
                                             >
                                                 <i className="ti ti-logout text-[1.125rem] me-2 opacity-[0.7]"></i>Log Out

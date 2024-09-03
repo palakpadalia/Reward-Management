@@ -1,4 +1,3 @@
-import React from 'react'
 import ChartSection from "./AcquisitionChart";
 
 const AcquisitionSection = () => {

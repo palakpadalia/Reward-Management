@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -21,10 +21,10 @@ const SidebarLink = styled(Link)`
   }
 `;
 
-const SidebarLabel = styled.span`
+const SidebarLabel: any = styled.span`
   margin-left: 10px;
   margin-right: 10px !important;
-  display: ${props => (props.$isSidebarActive ? (props.$isHover ? 'block': 'none') : 'block')};
+  display: ${(props: any) => (props.$isSidebarActive ? (props.$isHover ? 'block': 'none') : 'block')};
 `;
 
 const DropdownLink = styled(Link)`
@@ -46,7 +46,7 @@ const DropdownLink = styled(Link)`
   }
 `;
 
-const SubMenu = ({ item, isSidebarActive, isHover }) => {
+const SubMenu = ({ item, isSidebarActive, isHover }: any) => {
   const [subnav, setSubnav] = useState(false);
 
   const showSubnav = () => setSubnav(!subnav);
@@ -74,7 +74,7 @@ const SubMenu = ({ item, isSidebarActive, isHover }) => {
           </div>
         </div>
       )}
-      {subnav && item.subNav && item.subNav.map((subItem, index) => (
+      {subnav && item.subNav && item.subNav.map((subItem: any, index: any) => (
         <DropdownLink to={subItem.path} key={index}>
           {subItem.icon}
           <SidebarLabel $isSidebarActive={isSidebarActive}>{subItem.title}</SidebarLabel>

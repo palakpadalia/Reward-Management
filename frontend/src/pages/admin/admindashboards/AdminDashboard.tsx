@@ -4,7 +4,6 @@ import React, { Fragment, useState, useEffect } from "react";
 import { useFrappeGetDocList, useFrappeGetCall } from 'frappe-react-sdk';
 import SelectBar from "../../../components/common/AdminSelection/SelectBar";
 import SelectLoyaltyProgram from "../../../components/common/AdminSelection/SelectLoyaltyProgram";
-import { Link } from 'react-router-dom';
 import TabSection from "../../../components/common/AdminTabSection/AdminTab"
 import CustomerLoyaltyChart from "../../../components/common/AdminTabSection/CustomerLoyaltyChart"
 

@@ -5,9 +5,9 @@ import { Box, Button, Callout, Card, Flex, Text } from '@radix-ui/themes';
 // import { useFrappeAuth } from 'frappe-react-sdk';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { FrappeError, useFrappeGetCall, useFrappeAuth, AuthResponse } from "frappe-react-sdk";
 // import { BASE_URL, API_KEY, API_SECRET } from "../../utils/constants";
 import '../../assets/css/style.css';
-import { useFrappeAuth } from 'frappe-react-sdk';
 
 
 
@@ -115,6 +115,7 @@ const Login = () => {
                 throw new Error('Roles data is not in the expected format.');
             }
 
+
             // Redirect based on role
             if (roles.includes('Admin')) {
                 navigate('/admin-dashboard');
@@ -131,7 +132,7 @@ const Login = () => {
 
 
     // Send Carpenter Registration Request---------------------
-    const registerCarpainter = async (firstName, lastName, mobile, city) => {
+    const registerCarpainter = async (firstName: any, lastName: any, mobile: any, city: any) => {
         try {
             const response = await axios.post(`/api/method/reward_management.api.create_new_carpenter.create_new_carpainters`, {
                 firstname: firstName,
@@ -151,7 +152,7 @@ const Login = () => {
 
 
     //    Handle Carpenter Registration Form---------------------
-    const handleRegister = async (e) => {
+    const handleRegister = async (e: any) => {
         e.preventDefault();
         if (mobile.length !== 10 || !/^\d+$/.test(mobile)) {
             setLoginError('Mobile number must be exactly 10 digits and only contain digits');
@@ -292,7 +293,7 @@ const Login = () => {
     };
 
 
-    const handlelogincarpenter = async (e: React.FocusEvent) => {
+    const handlelogincarpenter: any = async (e: React.FocusEvent) => {
         e.preventDefault();
 
         // Assuming you have an OTP input field in your form
@@ -307,7 +308,6 @@ const Login = () => {
             // Verify the OTP
             const response = await axios.get(`/api/method/reward_management.api.mobile_number.verify_otp`, {
                 params: { mobile_number: mobilenumber, otp: mobileotp }, // Pass necessary parameters
-               
             });
 
             console.log('OTP Verification Response Data:', response.data); // Log the response for debugging
@@ -387,10 +387,10 @@ const Login = () => {
                             </div>
 
                             <div className="flex justify-evenly border-b mb-6 gap-4 font-semibold text-sm">
-                                <Button onClick={() => setCurrentForm('login')} className={`flex-1 ${currentForm === 'login' ? 'border-b-2 border-primary text-primary' : ''}`}>
+                                <Button onClick={() => setCurrentForm('login')} className={`flex-1 bg-white text-defaulttextcolor ${currentForm === 'login' ? 'border-b-2 border-primary text-primary' : ''}`}>
                                     Admin
                                 </Button>
-                                <Button onClick={() => setCurrentForm('register')} className={`flex-1 ${currentForm === 'register' ? 'border-b-2 border-primary text-primary' : ''}`}>
+                                <Button onClick={() => setCurrentForm('register')} className={`flex-1 bg-white text-defaulttextcolor ${currentForm === 'register' ? 'border-b-2 border-primary text-primary' : ''}`}>
                                     Customer
                                 </Button>
                             </div>

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { TiGift, TiStar, TiUser, TiTick, TiTime } from 'react-icons/ti'; // Adjusted import
 import '../../assets/css/header.css';
 import '../../assets/css/style.css';
 import { Link } from 'react-router-dom';
 
 // Map icon names to React components
-const iconMap = {
+const iconMap: any = {
     'ti-gift': TiGift,
     'ti-discount-2': TiStar,
     'ti-user-check': TiUser,
@@ -13,7 +13,7 @@ const iconMap = {
     'ti-clock': TiTime, // Ensure this icon exists
 };
 
-const NotificationDropdown = ({ isOpen, toggleDropdown }) => {
+const NotificationDropdown = ({ isOpen, toggleDropdown }: any) => {
     const initialNotifications = [
         { id: 1, color: 'primaries', avatarColor: 'bg-primary', icon: 'ti-gift', text1: 'Your Order Has Been Shipped', text2: 'Order No: 123456 Has Shipped To Your Delivery Address', class: '', class1: '' },
         { id: 2, color: 'secondaries', avatarColor: 'bg-secondary', icon: 'ti-discount-2', text1: 'Discount Available', text2: 'Discount Available On Selected Products', class: '', class1: '' },
@@ -24,7 +24,7 @@ const NotificationDropdown = ({ isOpen, toggleDropdown }) => {
 
     const [notifications, setNotifications] = useState([...initialNotifications]);
 
-    const handleNotificationClose = (e, index) => {
+    const handleNotificationClose = (e: any, index: any) => {
         e.stopPropagation(); // Prevents the event from reaching the button click event
         const updatedNotifications = notifications.filter((_, i) => i !== index);
         setNotifications(updatedNotifications);

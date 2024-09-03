@@ -1,14 +1,13 @@
 import '../../../assets/css/style.css';
 import '../../../assets/css/pages/admindashboard.css';
-import Pageheader from '@/components/common/pageheader/pageheader';
-import TableComponent from '@/components/ui/tables/tablecompnent';
-import TableBoxComponent from '@/components/ui/tables/tableboxheader';
+import Pageheader from '../../../components/common/pageheader/pageheader';
+import TableComponent from '../../../components/ui/tables/tablecompnent';
+import TableBoxComponent from '../../../components/ui/tables/tableboxheader';
 import React, { Fragment, useState } from "react";
 import { useFrappeGetDocList } from 'frappe-react-sdk';
 import { useNavigate } from 'react-router-dom';
-import EditModalComponent from '@/components/ui/models/RewardRequestEdit';
+import EditModalComponent from '../../../components/ui/models/RewardRequestEdit';
 import axios from 'axios';
-// import { BASE_URL} from "../../../utils/constants";
 
 interface RewardRequest {
     name: string;
