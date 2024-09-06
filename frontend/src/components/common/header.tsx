@@ -33,7 +33,7 @@ const Header = ({ toggleSidebar, isSidebarActive }: any) => {
     
     // const [value, setValue] = useState(localStorage.getItem("username"));
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [notificationCount, setNotificationCount] = useState(5);
+    const [notificationCount, setNotificationCount] = useState(0);
     const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
     const [isDropdownVisible, setDropdownVisible] = useState(false);
 
@@ -182,7 +182,11 @@ const Header = ({ toggleSidebar, isSidebarActive }: any) => {
                                     </button>
                                 </div>
 
-                                <NotificationDropdown isOpen={dropdownOpen} toggleDropdown={toggleDropdown} />
+                                <NotificationDropdown
+                                    isOpen={dropdownOpen}
+                                    toggleDropdown={toggleDropdown}
+                                    onNotificationCountChange={setNotificationCount}
+                                />
                             </div>
                             {/* end notification */}
 

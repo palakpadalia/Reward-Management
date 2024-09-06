@@ -8,6 +8,7 @@
  "field_order": [
   "naming_series",
   "customer_id",
+  "full_name",
   "redeemed_points",
   "current_point_status",
   "total_points",
@@ -109,11 +110,17 @@
    "fieldname": "approve_time",
    "fieldtype": "Time",
    "label": "Approve Time"
+  },
+  {
+   "fetch_from": "customer_id.full_name",
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "label": "Full Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-27 12:19:23.829769",
+ "modified": "2024-09-06 11:07:24.178429",
  "modified_by": "Administrator",
  "module": "Reward Management",
  "name": "Redeem Request",

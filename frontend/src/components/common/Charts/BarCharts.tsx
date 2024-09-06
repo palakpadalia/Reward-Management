@@ -16,7 +16,7 @@ export class ApexChart extends React.Component<IProps, IState, any> {
    this.state = {
    
      series: [{
-       data: [4, 13, 24, 47, 54, 58, 69, 110, 120, 138, 245, 312]
+       data: [124, 210, 54, 147, 264, 58, 69, 110, 120, 138, 245, 312]
      }],
      options: {
        chart: {

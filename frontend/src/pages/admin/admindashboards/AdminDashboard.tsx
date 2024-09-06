@@ -3,9 +3,8 @@ import '../../../assets/css/pages/admindashboard.css';
 import React, { Fragment, useState, useEffect } from "react";
 import { useFrappeGetDocList, useFrappeGetCall } from 'frappe-react-sdk';
 import SelectBar from "../../../components/common/AdminSelection/SelectBar";
-import SelectLoyaltyProgram from "../../../components/common/AdminSelection/SelectLoyaltyProgram";
 import TabSection from "../../../components/common/AdminTabSection/AdminTab"
-import CustomerLoyaltyChart from "../../../components/common/AdminTabSection/CustomerLoyaltyChart"
+import CustomerLoyaltyChart from "../../../components/common/AdminTabSection/CutomerAcquisitionChart"
 
 interface Carpenter {
     name: string;
@@ -14,10 +13,20 @@ interface Carpenter {
     city: string;
     total_points?: number;
 }
+interface User {
+    name: string;
+    mobile_no: string;
+}
+
 
 const AdminDashboard: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(5);
+
+    const { data: userData } = useFrappeGetDocList<User>('User', {
+        fields: ['mobile_no','name']
+    });
+
 
     const { data: carpentersData } = useFrappeGetDocList<Carpenter>('Customer', {
         fields: ['name', 'full_name', 'mobile_number', 'city', 'total_points'],
@@ -25,6 +34,7 @@ const AdminDashboard: React.FC = () => {
         pageSize: itemsPerPage
     });
 
+    
     const { data: productsRes } = useFrappeGetCall('reward_management.api.admin_dashboards_cards.total_product');
     const { data: redemptionsRes } = useFrappeGetCall('reward_management.api.admin_dashboards_cards.count_redemptions');
     const { data: pendingRes } = useFrappeGetCall('reward_management.api.admin_dashboards_cards.count_redeem_request');
@@ -55,20 +65,38 @@ const AdminDashboard: React.FC = () => {
         if (carpentersRes) setCountTotalRegisteredCarpenter(carpentersRes.message);
     }, [productsRes, redemptionsRes, pendingRes, qrPointsRes, pointsRes, carpentersRes]);
 
-    const totalPages = Math.ceil((carpentersData?.length || 0) / itemsPerPage);
-    const currentItems = carpentersData?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage) || [];
+   // Extract mobile numbers from User data
+   const validMobileNumbers = userData?.map(user => user.mobile_no) || [];
 
-    const handlePrevPage = () => {
-        if (currentPage > 1) setCurrentPage(currentPage - 1);
-    };
+   // Filter Carpenters Data
+   const filteredCarpenters = carpentersData?.filter(carpenter => validMobileNumbers.includes(carpenter.mobile_number)) || [];
 
-    const handleNextPage = () => {
-        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-    };
+   // Sort Carpenters by total_points in descending order
+   const sortedCarpenters = filteredCarpenters.sort((a, b) => (b.total_points || 0) - (a.total_points || 0));
 
-    const handlePageChange = (pageNumber: number) => {
-        setCurrentPage(pageNumber);
-    };
+   // Get Top 10 Carpenters
+   const top10Carpenters = sortedCarpenters.slice(0, 10);
+
+   // Pagination Logic
+   const totalItems = top10Carpenters.length;
+   const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+   const currentItems = top10Carpenters.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+   const handlePrevPage = () => {
+       if (currentPage > 1) setCurrentPage(currentPage - 1);
+   };
+
+   const handleNextPage = () => {
+       if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+   };
+
+   const handlePageChange = (pageNumber: number) => {
+       if (pageNumber >= 1 && pageNumber <= totalPages) {
+           setCurrentPage(pageNumber);
+       }
+   };
+
 
     return (
         <Fragment>
@@ -142,7 +170,6 @@ const AdminDashboard: React.FC = () => {
                 </div>
             </div>
             <div className="mb-10">
-                <SelectLoyaltyProgram />
                 <CustomerLoyaltyChart />
             </div>
             {/* Selection Bar */}

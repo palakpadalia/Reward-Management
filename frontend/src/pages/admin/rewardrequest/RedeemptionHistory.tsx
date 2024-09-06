@@ -54,15 +54,19 @@ const RedeemptionHistory: React.FC = () => {
 
          // Filter data based on search query
          const filteredData = formattedData?.filter(request => 
-            request.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            request.customer_id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (request.redeemed_points !== undefined && request.redeemed_points.toString().toLowerCase().includes(searchQuery)) ||
-          
-            (request.approved_on !== undefined && request.approved_on.toString().toLowerCase().includes(searchQuery)) ||
-            (request.approve_time !== undefined && request.approve_time.toString().toLowerCase().includes(searchQuery)) ||
-            (request.current_point_status !== undefined && request.current_point_status.toString().toLowerCase().includes(searchQuery)) ||
+            request.request_status === "Approved" &&
+            (
+                request.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                request.customer_id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                (request.redeemed_points !== undefined && request.redeemed_points.toString().toLowerCase().includes(searchQuery)) ||
+              
+                (request.approved_on !== undefined && request.approved_on.toString().toLowerCase().includes(searchQuery)) ||
+                (request.approve_time !== undefined && request.approve_time.toString().toLowerCase().includes(searchQuery)) ||
+                (request.current_point_status !== undefined && request.current_point_status.toString().toLowerCase().includes(searchQuery)) ||
+               
+                request.request_status?.toLowerCase().includes(searchQuery.toLowerCase())
+            )
            
-            request.request_status?.toLowerCase().includes(searchQuery.toLowerCase())
         );
 
 

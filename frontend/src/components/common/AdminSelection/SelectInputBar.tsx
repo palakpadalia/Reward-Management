@@ -7,9 +7,10 @@ interface SelectInputProps {
   id: string;
   options: { value: string; label: string }[];
   placeholder: string;
+  onChange?: (selectedOption: { value: string; label: string } | null) => void;
 }
 
-const SelectInputBar: React.FC<SelectInputProps> = ({ label, name, id, options, placeholder }) => {
+const SelectInputBar: React.FC<SelectInputProps> = ({ label, name, id, options, placeholder, onChange }) => {
   return (
     <div>
       <label htmlFor={id} className="font-semibold text-[1.125rem] text-defaulttextcolor dark:text-defaulttextcolor/70 !mb-0">
@@ -23,6 +24,7 @@ const SelectInputBar: React.FC<SelectInputProps> = ({ label, name, id, options, 
         menuPlacement='auto'
         classNamePrefix="Select2"
         placeholder={placeholder}
+        onChange={onChange}
       />
     </div>
   );

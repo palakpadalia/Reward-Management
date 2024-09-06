@@ -7,7 +7,7 @@ def get_all_products():
     try:
         # Fetch all products
         products = frappe.get_all("Product",
-            fields=["name", "product_name", "reward_points", "discription", "qr_code" ,"product_image","category"],
+            fields=["name", "product_name", "reward_points", "discription", "qr_code" ,"product_image","category","product_price"],
             order_by="creation desc"
         )
 
@@ -26,6 +26,7 @@ def get_all_products():
                     "product_id": product.get("name"),
                     "product_name": product.get("product_name"),
                     "reward_points": product.get("reward_points"),
+                    "product_price":product.get("product_price"),
                     "discription": product.get("discription"),
                     "category":product.get("category"),
                     "qr_code": product.get("qr_code"),
@@ -53,7 +54,7 @@ def get_all_products_data():
     try:
         # Fetch all products
         products = frappe.get_all("Product",
-            fields=["name", "product_name", "reward_points", "discription", "product_image", "category"],
+            fields=["name", "product_name", "reward_points", "discription", "product_image", "category","product_price"],
             order_by="creation desc"
         )
 
@@ -66,6 +67,7 @@ def get_all_products_data():
                     "product_id": product.get("name"),
                     "product_name": product.get("product_name"),
                     "reward_points": product.get("reward_points"),
+                    "product_price":product.get("product_price"),
                     "discription": product.get("discription"),
                     "category": product.get("category"),
                     "product_image": product.get("product_image")  # Initialize an empty list for images
@@ -192,12 +194,13 @@ def get_product_details(product_id):
 
 # Add New Product--------
 @frappe.whitelist(allow_guest=True)
-def add_product(productName, rewardPoints, discription, productCategory,productImage=None):
+def add_product(productName, productPrice, rewardPoints, discription, productCategory,productImage=None):
     try:
         # Create a new instance of the Product document
         product = frappe.new_doc("Product")
         product.product_name = productName
         product.reward_points = rewardPoints
+        product.product_price=productPrice
         product.discription = discription
         product.category=productCategory
 
@@ -259,6 +262,7 @@ def get_tableproduct_detail(product_id=None):
                 "category": getattr(product, 'category', ''),
                 "discription": getattr(product, 'discription', ''),
                 "reward_points": getattr(product, 'reward_points', 0),
+                "product_price":getattr(product,'product_price',0),
                 "product_image": getattr(product, 'product_image', '')
             }
         }
@@ -287,6 +291,7 @@ def get_product_detail(product_id):
         "category": product.category,
         "description": product.discription,
         "reward_points":product.reward_points,
+        "product_price":product.product_price,
         "product_images": product.product_image
     }
 

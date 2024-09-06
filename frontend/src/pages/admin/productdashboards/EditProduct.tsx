@@ -21,6 +21,8 @@ const EditProduct: React.FC = () => {
     const [existingImages, setExistingImages] = useState<string[]>([]);
     const [productName, setProductName] = useState('');
     const [rewardPoints, setRewardPoints] = useState('');
+    const [productPrice, setproductPrice] = useState('');
+    const [rewardPercent, setRewardPercent] = useState('');
     const [productDescription, setProductDescription] = useState('');
     const [productCategory, setProductCategory] = useState('');
     const navigate = useNavigate();
@@ -29,6 +31,13 @@ const EditProduct: React.FC = () => {
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
     useEffect(() => {
+        if (productPrice && rewardPercent) {
+            const calculatedPoints = (parseFloat(productPrice) * parseFloat(rewardPercent)) / 100;
+            setRewardPoints(calculatedPoints.toFixed(2)); // Round to 2 decimal places
+        } else {
+            setRewardPoints(rewardPoints);
+        }
+
         if (showSuccessAlert) {
             const timer = setTimeout(() => {
                 setShowSuccessAlert(false);
@@ -36,7 +45,7 @@ const EditProduct: React.FC = () => {
             }, 3000); // Hide alert after 3 seconds
             return () => clearTimeout(timer);
         }
-    }, [showSuccessAlert, navigate]);
+    }, [showSuccessAlert, navigate, productPrice, rewardPercent]);
 
     useEffect(() => {
         const fetchProductData = async () => {
@@ -46,16 +55,18 @@ const EditProduct: React.FC = () => {
                 const response = await axios.get(`/api/method/reward_management.api.product_master.get_tableproduct_detail`, {
                     params: { product_id: productId },
                     headers: {
-                       
+
                         'Content-Type': 'application/json',
                     }
                 });
 
                 if (response.data && response.data.message.message) {
+                    console.log("Edit Product Data",response);
                     const product = response.data.message.message;
 
                     setProductName(product.product_name || '');
                     setRewardPoints(product.reward_points || '');
+                    setproductPrice(product.product_price || '');
                     setProductDescription(product.discription || '');
                     setProductCategory(product.category || '');
 
@@ -96,7 +107,7 @@ const EditProduct: React.FC = () => {
             const response = await axios.post(`/api/method/upload_file`, formData, {
                 headers: {
                     'Accept': 'application/json',
-                    
+
                     'Content-Type': 'multipart/form-data'
                 }
             });
@@ -113,12 +124,7 @@ const EditProduct: React.FC = () => {
     };
 
     const resetForm = () => {
-        setFiles([]);
-        setPreviews([]);
-        setProductName('');
-        setRewardPoints('');
-        setProductDescription('');
-        setProductCategory('');
+        window.location.reload();
     };
 
     const handleSubmit = async (event: React.FormEvent) => {
@@ -138,6 +144,7 @@ const EditProduct: React.FC = () => {
             product_name: productName,
             category: productCategory,
             reward_points: rewardPoints,
+            product_price: productPrice,
             discription: productDescription,
             product_image: updatedProductImage
         };
@@ -145,7 +152,7 @@ const EditProduct: React.FC = () => {
         try {
             await axios.put(`/api/resource/Product/${productId}`, data, {
                 headers: {
-                    
+
                     'Content-Type': 'application/json',
                 }
             });
@@ -180,6 +187,19 @@ const EditProduct: React.FC = () => {
                                                         required
                                                     />
                                                 </div>
+                                                <div className="xl:col-span-12 col-span-12">
+                                                    <label htmlFor="product-price-add" className="form-label text-sm font-semibold text-defaulttextcolor">Product Price</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control w-full text-defaultsize text-defaulttextcolor border border-defaultborder rounded-[0.5rem] mt-2"
+                                                        id="product-price-add"
+                                                        placeholder="Product Price"
+                                                        value={productPrice}
+                                                        onChange={(e) => setproductPrice(e.target.value)}
+                                                        required
+                                                    />
+                                                </div>
+
                                                 <div className="xl:col-span-12 col-span-12">
                                                     <label htmlFor="product-cost-add" className="form-label text-sm font-semibold text-defaulttextcolor">Reward Points</label>
                                                     <input
@@ -216,50 +236,64 @@ const EditProduct: React.FC = () => {
                                             </div>
                                         </div>
                                         <div className="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12 gap-4">
-                                            <div className="xl:col-span-12 col-span-12">
-                                                <label htmlFor="product-category-add" className="form-label text-sm font-semibold text-defaulttextcolor">Category</label>
-                                                <input
-                                                    id="product-category-add"
-                                                    name="product-category-add"
-                                                    className="w-full border border-defaultborder text-defaultsize text-defaulttextcolor rounded-[0.5rem] form-control"
-                                                    placeholder="Category"
-                                                    value={productCategory}
-                                                    onChange={(e) => setProductCategory(e.target.value)}
-                                                    required
-                                                />
-                                            </div>
-                                            <div className="xl:col-span-12 col-span-12">
-                                                <label htmlFor="product-images-add" className="form-label text-sm font-semibold text-defaulttextcolor">Product Image</label>
-                                                <input
-                                                    type="file"
-                                                    multiple
-                                                    className="form-control w-full border border-defaultborder rounded-[0.5rem] mt-2"
-                                                    id="product-images-add"
-                                                    onChange={handleFileChange}
-                                                />
-                                                <div className="flex gap-4 mt-2">
-                                                    {previews.map((preview, index) => (
-                                                        <img key={index} src={preview} alt={`preview-${index}`} className="w-32 h-32 object-cover" />
-                                                    ))}
+                                            <div className="grid grid-cols-12 gap-4">
+                                                <div className="xl:col-span-12 col-span-12">
+                                                    <label htmlFor="product-category-add" className="form-label text-sm font-semibold text-defaulttextcolor">Category</label>
+                                                    <input
+                                                        id="product-category-add"
+                                                        name="product-category-add"
+                                                        className="w-full border border-defaultborder text-defaultsize text-defaulttextcolor rounded-[0.5rem] mt-2 form-control"
+                                                        placeholder="Category"
+                                                        value={productCategory}
+                                                        onChange={(e) => setProductCategory(e.target.value)}
+                                                        required
+                                                    />
                                                 </div>
-                                                {existingImages.length > 0 && (
+                                                <div className="xl:col-span-12 col-span-12">
+                                                    <label htmlFor="reward-percent-add" className="form-label text-sm font-semibold text-defaulttextcolor">Set Reward Percent</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control w-full text-defaultsize text-defaulttextcolor border border-defaultborder rounded-[0.5rem] mt-2"
+                                                        id="reward-percent-add"
+                                                        placeholder="Set Reward Percent"
+                                                        value={rewardPercent}
+                                                        onChange={(e) => setRewardPercent(e.target.value)}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="xl:col-span-12 col-span-12 ">
+                                                    <label htmlFor="product-images-add" className="form-label text-sm font-semibold text-defaulttextcolor">Product Image</label>
+                                                    <input
+                                                        type="file"
+                                                        multiple
+                                                        className="form-control w-full border border-defaultborder rounded-[0.5rem] mt-2 p-2"
+                                                        id="product-images-add"
+                                                        onChange={handleFileChange}
+                                                    />
                                                     <div className="flex gap-4 mt-2">
-                                                        {existingImages.map((image, index) => (
-                                                            <img key={index} src={image} alt={`existing-${index}`} className="w-32 h-32 object-cover" />
+                                                        {previews.map((preview, index) => (
+                                                            <img key={index} src={preview} alt={`preview-${index}`} className="w-32 h-32 object-cover" />
                                                         ))}
                                                     </div>
-                                                )}
+                                                    {existingImages.length > 0 && (
+                                                        <div className="flex gap-4 mt-2">
+                                                            {existingImages.map((image, index) => (
+                                                                <img key={index} src={image} alt={`existing-${index}`} className="w-32 h-32 object-cover" />
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="flex justify-end gap-3 mt-6">
-                                        {/* <button 
-                                            type="reset" 
-                                            className="btn btn-primary w-[6rem] text-white bg-defaultgreen rounded-[0.5rem]"
-                                            onClick={resetForm}
+                                        <button
+                                            type="button"
+                                            className="ti-btn ti-btn-success bg-defaulttextcolor ti-btn text-white !font-medium m-1"
+                                            onClick={resetForm} // Add the onClick event to reset the form
                                         >
-                                            Reset
-                                        </button> */}
+                                            Cancel
+                                        </button>
                                         <button
                                             type="submit"
                                             className="ti-btn ti-btn-primary !font-medium m-1"
@@ -270,7 +304,13 @@ const EditProduct: React.FC = () => {
                                 </div>
                             </form>
                             {showSuccessAlert && (
-                                <SuccessAlert message="Product updated successfully!" />
+                                <SuccessAlert
+                                    showButton={false}
+                                    showCancleButton={false}
+                                    showCollectButton={false}
+                                    showAnotherButton={false}
+                                    showMessagesecond = {false}
+                                    message="Product updated successfully!" />
                             )}
                         </div>
                     </div>

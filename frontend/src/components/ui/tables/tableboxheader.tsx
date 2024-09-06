@@ -2,10 +2,13 @@
 
 import React from 'react';
 
+
+
 interface BoxHeaderProps {
     title: string;
     onSearch: (value: string) => void;
     onAddButtonClick: () => void;
+    buttonOnClick: () => void
     buttonText?: string;
     showButton?: boolean;
     icon?: string;

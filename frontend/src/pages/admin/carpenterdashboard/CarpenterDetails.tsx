@@ -3,7 +3,7 @@ import '../../../assets/css/pages/admindashboard.css';
 import Pageheader from '../../../components/common/pageheader/pageheader';
 import TableComponent from '../../../components/ui/tables/tablecompnent';
 import TableBoxComponent from '../../../components/ui/tables/tableboxheader';
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { useFrappeGetDocList } from 'frappe-react-sdk';
 
 interface Carpenter {
@@ -16,17 +16,36 @@ interface Carpenter {
     redeem_points: number,
 }
 
+interface User {
+    name: string;
+    mobile_no: string;
+}
+
 const CarpenterDetails: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(5);
     const [searchQuery, setSearchQuery] = useState('');
-
+    const [validMobileNumbers, setValidMobileNumbers] = useState<string[]>([]);
+    
+    const { data: userData } = useFrappeGetDocList<User>('User', {
+        fields: ['mobile_no']
+    });
+    
     const { data: carpenterData } = useFrappeGetDocList<Carpenter>('Customer', {
         fields: ['name', 'full_name', 'city', 'mobile_number', 'total_points', 'current_points', 'redeem_points']
     });
 
+    useEffect(() => {
+        // Extract and set valid mobile numbers whenever userData changes
+        const extractedMobileNumbers = userData?.map(user => user.mobile_no) || [];
+        setValidMobileNumbers(extractedMobileNumbers);
+    }, [userData]);
+
+    // Filter Carpenters Data
+    const filteredCarpenters = carpenterData?.filter(carpenter => validMobileNumbers.includes(carpenter.mobile_number)) || [];
+
     // Function to filter data based on search query
-    const filteredData = carpenterData?.filter(carpenter => {
+    const filteredData = filteredCarpenters.filter(carpenter => {
         const query = searchQuery.toLowerCase();
         return (
             (carpenter.name && carpenter.name.toLowerCase().includes(query)) ||
@@ -60,7 +79,6 @@ const CarpenterDetails: React.FC = () => {
     const handleSearch = (value: string) => {
         setSearchQuery(value);
         setCurrentPage(1);
-        console.log("Search value:", value);
     };
 
     const handleAddProductClick = () => {
@@ -103,7 +121,7 @@ const CarpenterDetails: React.FC = () => {
                                 showProductQR={false} 
                                 showEdit={false} 
                                 columnStyles={{
-                                    'Carpenter ID': 'text-[var(--primaries)] font-semibold',
+                                    'Customer ID': 'text-[var(--primaries)] font-semibold',
                                 }}
                             />
                         </div>

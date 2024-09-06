@@ -29,7 +29,7 @@ const SuccessAlert: React.FC<SuccessAlertProps> = ({
     title = "Success!",
     buttonLabel = "Close",
     collectButtonLabel = "Collect",
-    anotherActionLabel = "Another Action", // Default label for the additional button
+    anotherActionLabel = "Another Action", 
     showButton = true,
     showCancleButton=false,
     showCollectButton = false,
@@ -81,7 +81,7 @@ const SuccessAlert: React.FC<SuccessAlertProps> = ({
                         {showAnotherButton && onAnotherAction && (
                             <button
                                 type="button"
-                                className="ti-btn ti-btn-secondary bg-secondary text-white font-medium py-2 px-4 rounded transition-all duration-300"
+                                className="ti-btn ti-btn-primary bg-primary text-white font-medium py-2 px-4 rounded transition-all duration-300"
                                 onClick={onAnotherAction}
                             >
                                 {anotherActionLabel}

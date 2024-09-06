@@ -43,7 +43,7 @@ const AdminProfile = () => {
     
     const numberRegex = /^\d{10}$/;
 
-    const handleMobileNumberChange = (e) => {
+    const handleMobileNumberChange = (e:any) => {
         const value = e.target.value;
 
         // Validate the input value against the regex
@@ -71,9 +71,7 @@ const AdminProfile = () => {
                 const userResponse = await axios.get(`/api/method/frappe.auth.get_logged_user`,
                     {
                         method: "GET",
-                        // headers: {
-                        //     Authorization: `token ${API_KEY}:${API_SECRET}`,
-                        // },
+                       
                     } 
                 );
                 console.log("userData----->", userResponse.data.message);
@@ -82,9 +80,7 @@ const AdminProfile = () => {
                 const userdata = await axios.get(`/api/resource/User/${userResponse.data.message}`,
                     {
                         method: "GET",
-                        // headers: {
-                        //     Authorization: `token ${API_KEY}:${API_SECRET}`,
-                        // },
+                     
                     }
                 );
                 console.log("userData----->", userdata.data.data);
@@ -119,9 +115,7 @@ const AdminProfile = () => {
                 const response = await axios.get(`/api/method/reward_management.api.admin_profile.get_all_gender`,
                     {
                         method: "GET",
-                        // headers: {
-                        //     Authorization: `token ${API_KEY}:${API_SECRET}`,
-                        // },
+                      
                     }
                 );
                 setGenders(response.data.message); // 
@@ -138,7 +132,7 @@ const AdminProfile = () => {
 
     }, [showSuccessAlert]);
 
-    const handleImageChange = (e) => {
+    const handleImageChange = (e:any) => {
         const file = e.target.files[0];
         if (file) {
             setSelectedImage(URL.createObjectURL(file));
@@ -161,9 +155,7 @@ const AdminProfile = () => {
                         location,
                     },
                     {
-                        // headers: {
-                        //     Authorization: `token ${API_KEY}:${API_SECRET}`,
-                        // },
+                        
                     }
                 );
 
@@ -241,10 +233,7 @@ const AdminProfile = () => {
                     new_image_url: uploadedFileUrl,
                     name: email,
                 }, {
-                    // headers: {
-                    //     'Authorization': `Bearer ${API_KEY}`,
-                    //     'X-API-SECRET': API_SECRET,
-                    // }
+                    
                 });
 
                 if (response.data.message.status === "success") {
@@ -296,7 +285,7 @@ const AdminProfile = () => {
         setShowConfirmPassword(!showConfirmPassword);
     };
 
-    const handlePasswordChange = (e) => {
+    const handlePasswordChange = (e:any) => {
         const { id, value } = e.target;
         if (id === 'new-password') {
             setNewPassword(value);

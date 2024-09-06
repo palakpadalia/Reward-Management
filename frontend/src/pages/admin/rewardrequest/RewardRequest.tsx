@@ -3,11 +3,12 @@ import '../../../assets/css/pages/admindashboard.css';
 import Pageheader from '../../../components/common/pageheader/pageheader';
 import TableComponent from '../../../components/ui/tables/tablecompnent';
 import TableBoxComponent from '../../../components/ui/tables/tableboxheader';
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { useFrappeGetDocList } from 'frappe-react-sdk';
 import { useNavigate } from 'react-router-dom';
 import EditModalComponent from '../../../components/ui/models/RewardRequestEdit';
 import axios from 'axios';
+import SuccessAlert from '../../../components/ui/alerts/SuccessAlert';
 
 interface RewardRequest {
     name: string;
@@ -42,10 +43,21 @@ const CarpenterRewardRequest: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
     const navigate = useNavigate(); // Initialize useNavigate
     const [searchQuery, setSearchQuery] = useState(''); // State for search query
+    const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
     const { data: rewardrequestData } = useFrappeGetDocList<RewardRequest>('Redeem Request', {
         fields: ['name', 'customer_id', 'total_points', 'current_point_status', 'redeemed_points', 'received_date', 'received_time', 'request_status', 'approved_on', 'approve_time', 'transection_id', 'amount']
     });
+
+    useEffect(() => {
+        if (showSuccessAlert) {
+            const timer = setTimeout(() => {
+                setShowSuccessAlert(false);
+                window.location.reload(); // Reload the page after hiding the alert
+            }, 3000); // Hide alert after 3 seconds
+            return () => clearTimeout(timer);
+        }
+    }, [showSuccessAlert]);
 
     const formattedData = rewardrequestData?.map(request => ({
         ...request,
@@ -54,21 +66,21 @@ const CarpenterRewardRequest: React.FC = () => {
         // Format other dates as needed
     }));
 
-    console.log("formattedData------->",formattedData);
+    console.log("formattedData------->", formattedData);
 
 
-        // Filter data based on search query
-    const filteredData = formattedData?.filter(request => 
-            request.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            request.customer_id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (request.redeemed_points !== undefined && request.redeemed_points.toString().toLowerCase().includes(searchQuery)) ||
-            (request.total_points !== undefined && request.total_points.toString().toLowerCase().includes(searchQuery)) ||
-            (request.received_date !== undefined && request.received_date.toString().toLowerCase().includes(searchQuery)) ||
-            (request.received_time !== undefined && request.received_time.toString().toLowerCase().includes(searchQuery)) ||
-            (request.current_point_status !== undefined && request.current_point_status.toString().toLowerCase().includes(searchQuery)) ||
-            (request.mobile_number !== undefined && request.mobile_number.toString().toLowerCase().includes(searchQuery)) ||
-            request.request_status?.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+    // Filter data based on search query
+    const filteredData = formattedData?.filter(request =>
+        request.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        request.customer_id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (request.redeemed_points !== undefined && request.redeemed_points.toString().toLowerCase().includes(searchQuery)) ||
+        (request.total_points !== undefined && request.total_points.toString().toLowerCase().includes(searchQuery)) ||
+        (request.received_date !== undefined && request.received_date.toString().toLowerCase().includes(searchQuery)) ||
+        (request.received_time !== undefined && request.received_time.toString().toLowerCase().includes(searchQuery)) ||
+        (request.current_point_status !== undefined && request.current_point_status.toString().toLowerCase().includes(searchQuery)) ||
+        (request.mobile_number !== undefined && request.mobile_number.toString().toLowerCase().includes(searchQuery)) ||
+        request.request_status?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const totalPages = Math.ceil((filteredData?.length || 0) / itemsPerPage);
 
@@ -114,13 +126,13 @@ const CarpenterRewardRequest: React.FC = () => {
     const handleSubmit = async () => {
         console.log('Submit clicked');
         if (!selectedRewardRequest) return;
-        console.log('Transaction ID:', selectedRewardRequest.transection_id); 
-    
+        console.log('Transaction ID:', selectedRewardRequest.transection_id);
+
         // Get current date and time
         const now = new Date();
         const currentDate = now.toISOString().split('T')[0]; // Format: YYYY-MM-DD
         const currentTime = now.toISOString().split('T')[1].split('.')[0]; // Format: HH:MM:SS
-    
+
         const data = {
             approved_on: currentDate,
             approve_time: currentTime,
@@ -129,13 +141,15 @@ const CarpenterRewardRequest: React.FC = () => {
             action: selectedRewardRequest.request_status,  // This is your 'action' parameter
             request_id: selectedRewardRequest.name, // This is your 'request_id' parameter
         };
-    
+
         try {
             const response = await axios.post(`/api/method/reward_management.api.admin_redeem_request.update_redeem_request_status`, data);
-    
+
             if (response.status === 200) {
                 console.log("Redeem Request updated successfully");
-                alert('Redeem Request updated successfully!');
+                // alert('Redeem Request updated successfully!');
+                // Set the success alert and trigger page reload
+                setShowSuccessAlert(true);
                 handleCloseModal();
                 // Optionally, you can re-fetch the data here or use a state update to reflect changes.
             } else {
@@ -147,7 +161,7 @@ const CarpenterRewardRequest: React.FC = () => {
             alert('An error occurred while updating the Redeem Request.');
         }
     };
-    
+
     const handleCancel = () => {
         console.log('Cancel clicked');
         setIsModalOpen(false); // Close the modal on cancel
@@ -227,6 +241,17 @@ const CarpenterRewardRequest: React.FC = () => {
                     setAmount={(value) => setSelectedRewardRequest(prev => ({ ...prev, amount: value }))}
                     showTransactionId={isApproved} // Pass the condition to modal
                     showAmount={isApproved} // Pass the condition to modal
+                />
+            )}
+
+            {showSuccessAlert && (
+                <SuccessAlert
+                    showButton={false}
+                    showCancleButton={false}
+                    showCollectButton={false}
+                    showAnotherButton={false}
+                    showMessagesecond={false}
+                    message="Reward Request Update successfully!"
                 />
             )}
         </Fragment>

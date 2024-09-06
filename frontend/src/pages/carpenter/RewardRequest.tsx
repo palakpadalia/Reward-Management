@@ -20,19 +20,19 @@ interface Transaction {
 
 const RedeemRequest: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(5); 
+    const [itemsPerPage] = useState(5);
     const [transactionData, setTransactionData] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [userData, setUserData] = useState<any>(null);
-    const [currentPoints, setCurrentPoints] = useState<string | null>(null); 
-    const [minPoints, setMinPoints] = useState<number | null>(null); 
-    const [maxPoints, setMaxPoints] = useState<number | null>(null); 
+    const [currentPoints, setCurrentPoints] = useState<string | null>(null);
+    const [minPoints, setMinPoints] = useState<number | null>(null);
+    const [maxPoints, setMaxPoints] = useState<number | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [pointredeem, setPointRedeem] = useState<string>("");
-    const [customerId, setCustomerId] = useState<string>('');  
+    const [customerId, setCustomerId] = useState<string>('');
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
-    const [searchQuery , setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         if (showSuccessAlert) {
@@ -53,14 +53,14 @@ const RedeemRequest: React.FC = () => {
 
     const fetchCarpenterDetails = async () => {
         try {
-            const response = await axios.get(`/api/method/reward_management.api.carpenter_master.get_customer_details`,{
-                
+            const response = await axios.get(`/api/method/reward_management.api.carpenter_master.get_customer_details`, {
+
             });
             console.log("Carpenter details:", response);
             const points = response.data.message.current_points || '0';
             const customer_id = response.data.message.name || '';
             setCurrentPoints(points);
-            setCustomerId(customer_id); 
+            setCustomerId(customer_id);
         } catch (error) {
             console.error("Error fetching carpenter details:", error);
         }
@@ -68,8 +68,8 @@ const RedeemRequest: React.FC = () => {
 
     const fetchMinMaxPoints = async () => {
         try {
-            const response = await axios.get(`/api/method/reward_management.api.points_setup.get_redeem_points`,{
-                
+            const response = await axios.get(`/api/method/reward_management.api.points_setup.get_redeem_points`, {
+
             });
             console.log("Min and Max points:", response);
             const { minimum_points, maximum_points } = response.data.message;
@@ -82,7 +82,7 @@ const RedeemRequest: React.FC = () => {
 
     const fetchTransactionData = async () => {
         try {
-            const response = await axios.get(`/api/method/reward_management.api.redeem_request_data.get_redeem_request_details`,{
+            const response = await axios.get(`/api/method/reward_management.api.redeem_request_data.get_redeem_request_details`, {
             });
             console.log("Redeem Request table data:", response);
             const RedeemRequestData = response.data.message.message;
@@ -146,14 +146,14 @@ const RedeemRequest: React.FC = () => {
             console.error("Customer ID or redeem points are not available.");
             return;
         }
-    
+
         const redeemedPoints = parseInt(pointredeem, 10);
-    
+
         if (isNaN(redeemedPoints)) {
             console.error("Invalid points value:", pointredeem);
             return;
         }
-    
+
         // Check if redeemedPoints is within the minPoints and maxPoints range
         if (minPoints !== null && maxPoints !== null) {
             if (redeemedPoints < minPoints) {
@@ -167,12 +167,12 @@ const RedeemRequest: React.FC = () => {
                 return;
             }
         }
-    
+
         console.log("Data being sent:", {
             customer_id: customerId,
             redeemed_points: redeemedPoints,
         });
-    
+
         try {
             const response = await axios.post(`/api/method/reward_management.api.redeem_request.create_redeem_request`, {
                 customer_id: customerId,
@@ -222,12 +222,12 @@ const RedeemRequest: React.FC = () => {
             <div className="grid grid-cols-12 gap-x-6 bg-white mt-5 rounded-lg shadow-lg">
                 <div className="xl:col-span-12 col-span-12">
                     <div className="box">
-                        <TableBoxComponent 
-                            title="Redeem Requests" 
-                            onSearch={handleSearch} 
-                            onAddButtonClick={handleAddRedeemRequestClick} 
-                            buttonText="Redeem Now" 
-                            showButton={true} 
+                        <TableBoxComponent
+                            title="Redeem Requests"
+                            onSearch={handleSearch}
+                            onAddButtonClick={handleAddRedeemRequestClick}
+                            buttonText="Redeem Now"
+                            showButton={true}
                         />
 
                         <div className="box-body m-5">
@@ -256,12 +256,12 @@ const RedeemRequest: React.FC = () => {
                                 handlePrevPage={handlePrevPage}
                                 handleNextPage={handleNextPage}
                                 handlePageChange={handlePageChange}
-                                showProductQR={false} 
-                                showEdit={false} 
+                                showProductQR={false}
+                                showEdit={false}
                                 showDelete={false}
                                 editHeader='Action'
                                 columnStyles={{
-                                    'Request ID': 'text-[var(--primaries)] font-semibold', 
+                                    'Request ID': 'text-[var(--primaries)] font-semibold',
                                 }}
                             />
                         </div>
@@ -270,25 +270,27 @@ const RedeemRequest: React.FC = () => {
             </div>
 
             {isModalOpen && (
-    <RedeemPointAlert
-        pointtitle="Redeem Points"
-        availablepoints={`Available Points: ${currentPoints}`}
-        minpoints={`${minPoints}`}
-        maxpoints={`${maxPoints}`}
-        showMinpoints={true}
-        onPointClose={handleModalClose}
-        onPointCollect={handlePointCollect}
-        showPointCollectButton={true}
-        collectButtonLabel="Submit"
-        pointValue={pointredeem}
-        onPointValueChange={(e) => setPointRedeem(e.target.value)}
-    />
-)}
-{showSuccessAlert && <SuccessAlert message="Redeem Request has been sent to the admin successfully!" onClose={function (): void {
-                throw new Error('Function not implemented.');
-            } } onCancel={function (): void {
-                throw new Error('Function not implemented.');
-            } } />}
+                <RedeemPointAlert
+                    pointtitle="Redeem Points"
+                    availablepoints={`Available Points: ${currentPoints}`}
+                    minpoints={`${minPoints}`}
+                    maxpoints={`${maxPoints}`}
+                    showMinpoints={true}
+                    onPointClose={handleModalClose}
+                    onPointCollect={handlePointCollect}
+                    showPointCollectButton={true}
+                    collectButtonLabel="Submit"
+                    pointValue={pointredeem}
+                    onPointValueChange={(e) => setPointRedeem(e.target.value)}
+                />
+            )}
+            {showSuccessAlert && <SuccessAlert
+                showButton={false}
+                message="Redeem Request has been sent to the admin successfully!" onClose={function (): void {
+                    throw new Error('Function not implemented.');
+                }} onCancel={function (): void {
+                    throw new Error('Function not implemented.');
+                }} />}
 
         </Fragment>
     );

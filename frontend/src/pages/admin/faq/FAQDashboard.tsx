@@ -7,6 +7,8 @@ import TableBoxComponent from '../../../components/ui/tables/tableboxheader';
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; 
 import { useFrappeGetDocList, useFrappeCreateDoc, useFrappeUpdateDoc, useFrappeDeleteDoc } from 'frappe-react-sdk';
+import SuccessAlert from '../../../components/ui/alerts/SuccessAlert';
+import DangerAlert from '../../../components/ui/alerts/DangerAlert';
 
 interface FAQ {
     name: string;
@@ -20,6 +22,7 @@ const FAQDashboard: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(5);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
     const [modalTitle, setModalTitle] = useState('');
     const [question, setQuestion] = useState('');
     const [answer, setAnswer] = useState('');
@@ -27,6 +30,10 @@ const FAQDashboard: React.FC = () => {
     const [faqData, setFaqData] = useState<FAQ[]>([]);
     const [isReadOnly, setIsReadOnly] = useState(false);
     const [searchQuery , setSearchQuery] = useState('');
+    const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertTitle, setAlertTitle] = useState('');
+    const [faqToDelete, setFaqToDelete] = useState<FAQ | null>(null);
 
     const { data } = useFrappeGetDocList<FAQ>('FAQ', {
         fields: ['name', 'question', 'status', 'created_date','answer'],
@@ -39,7 +46,15 @@ const FAQDashboard: React.FC = () => {
         if (data) {
             setFaqData(data);   
         }
-    }, [data]);
+        if (showSuccessAlert) {
+            const timer = setTimeout(() => {
+                setShowSuccessAlert(false);
+                window.location.reload();
+            }, 3000); // Hide alert after 3 seconds
+            return () => clearTimeout(timer); // Cleanup timeout on component unmount
+        }
+    }, [data,showSuccessAlert]);
+
 
     console.log("faqData",faqData);
 
@@ -100,33 +115,49 @@ const FAQDashboard: React.FC = () => {
             if (selectedFAQ) {
                 // Update existing FAQ
                 await updateDoc('FAQ', selectedFAQ.name, data);
-                alert('FAQ updated successfully!');
+                setAlertTitle('FAQ Updated');
+                setAlertMessage('FAQ updated successfully!');
             } else {
                 // Add new FAQ
                 await createDoc('FAQ', data);
-                alert('FAQ created successfully!');
+                setAlertTitle('FAQ Added');
+                setAlertMessage('FAQ added successfully!');
             }
             setQuestion('');
             setAnswer('');
             handleCloseModal();
+            setShowSuccessAlert(true);
         } catch (error) {
             console.error('Error:', error);
             alert('Failed to save FAQ.');
         }
     };
 
-    const handleDeleteFAQ = async (item: FAQ) => {
-        const confirmDelete = window.confirm('Are you sure you want to delete this FAQ?');
-        if (confirmDelete) {
+    const handleDeleteFAQ = (item: FAQ) => {
+        setFaqToDelete(item);
+        setIsConfirmDeleteModalOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        if (faqToDelete) {
             try {
-                await deleteDoc('FAQ', item.name);
-                setFaqData(prevData => prevData.filter(faq => faq.name !== item.name));
-                alert('FAQ deleted successfully!');
+                await deleteDoc('FAQ', faqToDelete.name);
+                setFaqData(prevData => prevData.filter(faq => faq.name !== faqToDelete.name));
+                setAlertTitle('FAQ Deleted');
+                setAlertMessage('FAQ deleted successfully!');
+                setShowSuccessAlert(true);
             } catch (error) {
                 console.error('Error deleting FAQ:', error);
                 alert('Failed to delete FAQ.');
             }
         }
+        setIsConfirmDeleteModalOpen(false);
+        setFaqToDelete(null);
+    };
+
+    const cancelDelete = () => {
+        setIsConfirmDeleteModalOpen(false);
+        setFaqToDelete(null);
     };
 
     const handleEditFAQ = (item: FAQ) => {
@@ -267,9 +298,9 @@ const FAQDashboard: React.FC = () => {
                                             <button
                                                 onClick={handleCloseModal}
                                                 type="button"
-                                                className="ti-btn ti-btn-secondary mr-2"
+                                                className="bg-defaulttextcolor ti-btn text-white me-2"
                                             >
-                                                Close
+                                                Cancel
                                             </button>
                                             <button type="submit" className="ti-btn ti-btn-primary">
                                                 {selectedFAQ ? 'Update FAQ' : 'Add FAQ'}
@@ -281,6 +312,24 @@ const FAQDashboard: React.FC = () => {
                         </div>
                     </div>
                 </div>
+            )}
+               {isConfirmDeleteModalOpen && (
+                <DangerAlert
+                type="danger"
+                message="Are you sure you want to delete this FAQ?"
+                onDismiss={cancelDelete}
+                onConfirm={confirmDelete}
+                cancelText="Cancel"
+                confirmText="Continue"
+            />
+            )}
+             {showSuccessAlert && (
+                <SuccessAlert
+                    title={alertTitle}
+                    message={alertMessage}
+                    showButton={false}
+                    onCancel={() => setShowSuccessAlert(false)}
+                />
             )}
         </Fragment>
     );

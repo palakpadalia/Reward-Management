@@ -3,14 +3,23 @@ import '../../../assets/css/pages/admindashboard.css';
 import Pageheader from '../../../components/common/pageheader/pageheader';
 import React, { Fragment, useState, useEffect } from "react";
 import axios from 'axios';
+import SuccessAlert from '../../../components/ui/alerts/SuccessAlert';
 
 const SetRewardPointsDashboard: React.FC = () => {
     const [minPoints, setMinPoints] = useState<number | ''>('');
     const [maxPoints, setMaxPoints] = useState<number | ''>('');
     const [currentMinPoints, setCurrentMinPoints] = useState<number | ''>('');
     const [currentMaxPoints, setCurrentMaxPoints] = useState<number | ''>('');
+    const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
     useEffect(() => {
+        if (showSuccessAlert) {
+            const timer = setTimeout(() => {
+                setShowSuccessAlert(false);
+                window.location.reload(); // Reload the page after hiding the alert
+            }, 3000); // Hide alert after 3 seconds
+            return () => clearTimeout(timer);
+        }
         // Fetch API function
         const fetchAPI = async () => {
             try {
@@ -30,7 +39,7 @@ const SetRewardPointsDashboard: React.FC = () => {
 
         // Call the fetch API function
         fetchAPI();
-    }, []);
+    }, [showSuccessAlert]);
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -59,9 +68,8 @@ const SetRewardPointsDashboard: React.FC = () => {
                 throw new Error('Network response was not ok');
             }
 
-            const result = await response.json();
-            // Handle the result here (e.g., show a success message)
-            alert('Redeemption Points Setup created successfully!');
+            // Set the success alert and trigger page reload
+            setShowSuccessAlert(true);
         } catch (error) {
             console.error('Error:', error);
             alert('Failed to create Redeemption Points Setup.');
@@ -127,6 +135,16 @@ const SetRewardPointsDashboard: React.FC = () => {
                     </div>
                 </div>
             </div>
+            {showSuccessAlert && (
+                <SuccessAlert
+                    showButton={false}
+                    showCancleButton={false}
+                    showCollectButton={false}
+                    showAnotherButton={false}
+                    showMessagesecond={false}
+                    message="Redeemption Points Setup created successfully!"
+                />
+            )}
         </Fragment>
     );
 };

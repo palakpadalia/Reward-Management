@@ -1,30 +1,24 @@
 import React, { useState, Fragment, useEffect } from 'react';
 
 import desktoplogo from '../../assets/images/sanskar-logo.png';
-import { Box, Button, Callout, Card, Flex, Text } from '@radix-ui/themes';
-// import { useFrappeAuth } from 'frappe-react-sdk';
+import { Box, Button, Callout, Card, Text } from '@radix-ui/themes';
+
 import { useNavigate } from 'react-router-dom';
+
+
 import axios from 'axios';
-import { FrappeError, useFrappeGetCall, useFrappeAuth, AuthResponse } from "frappe-react-sdk";
-// import { BASE_URL, API_KEY, API_SECRET } from "../../utils/constants";
+import {  useFrappeAuth } from "frappe-react-sdk";
+
 import '../../assets/css/style.css';
-
-
-
-
+import SuccessAlert from '../../components/ui/alerts/SuccessAlert';
 
 
 const Login = () => {
 
     const {
-        currentUser,
-        isValidating,
-        isLoading,
+      
         login,
-        logout,
-        error,
-        updateCurrentUser,
-        getUserCookie,
+
     } = useFrappeAuth();
 
 
@@ -35,6 +29,9 @@ const Login = () => {
     const [passwordShow, setPasswordShow] = useState<boolean>(false);
     const [isOtpVisible, setIsOtpVisible] = useState(false);
     const [isloginOtpVisible, setIsloginOtpVisible] = useState(false);
+    const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertTitle, setAlertTitle] = useState('');
 
     const [data, setData] = useState({
         email: "",
@@ -54,14 +51,7 @@ const Login = () => {
 
     const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setData({ ...data, [e.target.name]: e.target.value });
-        // if (name === 'mobile') {
-        //     setLoginError('');
-        //     if (value.length !== 10) {
-        //         setLoginError('Mobile number must be exactly 10 digits');
-        //     } else if (!/^\d+$/.test(value)) {
-        //         setLoginError('Mobile number can only contain digits');
-        //     }
-        // }
+       
         setLoginError("");
     };
 
@@ -80,9 +70,6 @@ const Login = () => {
             throw error;
         }
     };
-
-
-
 
 
     // Handle Admin Login Form--------
@@ -126,7 +113,7 @@ const Login = () => {
 
         } catch (err) {
             console.error('Login error:', err);
-            setLoginError('An error occurred during login.');
+            setLoginError('Invalid Username or Password.');
         }
     };
 
@@ -150,7 +137,6 @@ const Login = () => {
         }
     };
 
-
     //    Handle Carpenter Registration Form---------------------
     const handleRegister = async (e: any) => {
         e.preventDefault();
@@ -168,8 +154,11 @@ const Login = () => {
 
             if (otpResponse.data.message.status === "success") {
                 console.log("OTP matched:", otpResponse);
-                alert("OTP Matched Successfully.");
-
+                // alert("OTP Matched Successfully.");
+                setAlertTitle('Success');
+                setAlertMessage("OTP Matched Successfully.");
+                setShowSuccessAlert(true);
+              
                 // Call the function to register a new Carpainter
                 const registerResponse = await registerCarpainter(firstName, lastName, mobile, city);
 
@@ -177,7 +166,11 @@ const Login = () => {
 
                 if (registerResponse.message.status === "success") {
                     console.log("Carpainter registered successfully:", registerResponse);
-                    alert("Customer Registered Successfully.");
+                    // alert("Customer Registered Successfully.");
+                    setAlertTitle('Success');
+                    setAlertMessage("Customer Registration Sent to the Admin Successfully.");
+                    setShowSuccessAlert(true);
+                  
                 // Clear all input fields
                 setData({
                     email: "",
@@ -234,7 +227,11 @@ const Login = () => {
 
             if (response.data.message.status === "success") {
                 console.log("otp data", response);
-                alert("Otp has been sent to you mobile number !!!");
+                // alert("Otp has been sent to you mobile number !!!");
+                setAlertTitle('Success');
+                setAlertMessage("Otp has been sent to you mobile number !!!");
+                setShowSuccessAlert(true);
+              
                 setIsOtpVisible(true);
             } else {
                 setLoginError('Failed to send OTP. Please try again.');
@@ -278,7 +275,10 @@ const Login = () => {
                 console.log('OTP Response Data:', otpResponse.data); // Log the OTP response data
 
                 if (otpResponse.data.message.status === "success") {
-                    alert("OTP has been sent to your mobile number!");
+                    // alert("OTP has been sent to your mobile number!");
+                    setAlertTitle('Success');
+                    setAlertMessage("OTP has been sent to your mobile number!");
+                    setShowSuccessAlert(true);
                     setIsloginOtpVisible(true);
                 } else {
                     setLoginError('Failed to send OTP. Please try again.');
@@ -318,9 +318,6 @@ const Login = () => {
                 localStorage.setItem('login', 'true');
 
 
-
-
-
                 // Save user data in localStorage
                 const credentials = {
                     mobile_number: mobilenumber,
@@ -331,21 +328,10 @@ const Login = () => {
                 localStorage.setItem('credentials', JSON.stringify(credentials));
 
                 console.log('Login Status:', localStorage.getItem('login'));
-                // console.log('User Credentials:', JSON.parse(localStorage.getItem('credentials')));
-
-                // const rolesResponse = await fetchUserRoles(firstName);
-                // console.log("rolesResponse----",rolesResponse);
-
-                // // Extract roles from the response
-                // const roles = rolesResponse.message || []; // Assuming `message` contains the array of roles
-                // localStorage.setItem('user_roles', JSON.stringify(roles));
-
+              
 
                 navigate('/carpenter-dashboard');
-                // // Redirect to the carpenter dashboard
-                // if (roles.includes('Carpenter')) {
-                // }
-                // Replace with the correct path to your carpenter dashboard
+             
             } else {
                 setLoginError('Invalid OTP. Please try again.');
             }
@@ -357,8 +343,14 @@ const Login = () => {
 
 
     useEffect(() => {
-
-    }, []);
+        if (showSuccessAlert) {
+            const timer = setTimeout(() => {
+                setShowSuccessAlert(false);
+                // window.location.reload();
+            }, 3000); // Hide alert after 3 seconds
+            return () => clearTimeout(timer); // Cleanup timeout on component unmount
+        }
+    }, [showSuccessAlert]);
 
     return (
         <Fragment>
@@ -366,9 +358,7 @@ const Login = () => {
                 <div className="grid grid-cols-12 gap-4 b">
                     <div className="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-3 sm:col-span-2"></div>
                     <div className="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-6 sm:col-span-8 col-span-12 ">
-                        {/* <div className="my-[1.5rem] flex justify-center">
-                            <img src={desktoplogo} alt="logo" className="w-28" />
-                        </div> */}
+                    
                         <Card className="p-8 box-shadow-md border border-defaultborder shadow-md rounded-[10px] bg-white">
                             <div className="flex justify-center mb-8">
                                 <img src={desktoplogo} alt="logo" className="w-28" />
@@ -603,6 +593,14 @@ const Login = () => {
                     </div>
                 </div>
             </div>
+            {showSuccessAlert && (
+                <SuccessAlert
+                    title={alertTitle}
+                    showButton={false}
+                    
+                    message={alertMessage}
+                />
+            )}
         </Fragment>
     );
 };

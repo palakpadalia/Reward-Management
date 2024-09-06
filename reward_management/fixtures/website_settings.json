@@ -40,6 +40,7 @@
     "parent": "Website Settings",
     "parentfield": "route_redirects",
     "parenttype": "Website Settings",
+    "redirect_http_status": null,
     "source": "/",
     "target": "rewards/"
    },
@@ -47,6 +48,7 @@
     "parent": "Website Settings",
     "parentfield": "route_redirects",
     "parenttype": "Website Settings",
+    "redirect_http_status": null,
     "source": "/admin-profile",
     "target": "rewards/admin-profile"
    },
@@ -54,6 +56,7 @@
     "parent": "Website Settings",
     "parentfield": "route_redirects",
     "parenttype": "Website Settings",
+    "redirect_http_status": null,
     "source": "/customer-product",
     "target": "rewards/customer-product"
    }

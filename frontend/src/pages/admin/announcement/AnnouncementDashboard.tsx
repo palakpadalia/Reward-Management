@@ -6,7 +6,8 @@ import TableBoxComponent from '../../../components/ui/tables/tableboxheader';
 import ViewModalComponent from '../../../components/ui/models/ViewModel';
 import React, { Fragment, useState } from "react";
 import { useFrappeGetDocList } from 'frappe-react-sdk';
-
+import SuccessAlert from '../../../components/ui/alerts/SuccessAlert';
+import DangerAlert from '../../../components/ui/alerts/DangerAlert';
 interface Announcements {
     name: string,
     title?: string,
@@ -26,10 +27,26 @@ const AnnouncementDashboard: React.FC = () => {
     const [date, setDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [searchQuery, setSearchQuery] = useState(''); // State for search query
+    const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+    const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertTitle, setAlertTitle] = useState('');
+    const [announcementToDelete, setAnnouncementToDelete] = useState<Announcements | null>(null); // Track the announcement to delete
 
     const { data: announcementsData, mutate: mutateAnnouncements } = useFrappeGetDocList<Announcements>('Announcements', {
         fields: ['name', 'title', 'subject', 'published_on', 'end_date']
     });
+
+
+    React.useEffect(() => {
+        if (showSuccessAlert) {
+            const timer = setTimeout(() => {
+                setShowSuccessAlert(false);
+                // window.location.reload();
+            }, 3000); // Hide alert after 3 seconds
+            return () => clearTimeout(timer); // Cleanup timeout on component unmount
+        }
+    }, [showSuccessAlert]);
 
     const totalPages = Math.ceil((announcementsData?.length || 0) / itemsPerPage);
 
@@ -49,7 +66,7 @@ const AnnouncementDashboard: React.FC = () => {
         setCurrentPage(pageNumber);
     };
 
-    
+
     const handleSearch = (value: string) => {
         setSearchQuery(value); // Update search query
         setCurrentPage(1);
@@ -89,7 +106,10 @@ const AnnouncementDashboard: React.FC = () => {
             const responseData = await response.json(); // Add this line
             if (response.ok) {
                 console.log("Announcement added successfully");
-                alert('Announcement added successfully!');
+                // alert('Announcement added successfully!');
+                setAlertTitle('Success');
+                setAlertMessage('Announcement added successfully!');
+                setShowSuccessAlert(true);
                 handleCloseModal();
                 mutateAnnouncements(); // Refresh the announcements data
             } else {
@@ -100,17 +120,17 @@ const AnnouncementDashboard: React.FC = () => {
             alert('An error occurred while adding the announcement.');
         }
     };
-  
+
     const handleEditSubmit = async () => {
         if (!selectedAnnouncement) return;
-    
+
         const data = {
             title: question,
             subject: answer,
             published_on: formatDateToMySQL(date),
             end_date: formatDateToMySQL(endDate)
         };
-    
+
         try {
             const response = await fetch(`/api/resource/Announcements/${selectedAnnouncement.name}`, {
                 method: 'PUT',
@@ -119,11 +139,14 @@ const AnnouncementDashboard: React.FC = () => {
                 },
                 body: JSON.stringify(data),
             });
-    
+
             const responseData = await response.json();
             if (response.ok) {
                 console.log("Announcement updated successfully");
-                alert('Announcement updated successfully!');
+                // alert('Announcement updated successfully!');
+                setAlertTitle('Success');
+                setAlertMessage('Announcement updated successfully!');
+                setShowSuccessAlert(true);
                 handleCloseModal();
                 mutateAnnouncements();
             } else {
@@ -134,32 +157,44 @@ const AnnouncementDashboard: React.FC = () => {
             alert('An error occurred while updating the announcement.');
         }
     };
-    
 
-    const handleDeleteAnnouncement = async (item: Announcements) => {
-        const confirmDelete = window.confirm('Are you sure you want to delete this announcement?');
-        if (confirmDelete) {
-            try {
-                const response = await fetch(`/api/resource/Announcements/${item.name}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
+    const handleDeleteAnnouncement = (item: Announcements) => {
+        setAnnouncementToDelete(item);
+        setIsConfirmDeleteModalOpen(true);
+    };
 
-                if (!response.ok) {
-                    const responseData = await response.json(); // Add this line
-                    throw new Error(`Error: ${responseData.message || response.statusText}`); // Use response data for detailed error
+    const confirmDelete = async () => {
+        if (!announcementToDelete) return;
+
+        try {
+            const response = await fetch(`/api/resource/Announcements/${announcementToDelete.name}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
                 }
+            });
 
-                mutateAnnouncements(); 
-                alert('Announcement deleted successfully!');
-            } catch (error) {
-                console.error('Error deleting announcement:', error.message || error);
-                alert('Failed to delete announcement.');
+            if (!response.ok) {
+                const responseData = await response.json(); // Add this line
+                throw new Error(`Error: ${responseData.message || response.statusText}`); // Use response data for detailed error
             }
+
+            setAlertTitle('Success');
+            setAlertMessage('Announcement deleted successfully!');
+            setShowSuccessAlert(true);
+            setIsConfirmDeleteModalOpen(false);
+            mutateAnnouncements();
+        } catch (error) {
+            console.error('Error deleting announcement:', error.message || error);
+            alert('Failed to delete announcement.');
         }
     };
+
+    const cancelDelete = () => {
+        setIsConfirmDeleteModalOpen(false);
+        setAnnouncementToDelete(null);
+    };
+
 
     const handleEditAnnouncement = (item: Announcements) => {
         setModalMode('edit');
@@ -178,12 +213,12 @@ const AnnouncementDashboard: React.FC = () => {
         const day = (`0${date.getDate()}`).slice(-2);
         return `${year}-${month}-${day}`;
     };
-    
+
     const formatDateToISO = (dateString: string) => {
         const date = new Date(dateString);
         return date.toISOString().split('T')[0];
     };
-    
+
 
     const formattedAnnouncementsData = announcementsData?.map(announcement => ({
         ...announcement,
@@ -274,6 +309,23 @@ const AnnouncementDashboard: React.FC = () => {
                     onClose={handleCloseModal}
                     onSubmit={modalMode === 'add' ? handleSubmit : handleEditSubmit}
                     onCancel={handleCloseModal}
+                />
+            )}
+            {isConfirmDeleteModalOpen && (
+                <DangerAlert
+                    type="danger"
+                    message={`Are you sure you want to delete this announcement?`}
+                    onDismiss={cancelDelete}
+                    onConfirm={confirmDelete}
+                    cancelText="Cancel"
+                    confirmText="Continue"
+                />
+            )}
+            {showSuccessAlert && (
+                <SuccessAlert
+                    title={alertTitle}
+                    showButton={false}
+                    message={alertMessage}
                 />
             )}
         </Fragment>

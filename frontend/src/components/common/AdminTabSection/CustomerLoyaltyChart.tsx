@@ -1,44 +1,26 @@
-import { useState } from 'react'
 import Box from '@mui/material/Box';
-// import Tab from '@mui/material/Tab';
-import TabContext from '@mui/lab/TabContext';
-// import TabList from '@mui/lab/TabList';
-import TabPanel from '@mui/lab/TabPanel';
-// import AcquisitionSection from './AcquisitionSection';
 import CustomerAcquisitionSection from './CustomerAcquisition';
-import EngagementSection from './EngagementSection';
 
 const AdminTab = () => {
- const [value, setValue] = useState('1');
-
- const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-  setValue(newValue);
- };
- return (
-  <Box sx={{ width: '100%', typography: 'body1', marginTop: '20px' }}>
-   <TabContext value={value}>
-    <Box sx={{ borderColor: 'divider', backgroundColor: 'white' }}>
-    <div className="p-3 flex flex-row justify-between">
-        <span className=' font-bold text-defaulttextcolor'>Customer Loyalty Program</span>
-        <span className=' font-bold text-defaulttextcolor'>Status : Active</span>
-      </div>
-   
-     {/* <TabList onChange={handleChange} aria-label="Tab View">
-      <Tab label="Acquisition" value="1" />
-      <Tab label="Engagement" value="2" />
-     </TabList> */}
+  return (
+    <Box sx={{ width: '100%', typography: 'body1', marginTop: '20px' }}>
+      <Box sx={{ borderColor: 'divider', backgroundColor: 'white' }}>
+        <div className="p-3 flex flex-row justify-between">
+          <span className='font-bold text-defaulttextcolor'>Customer Loyalty Program</span>
+          <span className='font-bold text-defaulttextcolor'>Status: Active</span>
+        </div>
+      </Box>
+      <Box className='p-2 bg-white'>
+        <CustomerAcquisitionSection 
+          pointAccrued={{ value: '1.2M', percentageChange: '▲14.63%', changeColor: 'green' }}
+          pointRedeemed={{ value: '36.3K', percentageChange: '▼14.5%', changeColor: 'red' }}
+          pointExpired={{ value: '81K', percentageChange: '▲52%', changeColor: 'green' }}
+          pointBalance={{ value: '72.1k', percentageChange: '', changeColor: 'blue' }}
+          revenueGrowth={{ value: '735.2k', percentageChange: '▼18.64%', changeColor: 'red' }}
+        />
+      </Box>
     </Box>
-    <div className='p-2 bg-white'>
-     <TabPanel value="1" className='!p-0'>
-      <CustomerAcquisitionSection />
-     </TabPanel>
-     <TabPanel value="2" className='!p-4'>
-      <EngagementSection />
-     </TabPanel>
-    </div>
-   </TabContext>
-  </Box>
- )
-}
+  );
+};
 
-export default AdminTab
+export default AdminTab;

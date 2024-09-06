@@ -8,12 +8,16 @@ import CreateQRCode from '../../../components/ui/models/CreateQRModel.tsx';
 import SuccessAlert from '../../../components/ui/alerts/SuccessAlert';
 import TableBoxComponent from '../../../components/ui/tables/tableboxheader';
 import axios from 'axios';
+import { PulseLoader } from 'react-spinners';
+
 
 interface Product {
     name: string,
     product_name?: string,
     category: string,
-    reward_points?: number
+    reward_points?: number,
+    quantity?: number ,
+    product_price?: number
 }
 
 const ProductMaster: React.FC = () => {
@@ -21,28 +25,45 @@ const ProductMaster: React.FC = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+    const [loading, setLoading] = useState(false); // Loading state
     
     const [itemsPerPage] = useState(5); // Number of items per page
     const { data: productsData } = useFrappeGetDocList<Product>('Product', {
-        fields: ['name', 'product_name', 'category', 'reward_points']
+        fields: ['name', 'product_name', 'category', 'reward_points','product_price']
     });
+        // Fetch Product QR Data
+        const { data: productQRData } = useFrappeGetDocList<Product>('Product QR', {
+            fields: ['name', 'product_name', 'quantity']
+        });
+          // Combine Product and Product QR Data
+          const combinedData = productsData?.map(product => {
+            const qrData = productQRData?.find(qr => qr.product_name === product.name);
+            return {
+                ...product,
+                quantity: qrData?.quantity || 0  // Add the quantity from Product QR data
+            };
+        });
     const navigate = useNavigate();
 
     useEffect(() => {
         if (showSuccessAlert) {
-            const timer = setTimeout(() => setShowSuccessAlert(false), 3000); // Hide alert after 3 seconds
+            const timer = setTimeout(() => {
+                setShowSuccessAlert(false); // Hide alert after 3 seconds
+                window.location.reload(); // Reload the page
+            }, 3000);
             return () => clearTimeout(timer);
         }
     }, [showSuccessAlert]);
-
+    
     console.log("data", productsData);
 
     // Pagination data
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = productsData?.slice(indexOfFirstItem, indexOfLastItem) || [];
-    const totalPages = Math.ceil((productsData?.length || 0) / itemsPerPage);
-
+  
+     const indexOfLastItem = currentPage * itemsPerPage;
+     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+     const currentItems = combinedData?.slice(indexOfFirstItem, indexOfLastItem) || [];
+     const totalPages = Math.ceil((combinedData?.length || 0) / itemsPerPage);
+ 
     // Pagination handlers
     const handlePrevPage = () => {
         if (currentPage > 1) {
@@ -72,6 +93,7 @@ const ProductMaster: React.FC = () => {
 
     const handleConfirm = async (quantity: number) => {
         if (selectedProduct) {
+            setLoading(true); // Start loading
             try {
                 const response = await axios.post(`/api/method/reward_management.api.print_qr_code.create_product_qr`, {
                     product_name: selectedProduct.name,
@@ -85,6 +107,9 @@ const ProductMaster: React.FC = () => {
             } catch (error) {
                 console.error('Error creating QR codes:', error);
                 // Handle error, e.g., show an error message to the user
+            }
+            finally {
+                setLoading(false); // End loading
             }
         } else {
             console.error('No product selected');
@@ -111,29 +136,7 @@ const ProductMaster: React.FC = () => {
             <div className="grid grid-cols-12 gap-x-6 bg-white mt-5 rounded-lg shadow-lg">
                 <div className="xl:col-span-12 col-span-12">
                     <div className="box">
-                        {/* <div className="box-header flex justify-between items-center p-4 border-b">
-                            <div className="box-title text-[.9375rem] font-bold text-defaulttextcolor">
-                                Products
-                            </div>
-
-                            <div className="flex">
-                                {/* search box start-- */}
-                        {/* <div className='flex me-3 my-1 h-[36px]'>
-                                    <input className="mb-[0.25rem] ti-form-control text-[0.8rem] form-control-sm rounded-sm" type="text" placeholder="Search Here" onChange={(ele) => { myfunction(ele.target.value); }}
-                                        aria-label=".form-control-sm example" />
-                                </div> */}
-                        {/* end */}
-                        {/* add products */}
-                        {/* <button
-                                        type="button"
-                                        className="ti-btn !py-1 !px-2 text-xs !text-white !font-medium bg-[var(--primaries)]"
-                                        onClick={() => navigate('/add-product')} // Redirect to /add-product
-                                    >
-                                        <i className="ri-add-line font-semibold align-middle me-1"></i> Add Product
-                                    </button>
-                            </div> */}
-                        {/* end */}
-                        {/* </div>  */}
+                       
                         <TableBoxComponent
                             title="Products"
                             onSearch={handleSearch}
@@ -152,6 +155,7 @@ const ProductMaster: React.FC = () => {
                                             <th scope="col" className="text-start p-3 text-sm text-defaulttextcolor font-semibold border border-gray-300">Product ID</th>
                                             <th scope="col" className="text-start p-3 text-sm text-defaulttextcolor font-semibold border border-gray-300">Product Name</th>
                                             <th scope="col" className="text-start p-3 text-sm text-defaulttextcolor font-semibold border border-gray-300">Product Category</th>
+                                            <th scope="col" className="text-start p-3 text-sm text-defaulttextcolor font-semibold border border-gray-300">Product Price</th>
                                             <th scope="col" className="text-start p-3 text-sm text-defaulttextcolor font-semibold border border-gray-300">Reward Points</th>
                                             <th scope="col" className="text-start p-3 text-sm text-defaulttextcolor font-semibold border border-gray-300">Total QR</th>
                                             <th scope="col" className="text-start p-3 text-sm text-defaulttextcolor font-semibold border border-gray-300">Product QR</th>
@@ -165,8 +169,10 @@ const ProductMaster: React.FC = () => {
                                                 <td className="p-3 text-defaultsize font-semibold text-[var(--primaries)] whitespace-nowrap border border-gray-300">{product.name}</td>
                                                 <td className="p-3 text-defaultsize font-medium text-defaulttextcolor whitespace-nowrap border border-gray-300">{product.product_name}</td>
                                                 <td className="p-3 text-defaultsize font-medium text-defaulttextcolor whitespace-nowrap border border-gray-300">{product.category}</td>
+                                                <td className="p-3 text-defaultsize font-medium text-defaulttextcolor whitespace-nowrap border border-gray-300">{product.product_price}</td>
                                                 <td className="p-3 text-defaultsize font-medium text-defaulttextcolor whitespace-nowrap border border-gray-300">{product.reward_points}</td>
-                                                <td className="p-3 text-defaultsize font-medium text-defaulttextcolor whitespace-nowrap border border-gray-300">{product.reward_points}</td>
+                                               
+                                                <td className="p-3 text-defaultsize font-medium text-defaulttextcolor whitespace-nowrap border border-gray-300">{product.quantity}</td>
                                                 <td className="p-3 text-defaultsize font-medium text-defaulttextcolor whitespace-nowrap border border-gray-300">
                                                     <Link aria-label="anchor" to="#" onClick={() => openModal(product)} className="link-icon bg-[var(--bg-primary)] hover:bg-[var(--primaries)] py-2 px-[10px] rounded-full mr-2">
                                                         <i className="ri-qr-code-line"></i>
@@ -247,9 +253,16 @@ const ProductMaster: React.FC = () => {
                     title={`Create QR Code for ${selectedProduct.name}`}
                 />
             )}
+               {loading && (
+                <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-75 z-50">
+                      <PulseLoader color="#845ADF" loading={loading} size={15} />
+                </div>
+            )}
 
             {/* Success Alert */}
-            {showSuccessAlert && <SuccessAlert message="QR Codes created successfully!" />}
+            {showSuccessAlert && <SuccessAlert 
+            showButton={false}
+            message="QR Codes created successfully!" />}
         </Fragment>
     );
 };

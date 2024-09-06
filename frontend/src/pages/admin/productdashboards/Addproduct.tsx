@@ -1,9 +1,9 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import Pageheader from '../../../components/common/pageheader/pageheader';
 import SunEditor from 'suneditor-react';
 import { useNavigate } from 'react-router-dom';
 import 'suneditor/dist/css/suneditor.min.css'; // Import SunEditor styles
-
+import SuccessAlert from '../../../components/ui/alerts/SuccessAlert';
 import '../../../assets/css/style.css';
 import '../../../assets/css/pages/admindashboard.css';
 
@@ -14,11 +14,12 @@ const AddProduct: React.FC = () => {
     const [previews, setPreviews] = useState<string[]>([]);
     const [productName, setProductName] = useState('');
     const [rewardPoints, setRewardPoints] = useState('');
+    const [productPrice, setProductPrice] = useState('');
+    const [rewardPercent, setRewardPercent] = useState('');
     const [productDescription, setProductDescription] = useState('');
     const [productCategory, setProductCategory] = useState('');
+    const [showSuccessAlert, setShowSuccessAlert] = useState(false);
     const navigate = useNavigate(); // Initialize navigate
-
-
 
     // Handle file input change
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,7 +40,7 @@ const AddProduct: React.FC = () => {
         formData.append("is_private", "0");
         formData.append("folder", "");
         formData.append("file_name", file.name);
-      
+
         try {
             const response = await axios.post(`/api/method/upload_file`, formData, {
                 headers: {
@@ -47,7 +48,7 @@ const AddProduct: React.FC = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-    
+
             if (response.data.message && response.data.message.file_url) {
                 return response.data.message.file_url;
             } else {
@@ -59,23 +60,25 @@ const AddProduct: React.FC = () => {
             return null;
         }
     };
-    
 
     const addProduct = async (fileUrls: string[]) => {
         const data = {
             productName: productName,
             rewardPoints: rewardPoints,
-            discription: productDescription, // Ensure this is correctly mapped
+            productPrice: productPrice,
+            discription: productDescription,
             productCategory: productCategory,
             productImage: fileUrls.length > 0 ? fileUrls[0] : null // Assuming you use the first image if available
         };
-    
+
         try {
             const response = await axios.post(`/api/method/reward_management.api.product_master.add_product`, data);
             console.log("Product added successfully:", response.data);
-            
-            alert("Product added successfully!!!");
+            setShowSuccessAlert(true);
+             // Navigate after showing the success alert
+        setTimeout(() => {
             navigate('/product-master');
+        }, 3000); // Delay for 3 seconds
         } catch (error) {
             console.error("Error submitting form", error);
         }
@@ -87,9 +90,29 @@ const AddProduct: React.FC = () => {
         setPreviews([]);
         setProductName('');
         setRewardPoints('');
+        setProductPrice('');
+        setRewardPercent('');
         setProductDescription('');
         setProductCategory('');
     };
+
+    // Calculate reward points whenever product price or reward percent changes
+    useEffect(() => {
+        if (productPrice && rewardPercent) {
+            const calculatedPoints = (parseFloat(productPrice) * parseFloat(rewardPercent)) / 100;
+            setRewardPoints(calculatedPoints.toFixed(2)); // Round to 2 decimal places
+        } else {
+            setRewardPoints('');
+        }
+
+        if (showSuccessAlert) {
+            const timer = setTimeout(() => {
+                setShowSuccessAlert(false);
+                navigate('/product-master'); // Navigate after success alert is hidden
+            }, 3000); // Hide alert after 3 seconds
+            return () => clearTimeout(timer);
+        }
+    }, [productPrice, rewardPercent,showSuccessAlert]);
 
     // Basic form submission handler
     const handleSubmit = async (event: React.FormEvent) => {
@@ -132,7 +155,21 @@ const AddProduct: React.FC = () => {
                                                         required
                                                     />
                                                 </div>
-                                             
+                                                <div className="xl:col-span-12 col-span-12">
+                                                    <label htmlFor="product-price-add" className="form-label text-sm font-semibold text-defaulttextcolor">Product Price</label>
+                                                    <input 
+                                                        type="text" 
+                                                        className="form-control w-full text-defaultsize text-defaulttextcolor border border-defaultborder rounded-[0.5rem] mt-2" 
+                                                        id="product-price-add" 
+                                                        placeholder="Price" 
+                                                        value={productPrice}
+                                                        onChange={(e) => setProductPrice(e.target.value)}
+                                                        required
+                                                    />
+                                                </div>
+
+                                                
+
                                                 <div className="xl:col-span-12 col-span-12">
                                                     <label htmlFor="product-cost-add" className="form-label text-sm font-semibold text-defaulttextcolor">Reward Points</label>
                                                     <input 
@@ -142,9 +179,10 @@ const AddProduct: React.FC = () => {
                                                         placeholder="Reward points" 
                                                         value={rewardPoints}
                                                         onChange={(e) => setRewardPoints(e.target.value)}
-                                                        required
+                                                        readOnly
                                                     />
                                                 </div>
+                                               
                                                 <div className="xl:col-span-12 col-span-12 mb-4">
                                                     <label className="form-label text-sm font-semibold text-defaulttextcolor">Product Description</label>
                                                     <div id="product-features" className="mt-2">
@@ -169,19 +207,32 @@ const AddProduct: React.FC = () => {
                                             </div>
                                         </div>
                                         <div className="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12 gap-4">
+                                            <div className='grid grid-cols-12 gap-4'>
                                             <div className="xl:col-span-12 col-span-12">
                                                 <label htmlFor="product-category-add" className="form-label text-sm font-semibold text-defaulttextcolor">Category</label>
                                                 <input 
                                                     id="product-category-add" 
                                                     name="product-category-add" 
-                                                    className="w-full border border-defaultborder text-defaultsize text-defaulttextcolor rounded-[0.5rem] mt-2" 
+                                                    className="w-full border border-defaultborder text-defaultsize text-defaulttextcolor rounded-[0.5rem] mt-[8px]" 
                                                     placeholder="Category"
                                                     value={productCategory}
                                                     onChange={(e) => setProductCategory(e.target.value)}
                                                     required
                                                 />
                                             </div>
-                                            <div className="xl:col-span-12 col-span-12 product-documents-container mt-4">
+                                            <div className="xl:col-span-12 col-span-12 ">
+                                                    <label htmlFor="reward-percent-add" className="form-label text-sm font-semibold text-defaulttextcolor">Set Reward Percent</label>
+                                                    <input 
+                                                        type="text" 
+                                                        className="form-control w-full text-defaultsize text-defaulttextcolor border border-defaultborder rounded-[0.5rem] mt-2" 
+                                                        id="reward-percent-add" 
+                                                        placeholder="Set Reward Percent" 
+                                                        value={rewardPercent}
+                                                        onChange={(e) => setRewardPercent(e.target.value)}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="xl:col-span-12 col-span-12 product-documents-container ">
                                                 <p className="font-semibold mb-2 text-sm text-defaulttextcolor">Product Image</p>
                                                 <input 
                                                     type="file" 
@@ -197,9 +248,9 @@ const AddProduct: React.FC = () => {
                                                 </div>
                                             </div>
                                         </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="px-6 py-4 border-t border-dashed dark:border-defaultborder/10 sm:flex justify-end">
+                                    <div className="px-6 py-4 border-t border-dashed dark:border-defaultborder/10 sm:flex justify-end">
                                     <button 
                                         type="submit" 
                                         className="ti-btn ti-btn-primary !font-medium m-1">
@@ -213,7 +264,11 @@ const AddProduct: React.FC = () => {
                                         Cancel
                                     </button>
                                 </div>
+                                </div>
                             </form>
+                            {showSuccessAlert && (
+                                <SuccessAlert showButton={false} message="New Product Added successfully!" />
+                            )}
                         </div>
                     </div>
                 </div>

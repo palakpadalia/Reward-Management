@@ -26,6 +26,7 @@ import TransactionHistory from './pages/admin/transactions/TransactionHistroy.ts
 import FAQDashboard from './pages/admin/faq/FAQDashboard.tsx';
 import AddUserDashboard from './pages/admin/admindashboards/AddUser.tsx';
 import SetRewardPoint from './pages/admin/setrewardpoint/SetRewardPoint.tsx';
+import AdminNotifications from './pages/admin/notificationdashboard/adminnotifications.tsx'
 import CarpenterDashboard from './pages/carpenter/CarpenterDashboard.tsx';
 import CarpenterBankingHistory from './pages/carpenter/BankingHistory.tsx'
 import PointHistory from './pages/carpenter/PointHistory.tsx';
@@ -90,6 +91,7 @@ function App() {
           <Route path='/frequently-asked-question' element={<FAQDashboard />} />
           <Route path='/add-user' element={<AddUserDashboard />} />
           <Route path='/set-reward-points' element={<SetRewardPoint/>} />
+          <Route path='/notifications' element={<AdminNotifications/>}/>
           <Route path='/carpenter-dashboard' element={<CarpenterDashboard/>} />
           <Route path='/banking-history' element={<CarpenterBankingHistory/>} />
           <Route path='/point-history' element={<PointHistory/>} />

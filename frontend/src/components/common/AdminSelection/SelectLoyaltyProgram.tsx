@@ -12,26 +12,23 @@ const tierOptions = [
   // Add more options as needed
 ];
 
-const nonQualifyCurrencyOptions = [
-  { value: 'currency1', label: 'Currency 1' },
-  { value: 'currency2', label: 'Currency 2' },
-];
+
 
 const durationOptions = [
-  { value: '1month', label: '1 Month' },
+  { value: '1year', label: '1 Year' },
   { value: '6months', label: '6 Months' },
+  { value: '1month', label: '1 Month' },
 ];
 
 const formFields = [
   { label: 'Program', name: 'program', id: 'program', options: programOptions, placeholder: 'Select Program' },
   { label: 'Tier Group', name: 'tier-group', id: 'tier-group', options: tierOptions, placeholder: 'Select Tier Group' },
-  { label: 'Currency', name: 'non-qualifying-currency', id: 'non-qualifying-currency', options: nonQualifyCurrencyOptions, placeholder: 'Select Currency' },
   { label: 'Duration', name: 'duration', id: 'duration', options: durationOptions, placeholder: 'Select Duration' }
 ];
 
 const SelectBar: React.FC = () => {
   return (
-    <div className='grid md:grid-cols-4 gap-3'>
+    <div className='grid md:grid-cols-3 gap-3'>
       {formFields.map(field => (
         <SelectInput
           key={field.id}
