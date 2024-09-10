@@ -56,7 +56,6 @@ const TableComponent = <T,>({
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(data.length / itemsPerPage);
-
     return (
         <div className="table-responsive pt-2 overflow-y-auto ">
             <table className="table whitespace-nowrap min-w-full">
@@ -85,8 +84,8 @@ const TableComponent = <T,>({
                                     key={column.accessor as string}
                                     className={`p-3  text-defaultsize font-medium whitespace-nowrap border border-gray-300 border-b-0 ${columnStyles[column.header] || 'text-defaulttextcolor'}`}
                                 >
-                                    {typeof item[column.accessor] === 'string' 
-                                        ? stripHtmlTags(item[column.accessor] as string) 
+                                    {typeof item[column.accessor] === 'string'
+                                        ? stripHtmlTags(item[column.accessor] as string)
                                         : item[column.accessor]}
                                 </td>
                             ))}
@@ -133,42 +132,43 @@ const TableComponent = <T,>({
                         Showing {currentItems.length} Entries <i className="bi bi-arrow-right ms-2 font-semibold"></i>
                     </div>
                     <div className="ms-auto">
-                        <nav aria-label="Page navigation" className="pagination-style-4">
-                            <ul className="ti-pagination flex items-center px-3 mb-0">
-                                <li className="page-item px-2">
-                                    <button
-                                        className="page-link"
-                                        onClick={handlePrevPage}
-                                        disabled={currentPage === 1}
-                                    >
-                                        Prev
-                                    </button>
-                                </li>
-                                {Array.from({ length: totalPages }, (_, index) => (
-                                    <li className="page-item px-2" key={index + 1}>
-                                        <button
-                                            className={`page-link px-2 rounded-md ${currentPage === index + 1 ? 'text-white bg-blue-800' : 'bg-gray-200'}`}
-                                            onClick={() => handlePageChange(index + 1)}
-                                        >
-                                            {index + 1}
-                                        </button>
-                                    </li>
-                                ))}
-                                <li className="page-item px-2">
-                                    <button
-                                        className="page-link"
-                                        onClick={handleNextPage}
-                                        disabled={currentPage === totalPages}
-                                    >
-                                        Next
-                                    </button>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
+            <nav aria-label="Page navigation" className="pagination-style-4">
+                <ul className="ti-pagination flex items-center px-3 mb-0">
+                    <li className="page-item px-2">
+                        <button
+                            className="page-link"
+                            onClick={handlePrevPage}
+                            disabled={currentPage === 1}
+                        >
+                            Prev
+                        </button>
+                    </li>
+                    {Array.from({ length: totalPages }, (_, index) => (
+                        <li className="page-item px-2" key={index + 1}>
+                            <button
+                                className={`page-link px-2 rounded-md ${currentPage === index + 1 ? 'text-white bg-blue-800' : 'bg-gray-200'}`}
+                                onClick={() => handlePageChange(index + 1)}
+                            >
+                                {index + 1}
+                            </button>
+                        </li>
+                    ))}
+                    <li className="page-item px-2">
+                        <button
+                            className="page-link"
+                            onClick={handleNextPage}
+                            disabled={currentPage === totalPages}
+                        >
+                            Next
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
                 </div>
             </div>
         </div>
+     
     );
 };
 

@@ -2,7 +2,7 @@ import React from "react";
 import ReactApexChart from "react-apexcharts";
 
 interface SeriesData {
-  name: string;
+  name: any;
   type: 'column' | 'line';
   data: number[];
 }

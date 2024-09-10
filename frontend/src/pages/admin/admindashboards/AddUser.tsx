@@ -37,13 +37,15 @@ const AddUserDashboard: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(5); // Number of items per page
+    const [searchQuery, setSearchQuery] = useState(''); // State for search query
 
     // Fetching admin users
     const { data, error } = useFrappeGetCall<User[]>('reward_management.api.add_admin_user.get_users');
 
     React.useEffect(() => {
         if (showSuccessAlert) {
-            const timer = setTimeout(() => setShowSuccessAlert(false), 3000);
+            const timer = setTimeout(() =>{ setShowSuccessAlert(false); // Hide alert after 3 seconds
+            window.location.reload(); }, 3000);
             return () => clearTimeout(timer);
         }
         if (data) {
@@ -61,27 +63,6 @@ const AddUserDashboard: React.FC = () => {
     const handleCloseModal = () => {
         setIsModalOpen(false);
         reset();
-    };
-
-    const handlePrevPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
-
-    const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
-    const handlePageChange = (pageNumber: number) => {
-        setCurrentPage(pageNumber);
-    };
-
-    const handleSearch = (value: string) => {
-        console.log("Search value:", value);
-        // Implement search logic here
     };
 
     // Submitting new admin user
@@ -102,6 +83,41 @@ const AddUserDashboard: React.FC = () => {
         } catch (error) {
             console.error("Error creating admin user:", error);
         }
+    };
+
+    // Filter the data based on search query
+    const filteredData = usersData.filter(item => {
+        const query = searchQuery.toLowerCase();
+        return (
+            item.first_name.toLowerCase().includes(query) ||
+            item.last_name.toLowerCase().includes(query) ||
+            item.username.toLowerCase().includes(query) ||
+            item.email.toLowerCase().includes(query) ||
+            item.mobile_no.toLowerCase().includes(query)
+        );
+    });
+
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+    const handlePrevPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handlePageChange = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+    };
+
+    const handleSearch = (value: string) => {
+        setSearchQuery(value); // Update search query
+        setCurrentPage(1); // Reset to first page on new search
     };
 
     return (
@@ -128,7 +144,7 @@ const AddUserDashboard: React.FC = () => {
                                     { header: 'Email', accessor: 'email' },
                                     { header: 'Mobile Number', accessor: 'mobile_no' }
                                 ]}
-                                data={usersData || []}
+                                data={filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)}
                                 currentPage={currentPage}
                                 itemsPerPage={itemsPerPage}
                                 handlePrevPage={handlePrevPage}
@@ -162,7 +178,9 @@ const AddUserDashboard: React.FC = () => {
                 />
             )}
             {/* Success Alert */}
-            {showSuccessAlert && <SuccessAlert message="New Admin Created Successfully!" />}
+            {showSuccessAlert && <SuccessAlert 
+            showButton={false}
+            message="New Admin Created Successfully!" />}
         </Fragment>
     );
 };

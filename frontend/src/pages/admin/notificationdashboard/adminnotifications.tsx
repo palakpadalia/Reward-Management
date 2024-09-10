@@ -4,7 +4,6 @@ import Pageheader from '../../../components/common/pageheader/pageheader';
 import { TiUser } from 'react-icons/ti';
 import { useFrappeGetCall } from 'frappe-react-sdk';
 import axios from 'axios';
-import { format } from 'date-fns';
 import '../../../assets/css/header.css';
 import '../../../assets/css/style.css';
 
@@ -28,8 +27,8 @@ interface Notification {
     icon: keyof typeof iconMap; 
     subjectHTML: string;
     email_contentHTML: string;
-    timestamp: string;
-    date: string;
+    timestamp: string;  // Time part of the creation date
+    date: string;       // Date part of the creation date
 }
 
 const NotificationsDashboard = () => {
@@ -55,11 +54,18 @@ const NotificationsDashboard = () => {
             console.log("Fetched notifications data:", data.message);
 
             const notificationsData: Notification[] = data.message.map((notif: NotificationData) => {
-                const formattedDate = format(new Date(notif.creation), 'dd MMM yyyy');
+                const creationDate = new Date(notif.creation);
 
-                // Ensure links are absolute paths or correctly resolved
-                // You may need to adjust this based on your server configuration
-                // const sanitizedContent = notif.email_content.replace(/href="..\/\.\.\//g, 'href="/');
+                const date = creationDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                });
+
+                const time = creationDate.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
 
                 return {
                     id: notif.name,
@@ -68,8 +74,8 @@ const NotificationsDashboard = () => {
                     icon: 'ti-user',
                     subjectHTML: notif.subject,
                     email_contentHTML: notif.email_content,
-                    timestamp: '12 mins ago',
-                    date: formattedDate,
+                    timestamp: time,  // Time part of the creation date
+                    date: date,       // Date part of the creation date
                 };
             });
             

@@ -26,7 +26,7 @@ const ProductMaster: React.FC = () => {
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
     const [loading, setLoading] = useState(false); // Loading state
-    
+    const [searchQuery, setSearchQuery] = useState(''); // State for search query
     const [itemsPerPage] = useState(5); // Number of items per page
     const { data: productsData } = useFrappeGetDocList<Product>('Product', {
         fields: ['name', 'product_name', 'category', 'reward_points','product_price']
@@ -57,12 +57,26 @@ const ProductMaster: React.FC = () => {
     
     console.log("data", productsData);
 
+
+    // Filter the data based on search query
+   
+    const filteredData = combinedData?.filter(item => {
+        const query = searchQuery.toLowerCase();
+        return (
+            item.name.toLowerCase().includes(query) ||
+            item.product_name?.toLowerCase().includes(query) ||
+            item.category.toLowerCase().includes(query) ||
+            (item.reward_points?.toString().includes(query))
+        );
+    }) || [];
+
+
     // Pagination data
   
      const indexOfLastItem = currentPage * itemsPerPage;
      const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-     const currentItems = combinedData?.slice(indexOfFirstItem, indexOfLastItem) || [];
-     const totalPages = Math.ceil((combinedData?.length || 0) / itemsPerPage);
+     const currentItems = filteredData?.slice(indexOfFirstItem, indexOfLastItem) || [];
+     const totalPages = Math.ceil((filteredData?.length || 0) / itemsPerPage);
  
     // Pagination handlers
     const handlePrevPage = () => {
@@ -117,10 +131,11 @@ const ProductMaster: React.FC = () => {
         }
     };
 
-
     const handleSearch = (value: string) => {
-       console.log("first")
+        setSearchQuery(value); // Update search query
+        setCurrentPage(1);
     };
+
 
     const handleAddProductClick = () => {
         console.log("Add Product button clicked");
@@ -165,7 +180,7 @@ const ProductMaster: React.FC = () => {
                                     <tbody>
                                         {currentItems.map((product, index) => (
                                             <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                                                <td className="p-3 text-defaultsize font-medium text-defaulttextcolor whitespace-nowrap border border-gray-300">{index + 1}</td>
+                                                <td className="p-3 text-defaultsize font-medium text-defaulttextcolor whitespace-nowrap border border-gray-300">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                                                 <td className="p-3 text-defaultsize font-semibold text-[var(--primaries)] whitespace-nowrap border border-gray-300">{product.name}</td>
                                                 <td className="p-3 text-defaultsize font-medium text-defaulttextcolor whitespace-nowrap border border-gray-300">{product.product_name}</td>
                                                 <td className="p-3 text-defaultsize font-medium text-defaulttextcolor whitespace-nowrap border border-gray-300">{product.category}</td>

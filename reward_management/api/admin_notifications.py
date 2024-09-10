@@ -1,5 +1,6 @@
 import frappe
 from frappe import _
+from datetime import datetime
 
 
     
@@ -27,13 +28,21 @@ def get_notifications_log():
         notifications = frappe.get_all(
             "Notification Log",
             filters={"for_user": user},
-            fields=["name", "subject", "email_content", "document_type", "for_user"]
+            fields=["name", "subject", "email_content", "document_type", "for_user","creation"]
         )
 
     # Return the fetched data
     return notifications
 
+@frappe.whitelist()
+def show_notification_data():
+    # Fetch all notifications from the Notification Log doctype
+    notifications = frappe.get_all(
+        "Notification Log",
+        fields=["name", "subject", "email_content", "document_type", "for_user", "creation"]
+    )
 
+    return notifications
 
 
 @frappe.whitelist()
@@ -49,6 +58,7 @@ def send_system_notification(doc, method=None):
     notification = frappe.get_doc({
         'doctype': 'Notification Log',
         'for_user': user_email,
+        'type':'Alert',
         'subject': 'Your Account Has Been Approved',
         'email_content': f'{username}, Your registration request has been approved, and your account has been created successfully.',
         'document_type': 'User',
@@ -82,6 +92,7 @@ def send_customer_reward_approved_notification(doc, method=None):
             'doctype': 'Notification Log',
             'for_user': customer_email,  # Send notification to the specific customer
             'subject': 'Reward Request Approved',
+            'type':'Alert',
             'email_content': f"""
                 <p>{customer.full_name}, 
                 <a href="../../rewards/redeem-request">Your request for 

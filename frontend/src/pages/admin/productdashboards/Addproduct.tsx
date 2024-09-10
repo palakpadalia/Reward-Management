@@ -267,7 +267,11 @@ const AddProduct: React.FC = () => {
                                 </div>
                             </form>
                             {showSuccessAlert && (
-                                <SuccessAlert showButton={false} message="New Product Added successfully!" />
+                                <SuccessAlert showButton={false} 
+                    showCancleButton={false}
+                    showCollectButton={false}
+                    showAnotherButton={false}
+                    showMessagesecond={false}message="New Product Added successfully!" />
                             )}
                         </div>
                     </div>

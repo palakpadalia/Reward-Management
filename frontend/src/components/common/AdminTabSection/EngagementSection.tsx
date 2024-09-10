@@ -2,10 +2,15 @@ import React, { useState } from 'react';
 import ToggleButtonSection from './ToggleButtonSection';
 import EngagementChartSection from './EngagementChartSection';
 
-const EngagementSection = () => {
+interface EngagementSectionProps {
+  selectedProgram: string;
+  selectedTier: string; // Add this line
+}
+
+const EngagementSection: React.FC<EngagementSectionProps> = ({ selectedProgram, selectedTier }) => {
   const [alignment, setAlignment] = useState('Customer Activity');
 
-  const handleAlignmentChange = (event: React.MouseEvent<HTMLElement>, newAlignment: string) => {
+  const handleAlignmentChange = (_event: React.MouseEvent<HTMLElement>, newAlignment: string) => {
     setAlignment(newAlignment);
   };
 
@@ -15,7 +20,11 @@ const EngagementSection = () => {
         alignment={alignment}
         onAlignmentChange={handleAlignmentChange}
       />
-      <EngagementChartSection alignment={alignment} />
+      <EngagementChartSection 
+        alignment={alignment} 
+        selectedProgram={selectedProgram} 
+        selectedTier={selectedTier} // Pass selectedTier here
+      />
     </div>
   );
 };

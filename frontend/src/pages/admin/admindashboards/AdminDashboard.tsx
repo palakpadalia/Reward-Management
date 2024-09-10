@@ -2,7 +2,6 @@ import '../../../assets/css/style.css';
 import '../../../assets/css/pages/admindashboard.css';
 import React, { Fragment, useState, useEffect } from "react";
 import { useFrappeGetDocList, useFrappeGetCall } from 'frappe-react-sdk';
-import SelectBar from "../../../components/common/AdminSelection/SelectBar";
 import TabSection from "../../../components/common/AdminTabSection/AdminTab"
 import CustomerLoyaltyChart from "../../../components/common/AdminTabSection/CutomerAcquisitionChart"
 
@@ -172,10 +171,7 @@ const AdminDashboard: React.FC = () => {
             <div className="mb-10">
                 <CustomerLoyaltyChart />
             </div>
-            {/* Selection Bar */}
-            <SelectBar />
-            {/* Chart Section */}
-
+           
             {/* Tab Section */}
             <TabSection />
             {/* Table Section */}

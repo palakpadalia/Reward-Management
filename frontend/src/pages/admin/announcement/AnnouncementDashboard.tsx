@@ -325,6 +325,10 @@ const AnnouncementDashboard: React.FC = () => {
                 <SuccessAlert
                     title={alertTitle}
                     showButton={false}
+                    showCancleButton={false}
+                    showCollectButton={false}
+                    showAnotherButton={false}
+                    showMessagesecond={false}
                     message={alertMessage}
                 />
             )}

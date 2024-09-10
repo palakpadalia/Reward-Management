@@ -23,30 +23,27 @@ const ProductQRHistory: React.FC = () => {
     const [data, setData] = useState<ProductQRHistory[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(12);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [itemsPerPage] = useState<number>(15);
     const navigate = useNavigate();
-    const [searchQuery, setSearchQuery] = useState(''); // State for search query
+    const [searchQuery, setSearchQuery] = useState<string>('');
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`/api/method/reward_management.api.print_qr_code.print_qr_code`,
-                    {
-                    }
+                const response = await axios.get('/api/method/reward_management.api.print_qr_code.print_qr_code');
+                const fetchedData = response.data?.message ?? [];
+                console.log("Fetched Data:", fetchedData); // Log the raw fetched data
+                
+                const flattenedData = fetchedData.flatMap((item: any) =>
+                    item.qr_table_data?.map((qrItem: any) => ({
+                        ...qrItem,
+                        scanned: qrItem.scanned == '1' ? 'Scanned' : 'Not Scanned',
+                    })) ?? []
                 );
-                console.log('Fetched data:', response.data);
-        
-                if (response.data && response.data.message && Array.isArray(response.data.message)) {
-                    const qrTableData = response.data.message[0].qr_table_data || [];
-                    const formattedData = qrTableData.map((item:any) => ({
-                        ...item,
-                        scanned: item.scanned == '1' ? 'Scanned' : 'Not Scanned',
-                    }));
-                    setData(formattedData);
-                } else {
-                    setData([]);
-                }
+                
+                console.log("Flattened Data:", flattenedData); // Log the flattened data
+                setData(flattenedData);
             } catch (error) {
                 setError(error instanceof Error ? error.message : 'Failed to fetch data');
             } finally {
@@ -57,14 +54,27 @@ const ProductQRHistory: React.FC = () => {
         fetchData();
     }, []);
     
-    const totalPages = Math.ceil((data.length || 0) / itemsPerPage);
-
+    const filteredData = data.filter(item => {
+        const query = searchQuery.toLowerCase();
+        return (
+            item.product_qr_name?.toLowerCase().includes(query) ||
+            item.product_table_name?.toLowerCase().includes(query) ||
+            item.carpenter_id?.toLowerCase().includes(query) ||
+            item.points?.toString().toLowerCase().includes(query) ||
+            item.scanned?.toLowerCase().includes(query) ||
+            item.generated_date?.toLowerCase().includes(query)
+        );
+    });
+    
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+    console.log("total pages",totalPages);
+    const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    console.log("data per page",paginatedData);
     const handlePrevPage = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
         }
     };
-
     const handleNextPage = () => {
         if (currentPage < totalPages) {
             setCurrentPage(currentPage + 1);
@@ -76,7 +86,7 @@ const ProductQRHistory: React.FC = () => {
     };
 
     const handleSearch = (value: string) => {
-        setSearchQuery(value); // Update search query
+        setSearchQuery(value);
         setCurrentPage(1);
     };
 
@@ -85,22 +95,9 @@ const ProductQRHistory: React.FC = () => {
         navigate('/redeemption-history');
     };
 
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
-
-    // Filter the data based on search query
-    const filteredData = data.filter(item => {
-        const query = searchQuery.toLowerCase();
-        return (
-            (item.product_qr_name && item.product_qr_name.toLowerCase().includes(query)) ||
-            (item.product_table_name && item.product_table_name.toLowerCase().includes(query)) ||
-            (item.carpenter_id && item.carpenter_id.toLowerCase().includes(query)) ||
-            (item.points !== undefined && item.points.toString().toLowerCase().includes(query)) || // Convert number to string for search
-            (item.scanned && item.scanned.toLowerCase().includes(query)) ||
-            (item.generated_date && item.generated_date.toLowerCase().includes(query)) 
-        );
-    });
-
     return (
         <Fragment>
             <Pageheader currentpage="Product QR History" activepage="Product Dashboard" mainpage="Product QR History" />
@@ -133,22 +130,21 @@ const ProductQRHistory: React.FC = () => {
                                         header: 'QR Image',
                                         accessor: 'qr_code_image',
                                         render: (imageUrl) => {
-                                            // Check if URL is valid
-                                            const imageSrc = imageUrl ? imageUrl : 'placeholder.png'; // Fallback image
+                                            const imageSrc = imageUrl ? imageUrl : 'placeholder.png'; 
                                             return (
                                                 <img
                                                     src={imageSrc}
                                                     alt="QR Code"
                                                     style={{ width: '20px', height: '20px' }}
                                                     onError={(e) => {
-                                                        (e.target as HTMLImageElement).src = 'placeholder.png'; // Handle broken image
+                                                        (e.target as HTMLImageElement).src = 'placeholder.png'; 
                                                     }}
                                                 />
                                             );
                                         }
                                     },
                                 ]}
-                                data={filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)}
+                                data={paginatedData}
                                 currentPage={currentPage}
                                 itemsPerPage={itemsPerPage}
                                 handlePrevPage={handlePrevPage}
