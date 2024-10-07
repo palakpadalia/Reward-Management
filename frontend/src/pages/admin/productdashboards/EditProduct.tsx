@@ -48,6 +48,7 @@ const EditProduct: React.FC = () => {
     }, [showSuccessAlert, navigate, productPrice, rewardPercent]);
 
     useEffect(() => {
+        document.title='Edit Product';
         const fetchProductData = async () => {
             if (!productId) return;
 

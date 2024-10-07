@@ -61,6 +61,7 @@ const AdminProfile = () => {
     localStorage.setItem('username', username)
 
     useEffect(() => {
+        document.title='Profile Setting';
         if (showSuccessAlert) {
             const timer = setTimeout(() => setShowSuccessAlert(false), 3000);
             return () => clearTimeout(timer);

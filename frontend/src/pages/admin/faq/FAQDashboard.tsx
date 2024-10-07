@@ -43,6 +43,7 @@ const FAQDashboard: React.FC = () => {
     });
 
     React.useEffect(() => {
+        document.title="Faq's";
         if (data) {
             setFaqData(data);   
         }

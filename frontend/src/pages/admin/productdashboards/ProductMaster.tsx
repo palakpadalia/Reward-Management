@@ -9,6 +9,7 @@ import SuccessAlert from '../../../components/ui/alerts/SuccessAlert';
 import TableBoxComponent from '../../../components/ui/tables/tableboxheader';
 import axios from 'axios';
 import { PulseLoader } from 'react-spinners';
+import DangerAlert from '../../../components/ui/alerts/DangerAlert';
 
 
 interface Product {
@@ -16,7 +17,7 @@ interface Product {
     product_name?: string,
     category: string,
     reward_points?: number,
-    quantity?: number ,
+    quantity?: number,
     product_price?: number
 }
 
@@ -26,26 +27,31 @@ const ProductMaster: React.FC = () => {
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
     const [loading, setLoading] = useState(false); // Loading state
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertTitle, setAlertTitle] = useState('');
     const [searchQuery, setSearchQuery] = useState(''); // State for search query
     const [itemsPerPage] = useState(5); // Number of items per page
-    const { data: productsData } = useFrappeGetDocList<Product>('Product', {
-        fields: ['name', 'product_name', 'category', 'reward_points','product_price']
+    const [productToDelete, setProductToDelete] = useState<Product| null>(null);
+    const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false); // Track the announcement to delete // Number of items per page
+    const { data: productsData ,mutate: mutateProducts} = useFrappeGetDocList<Product>('Product', {
+        fields: ['name', 'product_name', 'category', 'reward_points', 'product_price']
     });
-        // Fetch Product QR Data
-        const { data: productQRData } = useFrappeGetDocList<Product>('Product QR', {
-            fields: ['name', 'product_name', 'quantity']
-        });
-          // Combine Product and Product QR Data
-          const combinedData = productsData?.map(product => {
-            const qrData = productQRData?.find(qr => qr.product_name === product.name);
-            return {
-                ...product,
-                quantity: qrData?.quantity || 0  // Add the quantity from Product QR data
-            };
-        });
+    // Fetch Product QR Data
+    const { data: productQRData } = useFrappeGetDocList<Product>('Product QR', {
+        fields: ['name', 'product_name', 'quantity']
+    });
+    // Combine Product and Product QR Data
+    const combinedData = productsData?.map(product => {
+        const qrData = productQRData?.find(qr => qr.product_name === product.name);
+        return {
+            ...product,
+            quantity: qrData?.quantity || 0  // Add the quantity from Product QR data
+        };
+    });
     const navigate = useNavigate();
 
     useEffect(() => {
+        document.title='Products Dashboard';
         if (showSuccessAlert) {
             const timer = setTimeout(() => {
                 setShowSuccessAlert(false); // Hide alert after 3 seconds
@@ -54,12 +60,12 @@ const ProductMaster: React.FC = () => {
             return () => clearTimeout(timer);
         }
     }, [showSuccessAlert]);
-    
+
     console.log("data", productsData);
 
 
     // Filter the data based on search query
-   
+
     const filteredData = combinedData?.filter(item => {
         const query = searchQuery.toLowerCase();
         return (
@@ -72,12 +78,12 @@ const ProductMaster: React.FC = () => {
 
 
     // Pagination data
-  
-     const indexOfLastItem = currentPage * itemsPerPage;
-     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-     const currentItems = filteredData?.slice(indexOfFirstItem, indexOfLastItem) || [];
-     const totalPages = Math.ceil((filteredData?.length || 0) / itemsPerPage);
- 
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredData?.slice(indexOfFirstItem, indexOfLastItem) || [];
+    const totalPages = Math.ceil((filteredData?.length || 0) / itemsPerPage);
+
     // Pagination handlers
     const handlePrevPage = () => {
         if (currentPage > 1) {
@@ -113,6 +119,8 @@ const ProductMaster: React.FC = () => {
                     product_name: selectedProduct.name,
                     quantity: quantity
                 });
+                setAlertTitle('Success');
+                setAlertMessage('QR Codes created successfully!');
                 setShowSuccessAlert(true);
                 console.log('QR Codes created successfully:', response.data);
                 // Optionally, close the modal or perform other actions here
@@ -143,6 +151,43 @@ const ProductMaster: React.FC = () => {
         // Implement add product logic here
     };
 
+    const handleDeleteProduct = (item: Product) => {
+        setProductToDelete(item);
+        setIsConfirmDeleteModalOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!productToDelete) return;
+
+        try {
+            const response = await fetch(`/api/resource/Product/${productToDelete.name}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (!response.ok) {
+                const responseData = await response.json(); // Add this line
+                throw new Error(`Error: ${responseData.message || response.statusText}`); // Use response data for detailed error
+            }
+
+            setAlertTitle('Success');
+            setAlertMessage('Product deleted successfully!');
+            setShowSuccessAlert(true);
+            setIsConfirmDeleteModalOpen(false);
+            mutateProducts();
+        } catch (error) {
+            console.error('Error deleting announcement:', error.message || error);
+            alert('Failed to delete announcement.');
+        }
+    };
+
+    const cancelDelete = () => {
+        setIsConfirmDeleteModalOpen(false);
+        setProductToDelete(null);
+    };
+
 
     return (
         <Fragment>
@@ -151,7 +196,7 @@ const ProductMaster: React.FC = () => {
             <div className="grid grid-cols-12 gap-x-6 bg-white mt-5 rounded-lg shadow-lg">
                 <div className="xl:col-span-12 col-span-12">
                     <div className="box">
-                       
+
                         <TableBoxComponent
                             title="Products"
                             onSearch={handleSearch}
@@ -186,7 +231,7 @@ const ProductMaster: React.FC = () => {
                                                 <td className="p-3 text-defaultsize font-medium text-defaulttextcolor whitespace-nowrap border border-gray-300">{product.category}</td>
                                                 <td className="p-3 text-defaultsize font-medium text-defaulttextcolor whitespace-nowrap border border-gray-300">{product.product_price}</td>
                                                 <td className="p-3 text-defaultsize font-medium text-defaulttextcolor whitespace-nowrap border border-gray-300">{product.reward_points}</td>
-                                               
+
                                                 <td className="p-3 text-defaultsize font-medium text-defaulttextcolor whitespace-nowrap border border-gray-300">{product.quantity}</td>
                                                 <td className="p-3 text-defaultsize font-medium text-defaulttextcolor whitespace-nowrap border border-gray-300">
                                                     <Link aria-label="anchor" to="#" onClick={() => openModal(product)} className="link-icon bg-[var(--bg-primary)] hover:bg-[var(--primaries)] py-2 px-[10px] rounded-full mr-2">
@@ -203,6 +248,21 @@ const ProductMaster: React.FC = () => {
                                                 <td className="p-3 text-defaultsize font-medium text-defaulttextcolor whitespace-nowrap border border-gray-300">
                                                     <Link aria-label="anchor" to={`/edit-product?product=${encodeURIComponent(product.name)}`} className="link-icon bg-[var(--bg-primary)] hover:bg-[var(--primaries)] py-2 px-[10px] rounded-full mr-2">
                                                         <i className="ri-edit-2-fill"></i>
+                                                    </Link>
+                                                    <Link
+                                                        aria-label="anchor"
+                                                        to="#"
+                                                        className={`link-icon bg-[var(--bg-primary)] hover:bg-[var(--primaries)] py-2 px-[10px] rounded-full mr-2 ${product.quantity === 0 ? '' : 'opacity-50 cursor-not-allowed'}`}
+                                                        onClick={(e) => {
+                                                            if (product.quantity <= 0) {
+                                                                e.preventDefault(); // Prevent default action if quantity is 0
+                                                                handleDeleteProduct(product);
+                                                            } else {
+                                                                // Implement delete functionality here
+                                                            }
+                                                        }}
+                                                    >
+                                                        <i className="ri-delete-bin-line"></i>
                                                     </Link>
                                                 </td>
                                             </tr>
@@ -268,16 +328,36 @@ const ProductMaster: React.FC = () => {
                     title={`Create QR Code for ${selectedProduct.name}`}
                 />
             )}
-               {loading && (
+            {loading && (
                 <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-75 z-50">
-                      <PulseLoader color="#845ADF" loading={loading} size={15} />
+                    <PulseLoader color="#845ADF" loading={loading} size={15} />
                 </div>
             )}
 
             {/* Success Alert */}
-            {showSuccessAlert && <SuccessAlert 
-            showButton={false}
-            message="QR Codes created successfully!" />}
+            {showSuccessAlert && <SuccessAlert
+                    title={alertTitle}
+                    showButton={false}
+                    showCancleButton={false}
+                    showCollectButton={false}
+                    showAnotherButton={false}
+                    showMessagesecond={false}
+                    message={alertMessage}
+                />}
+                
+
+
+
+            {isConfirmDeleteModalOpen && (
+                <DangerAlert
+                    type="danger"
+                    message={`Are you sure you want to delete this Product?`}
+                    onDismiss={cancelDelete}
+                    onConfirm={confirmDelete}
+                    cancelText="Cancel"
+                    confirmText="Continue"
+                />
+            )} 
         </Fragment>
     );
 };

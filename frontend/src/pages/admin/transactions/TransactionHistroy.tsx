@@ -3,7 +3,7 @@ import '../../../assets/css/pages/admindashboard.css';
 import Pageheader from '../../../components/common/pageheader/pageheader';
 import TableComponent from '../../../components/ui/tables/tablecompnent';
 import TableBoxComponent from '../../../components/ui/tables/tableboxheader';
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState,useEffect } from "react";
 import { useFrappeGetDocList } from 'frappe-react-sdk';
 
 interface Transaction {
@@ -22,6 +22,10 @@ const TransactionHistory: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(5); // Number of items per page
     const [searchQuery, setSearchQuery] = useState(''); // State for search query
+
+    useEffect(()=>{
+        document.title='Transaction History';
+    },[]);
 
     const { data: transactionData, error } = useFrappeGetDocList<Transaction>('Bank Balance', {
         fields: ['name', 'redeem_request_id', 'carpainter_id', 'mobile_number', 'transaction_id', 'transfer_date', 'amount', 'transfer_time']

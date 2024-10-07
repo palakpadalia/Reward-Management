@@ -15,6 +15,7 @@ const Productdetails = () => {
   const productId = urlParams.get('product_id');
 
   useEffect(() => {
+    document.title='View Product';
     if (!productId) {
       console.error('No product ID found in URL');
       return;

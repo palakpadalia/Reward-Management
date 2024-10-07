@@ -43,6 +43,7 @@ const AddUserDashboard: React.FC = () => {
     const { data, error } = useFrappeGetCall<User[]>('reward_management.api.add_admin_user.get_users');
 
     React.useEffect(() => {
+        document.title='Add User';
         if (showSuccessAlert) {
             const timer = setTimeout(() =>{ setShowSuccessAlert(false); // Hide alert after 3 seconds
             window.location.reload(); }, 3000);
@@ -180,7 +181,7 @@ const AddUserDashboard: React.FC = () => {
             {/* Success Alert */}
             {showSuccessAlert && <SuccessAlert 
             showButton={false}
-            message="New Admin Created Successfully!" />}
+            message="New Admin User Created Successfully!" />}
         </Fragment>
     );
 };

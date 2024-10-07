@@ -28,7 +28,7 @@
    "fieldtype": "Select",
    "hidden": 1,
    "label": "Naming Series",
-   "options": "Product.-.{product_name}.-.YYYY.-.#####"
+   "options": "{product_name}.-.YYYY.-.#####"
   },
   {
    "fieldname": "product_name",
@@ -76,7 +76,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-04 10:46:55.880042",
+ "modified": "2024-09-11 16:44:43.010528",
  "modified_by": "Administrator",
  "module": "Reward Management",
  "name": "Product",

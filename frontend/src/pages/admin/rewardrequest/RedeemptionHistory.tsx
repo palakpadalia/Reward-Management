@@ -5,7 +5,7 @@ import '../../../assets/css/pages/admindashboard.css';
 import Pageheader from '../../../components/common/pageheader/pageheader';
 import TableComponent from '../../../components/ui/tables/tablecompnent';
 import TableBoxComponent from '../../../components/ui/tables/tableboxheader';
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState ,useEffect} from "react";
 import { useFrappeGetDocList } from 'frappe-react-sdk';
 import { useNavigate } from 'react-router-dom'; 
 
@@ -41,6 +41,10 @@ const RedeemptionHistory: React.FC = () => {
     const [itemsPerPage] = useState(5); // Number of items per page
     const navigate = useNavigate(); 
     const [searchQuery, setSearchQuery] = useState(''); // State for search query
+
+    useEffect(()=>{
+        document.title='Reward Request History';
+    },[]);
 
     const { data: rewardrequesthistoryData } = useFrappeGetDocList<RewardRequestHistory>('Redeem Request', {
         fields: ['name', 'customer_id', 'total_points', 'current_point_status', 'redeemed_points', 'received_date', 'received_time', 'request_status', 'approved_on', 'approve_time', 'transection_id', 'amount']

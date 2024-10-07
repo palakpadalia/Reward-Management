@@ -30,7 +30,7 @@ const Header = ({ toggleSidebar, isSidebarActive }: any) => {
         toggled: '',
         class: 'light',
     });
-    
+
     // const [value, setValue] = useState(localStorage.getItem("username"));
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [notificationCount, setNotificationCount] = useState(0);
@@ -215,21 +215,31 @@ const Header = ({ toggleSidebar, isSidebarActive }: any) => {
                                     aria-labelledby="dropdown-profile"
                                 >
                                     <ul className="text-defaulttextcolor font-medium dark:text-[#8c9097] dark:text-white/50">
-                                        {carpenterrole !== "Customer" && (
-                                            <li className="user-profile-list hover:bg-[var(--bg-primary)] hover:text-[var(--primaries)]">
+
+                                        <li className="user-profile-list hover:bg-[var(--bg-primary)] hover:text-[var(--primaries)]">
+                                            {(carpenterrole  !== "Customer") && (
                                                 <a className="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0 !p-[0.65rem] !inline-flex" href={`/admin-profile`}>
                                                     <i className="ti ti-user-circle text-[1.125rem] me-2 opacity-[0.7]"></i>Profile
                                                 </a>
-                                            </li>
-                                        )}
-                                        
+                                            )}
+
+                                            {(carpenterrole === "Customer") && (
+
+                                                <a className="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0 !p-[0.65rem] !inline-flex" href={`/profile-setting`}>
+                                                    <i className="ti ti-user-circle text-[1.125rem] me-2 opacity-[0.7]"></i>Profile
+                                                </a>
+
+                                            )}
+                                        </li>
+
+
                                         <li className="user-profile-list hover:bg-[var(--bg-primary)] hover:text-[var(--primaries)]">
                                             <a
                                                 className="w-full ti-dropdown-item !text-[0.8125rem] !p-[0.65rem] !gap-x-0 !inline-flex"
                                                 href="/"
                                                 onClick={() => {
-                                                    localStorage.removeItem('user_roles'); 
-                                                    localStorage.removeItem('carpenterrole'); 
+                                                    localStorage.removeItem('user_roles');
+                                                    localStorage.removeItem('carpenterrole');
                                                     localStorage.removeItem("username");
                                                     logout;
                                                 }}
@@ -242,7 +252,7 @@ const Header = ({ toggleSidebar, isSidebarActive }: any) => {
 
                             </div>
                         </div>
-                        
+
                     </div>
                 </nav>
             </header>

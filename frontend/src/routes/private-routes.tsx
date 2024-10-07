@@ -20,7 +20,7 @@ const PrivateRoutes = () => {
 
     // return !isLoading && !isValidating && (currentUser ? element : <Navigate to="/auth/login" state={{ from: location }} />);
     if (!isLoading && !isValidating && (!currentUser || currentUser === 'Guest')) {
-        return <Navigate to="/login" />
+        return <Navigate to="/" />
     }
     return (
         <Outlet />

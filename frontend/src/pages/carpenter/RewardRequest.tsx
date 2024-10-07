@@ -101,6 +101,7 @@ const RedeemRequest: React.FC = () => {
     };
 
     useEffect(() => {
+        document.title='Reward Request';
         fetchUserData();
         fetchCarpenterDetails();
         fetchMinMaxPoints();

@@ -15,6 +15,8 @@ const CustomerProducts = () => {
   const [productsData, setProductsData] = useState([]);
 
   useEffect(() => {
+    document.title='Products';
+
     const fetchData = async () => {
       try {
         const response = await axios.get(`/api/method/reward_management.api.product_master.get_all_products_data`,{

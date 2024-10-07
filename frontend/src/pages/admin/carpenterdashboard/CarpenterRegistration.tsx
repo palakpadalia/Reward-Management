@@ -36,6 +36,7 @@ const CarpenterRegistration: React.FC = () => {
 
 
     useEffect(() => {
+        document.title='Customer Registration';
         if (showSuccessAlert) {
             const timer = setTimeout(() => {
                 setShowSuccessAlert(false);
@@ -167,7 +168,7 @@ const CarpenterRegistration: React.FC = () => {
                 console.error("Failed to update registration request status and new user creating: ", response.data.message);
                 alert('Failed to update registration request status and user .');
             }
-        } catch (error) {
+        } catch (error:any) {
             console.error("Error details:", {
                 message: error.message,
                 response: error.response?.data,

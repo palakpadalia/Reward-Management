@@ -1,6 +1,6 @@
 
-import { useState } from 'react';
-import { Outlet, Route, RouterProvider, createBrowserRouter, createRoutesFromElements, Routes, Navigate } from 'react-router-dom'
+import { useState,useEffect  } from 'react';
+import { Outlet, Route, RouterProvider, createBrowserRouter, createRoutesFromElements, Navigate } from 'react-router-dom'
 import { FrappeProvider } from 'frappe-react-sdk';
 import '@radix-ui/themes/styles.css';
 import { Theme } from '@radix-ui/themes';
@@ -33,6 +33,8 @@ import PointHistory from './pages/carpenter/PointHistory.tsx';
 import QRCodeScanner from './pages/carpenter/QRScanner.tsx'
 import RedeemRequest from './pages/carpenter/RewardRequest.tsx';
 import HelpAndSupport from './pages/carpenter/HelpAndSupport.tsx';
+import Announcement from './pages/carpenter/Announcements.tsx';
+import CustomerProfile from './pages/carpenter/CustomerProfile.tsx';
 
 
 function App() {
@@ -44,6 +46,7 @@ function App() {
   };
 
   const getSiteName = () => {
+
     // @ts-ignore
     if (window.frappe?.boot?.versions?.frappe && (window.frappe.boot.versions.frappe.startsWith('15') || window.frappe.boot.versions.frappe.startsWith('16'))) {
       // @ts-ignore
@@ -66,6 +69,67 @@ function App() {
             </div>
     </>
   );
+
+
+// Function to set the favicon
+function setFavicons(favImg) {
+  let headTitle = document.querySelector('head');
+  
+  // Remove existing favicon if it exists
+  const existingFavicon = document.querySelector('link[rel="shortcut icon"]');
+  if (existingFavicon) {
+      headTitle.removeChild(existingFavicon);
+  }
+
+  let setFavicon = document.createElement('link');
+  setFavicon.setAttribute('rel', 'shortcut icon');
+  setFavicon.setAttribute('type', 'image/svg+xml'); // Adjust type if needed
+  setFavicon.setAttribute('href', favImg);
+  headTitle.appendChild(setFavicon);
+}
+
+useEffect(() => {
+  const fetchWebsiteSettings = async () => {
+      try {
+          const response = await fetch('/api/method/reward_management.api.website_settings.get_website_settings');
+          console.log("image response", response);
+
+          // Check if the response is OK and parse the JSON
+          if (response.ok) {
+              const data = await response.json(); // Parse the response data
+              console.log("Fetched data:", data);
+
+              // Check if the response indicates success
+              if (data && data.message && data.message.status === 'success') {
+                  const { splash_image } = data.message.data || {}; // Safely destructure
+
+                  // Log the splash_image for debugging
+                  console.log("Fetched splash_image:", splash_image);
+
+                  if (splash_image) {
+                      // Prepend window.origin to the splash_image path
+                      const absoluteFaviconUrl = `${window.origin}${splash_image}`;
+                      console.log("Absolute favicon URL:", absoluteFaviconUrl); // Log the URL
+                      setFavicons(absoluteFaviconUrl); // Set the favicon using the function
+                  } else {
+                      const defaultFaviconUrl = "/src/assets/images/reward_management/favicon.ico"; // Default favicon
+                      setFavicons(defaultFaviconUrl);
+                      console.log("Fallback favicon set to default.");
+                  }
+              } else {
+                  console.error("Error fetching website settings:", data?.message || 'No message available');
+              }
+          } else {
+              console.error("Network response was not ok:", response.statusText);
+          }
+      } catch (error) {
+          console.error("Error fetching website settings:", error.message || error);
+      }
+  };
+
+  fetchWebsiteSettings();
+}, []);
+
 
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -98,6 +162,8 @@ function App() {
           <Route path='/qr-scanner' element={<QRCodeScanner/>} />
           <Route path='/redeem-request' element={<RedeemRequest/>} />
           <Route path='/help-and-support' element={<HelpAndSupport/>} />
+          <Route path='/customer-announcement' element={<Announcement/>} />
+          <Route path='/profile-setting' element={<CustomerProfile/>}/>
           <Route path='*' element={<Navigate to="/" replace />} />
         </Route>
         </Route>

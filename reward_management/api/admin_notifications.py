@@ -3,7 +3,6 @@ from frappe import _
 from datetime import datetime
 
 
-    
 @frappe.whitelist()
 def get_notifications_log():
     # Get the current user
@@ -11,28 +10,47 @@ def get_notifications_log():
 
     # Check if the user is "Administrator"
     if user == "Administrator":
-        # Fetch only one user with the "Admin" role
-        admin_user = frappe.get_all("User", filters={"role_profile_name": "Admin"}, pluck="name", limit=1)
+        # Fetch all users with the "Admin" role
+        admin_users = frappe.get_all("User", filters={"role_profile_name": "Admin"}, pluck="name")
 
-        if admin_user:
-            # Fetch notifications for that single Admin user
+        if admin_users:
+            # Fetch notifications for any of the admin users
             notifications = frappe.get_all(
                 "Notification Log",
-                filters={"for_user": admin_user[0]},  # Select the first Admin user
-                fields=["name", "subject", "email_content", "document_type", "for_user","creation"]
+                filters={"for_user": ["in", admin_users]},  # Filter for any admin user
+                fields=["name", "subject", "email_content", "document_type", "for_user", "creation"]
             )
+            
+            if notifications:
+                # Find the first admin user with notifications
+                first_admin_with_notifications = next(
+                    (admin_user for admin_user in admin_users if any(n['for_user'] == admin_user for n in notifications)),
+                    None
+                )
+
+                if first_admin_with_notifications:
+                    # Fetch notifications specifically for that first admin user
+                    notifications = frappe.get_all(
+                        "Notification Log",
+                        filters={"for_user": first_admin_with_notifications},
+                        fields=["name", "subject", "email_content", "document_type", "for_user", "creation"]
+                    )
+                
+                return notifications
+            else:
+                return []
         else:
-            notifications = []
+            return []
     else:
         # Fetch notifications for the logged-in user
         notifications = frappe.get_all(
             "Notification Log",
             filters={"for_user": user},
-            fields=["name", "subject", "email_content", "document_type", "for_user","creation"]
+            fields=["name", "subject", "email_content", "document_type", "for_user", "creation"]
         )
 
-    # Return the fetched data
-    return notifications
+        return notifications
+
 
 @frappe.whitelist()
 def show_notification_data():
@@ -50,24 +68,29 @@ def send_system_notification(doc, method=None):
     # doc is the document that triggered the hook
     user_email = doc.name  # Assuming `doc.name` is the user email or ID
 
-    # Fetch the username from the User doctype
+    # Fetch the user document
     user = frappe.get_doc("User", user_email)
-    username = user.username  # Access the username field
+    
+    # Check if the user has a role profile named "Customer"
+    if user.role_profile_name == "Customer":
+        username = user.full_name  # Access the username field
 
-    # Create a new notification log entry
-    notification = frappe.get_doc({
-        'doctype': 'Notification Log',
-        'for_user': user_email,
-        'type':'Alert',
-        'subject': 'Your Account Has Been Approved',
-        'email_content': f'{username}, Your registration request has been approved, and your account has been created successfully.',
-        'document_type': 'User',
-        'name': 'Welcome Notification'
-    })
-    notification.insert(ignore_permissions=True)
-    frappe.db.commit()
+        # Create a new notification log entry
+        notification = frappe.get_doc({
+            'doctype': 'Notification Log',
+            'for_user': user_email,
+            'type': 'Alert',
+            'subject': 'Your Account Has Been Approved',
+            'email_content': f'{username}, Your registration request has been approved, and your account has been created successfully.',
+            'document_type': 'User',
+            'name': 'Welcome Notification'
+        })
+        notification.insert(ignore_permissions=True)
+        frappe.db.commit()
 
-    return "Notification sent successfully"
+        return "Notification sent successfully"
+    
+    return "User is not a Customer, notification not sent."
 
 
 

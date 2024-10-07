@@ -50,6 +50,7 @@ const CarpenterRewardRequest: React.FC = () => {
     });
 
     useEffect(() => {
+        document.title='Reward Request';
         if (showSuccessAlert) {
             const timer = setTimeout(() => {
                 setShowSuccessAlert(false);

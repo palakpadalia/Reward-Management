@@ -51,6 +51,7 @@ const AdminDashboard: React.FC = () => {
     const [countTotalRegisteredCarpenter, setCountTotalRegisteredCarpenter] = useState<number>(0);
 
     useEffect(() => {
+        document.title='Admin Dashboard';
         if (productsRes) setProductCount(productsRes.message);
         if (redemptionsRes) setRedemptionsCount(redemptionsRes.message);
         if (pendingRes) setPendingRedeemptionCount(pendingRes.message);

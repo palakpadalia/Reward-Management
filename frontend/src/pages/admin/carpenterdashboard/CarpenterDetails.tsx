@@ -36,6 +36,7 @@ const CarpenterDetails: React.FC = () => {
     });
 
     useEffect(() => {
+        document.title='Customer Details';
         // Extract and set valid mobile numbers whenever userData changes
         const extractedMobileNumbers = userData?.map(user => user.mobile_no) || [];
         setValidMobileNumbers(extractedMobileNumbers);

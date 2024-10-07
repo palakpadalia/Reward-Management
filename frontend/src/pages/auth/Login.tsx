@@ -1,13 +1,13 @@
 import React, { useState, Fragment, useEffect } from 'react';
 
-import desktoplogo from '../../assets/images/sanskar-logo.png';
+import desktoplogo from '../../assets/images/reward_management/frappe-framework-logo.svg';
 import { Box, Button, Callout, Card, Text } from '@radix-ui/themes';
 
 import { useNavigate } from 'react-router-dom';
 
 
 import axios from 'axios';
-import {  useFrappeAuth } from "frappe-react-sdk";
+import { useFrappeAuth } from "frappe-react-sdk";
 
 import '../../assets/css/style.css';
 import SuccessAlert from '../../components/ui/alerts/SuccessAlert';
@@ -16,7 +16,7 @@ import SuccessAlert from '../../components/ui/alerts/SuccessAlert';
 const Login = () => {
 
     const {
-      
+
         login,
 
     } = useFrappeAuth();
@@ -32,6 +32,9 @@ const Login = () => {
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
     const [alertTitle, setAlertTitle] = useState('');
+
+    const [logo, setLogo] = useState(null);
+    const [loading, setLoading] = useState(true); // Loading state
 
     const [data, setData] = useState({
         email: "",
@@ -51,7 +54,7 @@ const Login = () => {
 
     const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setData({ ...data, [e.target.name]: e.target.value });
-       
+
         setLoginError("");
     };
 
@@ -62,7 +65,7 @@ const Login = () => {
                 params: {
                     uid: username  // Replace with correct parameter if needed
                 },
-                
+
             });
             return response.data;
         } catch (error) {
@@ -149,7 +152,7 @@ const Login = () => {
             // Verify OTP
             const otpResponse = await axios.get(`/api/method/reward_management.api.mobile_number.verify_otp`, {
                 params: { mobile_number: mobile, otp: otp },
-                
+
             });
 
             if (otpResponse.data.message.status === "success") {
@@ -158,7 +161,7 @@ const Login = () => {
                 setAlertTitle('Success');
                 setAlertMessage("OTP Matched Successfully.");
                 setShowSuccessAlert(true);
-              
+
                 // Call the function to register a new Carpainter
                 const registerResponse = await registerCarpainter(firstName, lastName, mobile, city);
 
@@ -170,22 +173,22 @@ const Login = () => {
                     setAlertTitle('Success');
                     setAlertMessage("Customer Registration Sent to the Admin Successfully.");
                     setShowSuccessAlert(true);
-                  
-                // Clear all input fields
-                setData({
-                    email: "",
-                    password: "",
-                    firstName: "",
-                    lastName: "",
-                    city: "",
-                    mobile: "",
-                    otp: "",
-                    mobilenumber: "",
-                    mobileotp: "",
-                });
 
-                // Optionally, reset OTP visibility state
-                setIsOtpVisible(false);
+                    // Clear all input fields
+                    setData({
+                        email: "",
+                        password: "",
+                        firstName: "",
+                        lastName: "",
+                        city: "",
+                        mobile: "",
+                        otp: "",
+                        mobilenumber: "",
+                        mobileotp: "",
+                    });
+
+                    // Optionally, reset OTP visibility state
+                    setIsOtpVisible(false);
                 } else {
                     setLoginError('Failed to register. Please try again.');
                 }
@@ -231,7 +234,7 @@ const Login = () => {
                 setAlertTitle('Success');
                 setAlertMessage("Otp has been sent to you mobile number !!!");
                 setShowSuccessAlert(true);
-              
+
                 setIsOtpVisible(true);
             } else {
                 setLoginError('Failed to send OTP. Please try again.');
@@ -256,7 +259,7 @@ const Login = () => {
             // First, check if the user is registered
             const checkResponse = await axios.get(`/api/method/reward_management.api.create_new_user.check_user_registration`, {
                 params: { mobile_number: mobilenumber },
-               
+
             });
 
             localStorage.setItem('carpenterrole', checkResponse.data.message.role_profile_name);
@@ -328,10 +331,10 @@ const Login = () => {
                 localStorage.setItem('credentials', JSON.stringify(credentials));
 
                 console.log('Login Status:', localStorage.getItem('login'));
-              
+
 
                 navigate('/carpenter-dashboard');
-             
+
             } else {
                 setLoginError('Invalid OTP. Please try again.');
             }
@@ -343,14 +346,51 @@ const Login = () => {
 
 
     useEffect(() => {
+
+        const fetchWebsiteSettings = async () => {
+            try {
+                const response = await axios.get('/api/method/reward_management.api.website_settings.get_website_settings');
+                console.log('API Image Response:', response.data);
+
+                // Check if the response is successful and contains the expected structure
+                if (response && response.data && response.data.message && response.data.message.status === 'success') {
+                    const { banner_image } = response.data.message.data;
+
+                    // If banner_image exists, set it as the logo
+                    if (banner_image) {
+                        const fullBannerImageURL = `${window.origin}${banner_image}`;
+                        setLogo(fullBannerImageURL); // Set the banner image as the logo
+                        console.log('Banner Image Set:', fullBannerImageURL);
+                    } else {
+                        console.log('No banner_image found, using default logo.');
+                        setLogo(desktoplogo); // Set to default logo if no banner_image found
+                    }
+                } else {
+                    console.error('API response was not successful:', response.data.message);
+                    setLogo(desktoplogo); // Set to default logo on failure
+                }
+            } catch (error) {
+                console.error('Error fetching website settings:', error);
+                setLogo(desktoplogo); // Set to default logo on error
+            } finally {
+                setLoading(false); // End loading state
+            }
+        };
+
+        fetchWebsiteSettings();
+
+        // Optional: Handle success alert display logic
         if (showSuccessAlert) {
             const timer = setTimeout(() => {
                 setShowSuccessAlert(false);
-                // window.location.reload();
+                // window.location.reload(); // Optional: Reload the page if needed
             }, 3000); // Hide alert after 3 seconds
             return () => clearTimeout(timer); // Cleanup timeout on component unmount
         }
     }, [showSuccessAlert]);
+    if (loading) {
+        return <div></div>; // Show loading message or spinner while fetching
+    }
 
     return (
         <Fragment>
@@ -358,10 +398,11 @@ const Login = () => {
                 <div className="grid grid-cols-12 gap-4 b">
                     <div className="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-3 sm:col-span-2"></div>
                     <div className="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-6 sm:col-span-8 col-span-12 ">
-                    
+
                         <Card className="p-8 box-shadow-md border border-defaultborder shadow-md rounded-[10px] bg-white">
                             <div className="flex justify-center mb-8">
-                                <img src={desktoplogo} alt="logo" className="w-28" />
+                                {/* <img src={desktoplogo} alt="logo" className="w-28" /> */}
+                                <img src={logo } alt="logo" className="w-[60px]" />
                             </div>
                             <div className="text-center mb-5">
                                 <p className="text-lg font-semibold">
@@ -597,7 +638,7 @@ const Login = () => {
                 <SuccessAlert
                     title={alertTitle}
                     showButton={false}
-                    
+
                     message={alertMessage}
                 />
             )}

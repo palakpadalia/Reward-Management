@@ -40,6 +40,7 @@ const PointHistory: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
+        document.title='Point History';
         const fetchCarpenterData = async () => {
             try {
                 const response = await axios.get(`/api/method/reward_management.api.carpenter_master.get_carpainter_data`,{

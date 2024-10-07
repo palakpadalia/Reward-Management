@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { DonutChart } from "../Charts/CutomerDonutCharts";
 import { LineColumnChart } from "../Charts/CutomerLineChart";
 import CustomerAcquisitionSection from './CustomerAcquisition';
@@ -34,60 +34,27 @@ const formFields = [
 const loyaltyProgramData: any = {
   program1: {
     tier0: {
-      '1year': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [150, 300, 450, 200] },
-      '6months': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [150, 300, 450, 200] },
-      '1month': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [150, 300, 450, 200] }
+      '1year': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [150, 300, 450, 300] },
+      '6months': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [120, 250, 400, 180] },
+      '1month': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [90, 200, 300, 150] }
     },
-    tier1: {
-      '1year': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [150, 0, 0, 0] },
-      '6months': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [150, 0, 0, 0] },
-      '1month': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [150, 0, 0, 0] }
-    },
-    tier2: {
-      '1year': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 300, 0, 0] },
-      '6months': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 300, 0, 0] },
-      '1month': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 300, 0, 0] }
-    },
-    tier3: {
-      '1year': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 0, 450, 0] },
-      '6months': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 0, 450, 0] },
-      '1month': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 0, 450, 0] }
-    },
-    tier4: {
-      '1year': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 0, 0, 200] },
-      '6months': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 0, 0, 200] },
-      '1month': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 0, 0, 200] }
-    }
+    tier1: { '1year': { labels:  ['Basic', 'Silver', 'Gold', 'Platinum'], series: [150, 0, 0, 0] }, '6months': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [120, 0, 0, 0] }, '1month': { labels: ['Basic'], series: [90, 0, 0, 0] } },
+    tier2: { '1year': { labels:  ['Basic', 'Silver', 'Gold', 'Platinum'], series:  [0, 300, 0, 0]  }, '6months': { labels:['Basic', 'Silver', 'Gold', 'Platinum'], series:  [0, 250, 0, 0]  }, '1month': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series:  [0, 200, 0, 0]  } },
+    tier3: { '1year': { labels:  ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0,0,450,0] }, '6months': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0,0,400,0] }, '1month': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'],series: [0,0,300,0] } },
+    tier4: { '1year': { labels:  ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0,0,0,300] }, '6months': { labels:['Basic', 'Silver', 'Gold', 'Platinum'], series: [0,0,0,180] }, '1month': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0,0,0,150] } }
   },
   program2: {
     tier0: {
-      '1year': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [200, 350, 400, 250] },
-      '6months': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [200, 350, 400, 250] },
-      '1month': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [200, 350, 400, 250] }
+      '1year': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [100, 350, 400, 250] },
+      '6months': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [180, 300, 350, 230] },
+      '1month': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [160, 250, 300, 210] }
     },
-    tier1: {
-      '1year': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [200, 0, 0, 0] },
-      '6months': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [200, 0, 0, 0] },
-      '1month': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [200, 0, 0, 0] }
-    },
-    tier2: {
-      '1year': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 350, 0, 0] },
-      '6months': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 350, 0, 0] },
-      '1month': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 350, 0, 0] }
-    },
-    tier3: {
-      '1year': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 0, 400, 0] },
-      '6months': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 0, 400, 0] },
-      '1month': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 0, 400, 0] }
-    },
-    tier4: {
-      '1year': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 0, 0, 250] },
-      '6months': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 0, 0, 250] },
-      '1month': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 0, 0, 250] }
-    }
+    tier1: { '1year': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [200, 0, 0, 0] }, '6months': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [180, 0, 0, 0] }, '1month': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [160,0,0] } },
+    tier2: { '1year': { labels:  ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 350, 0, 0]}, '6months': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0, 300, 0, 0] }, '1month': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'],series: [0,250,0,0]} },
+    tier3: { '1year': { labels:  ['Basic', 'Silver', 'Gold', 'Platinum'], series:[0,0,400,0] }, '6months': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series:[0,0,350,0]  }, '1month': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'],series:[0,0,300,0] } },
+    tier4: { '1year': { labels:  ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0,0,0,250]  }, '6months': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0,0,0,230]  }, '1month': { labels: ['Basic', 'Silver', 'Gold', 'Platinum'], series: [0,0,0,210]  } }
   }
 };
-
 
 
 
@@ -512,6 +479,13 @@ const AcquisitionChart = () => {
   const [selectedProgram, setSelectedProgram] = useState('program1');
   const [selectedTier, setSelectedTier] = useState('tier0');
   const [selectedDuration, setSelectedDuration] = useState('1year');
+  const [chartData, setChartData] = useState({ labels: [], series: [] });
+
+    // Update chart data whenever the selectedProgram, selectedTier, or selectedDuration changes
+    useEffect(() => {
+      const newChartData = loyaltyProgramData[selectedProgram]?.[selectedTier]?.[selectedDuration] || { labels: [], series: [] };
+      setChartData(newChartData);
+    }, [selectedProgram, selectedTier, selectedDuration]);
 
   const getLabels = () => {
     switch (selectedDuration) {
@@ -527,25 +501,25 @@ const AcquisitionChart = () => {
   };
 
   const labels = getLabels();
-  const chartData = loyaltyProgramData[selectedProgram]?.[selectedTier]?.[selectedDuration] || { labels: [], series: [] };
+  // const chartData = loyaltyProgramData[selectedProgram]?.[selectedTier]?.[selectedDuration] || { labels: [], series: [] };
 
   const LineColumnChartDatas = LineColumnChartData[selectedProgram]?.[selectedTier]?.[selectedDuration] || [];
 
   const acquisitionData = customerAcquisitionData[selectedProgram]?.[selectedTier]?.[selectedDuration] || [];
 
-  const handleProgramChange = (selectedOption:any) => {
+  const handleProgramChange = (selectedOption: any) => {
     if (selectedOption) {
       setSelectedProgram(selectedOption.value);
     }
   };
 
-  const handleTierChange = (selectedOption:any) => {
+  const handleTierChange = (selectedOption: any) => {
     if (selectedOption) {
       setSelectedTier(selectedOption.value);
     }
   };
 
-  const handleDurationChange = (selectedOption:any) => {
+  const handleDurationChange = (selectedOption: any) => {
     if (selectedOption) {
       setSelectedDuration(selectedOption.value);
     }
@@ -590,7 +564,7 @@ const AcquisitionChart = () => {
           </center>
           <div className="box-body overflow-hidden">
             <div className="leads-source-chart flex items-center justify-center relative">
-              <DonutChart chartLabels={chartData.labels} chartSeries={chartData.series} />
+            <DonutChart chartLabels={chartData.labels} chartSeries={chartData.series} />
             </div>
           </div>
         </div>

@@ -39,6 +39,7 @@ const AnnouncementDashboard: React.FC = () => {
 
 
     React.useEffect(() => {
+        document.title='Announcements'
         if (showSuccessAlert) {
             const timer = setTimeout(() => {
                 setShowSuccessAlert(false);
@@ -127,8 +128,8 @@ const AnnouncementDashboard: React.FC = () => {
         const data = {
             title: question,
             subject: answer,
-            published_on: formatDateToMySQL(date),
-            end_date: formatDateToMySQL(endDate)
+            published_on: formatDateToISO(date), // Convert date to yyyy-mm-dd
+            end_date: formatDateToISO(endDate) 
         };
 
         try {
@@ -207,17 +208,18 @@ const AnnouncementDashboard: React.FC = () => {
     };
 
     const formatDateToMySQL = (dateString: string) => {
+        const [year, month, day] = dateString.split('-').map(Number);
+        return `${day.toString().padStart(2, '0')}-${month.toString().padStart(2, '0')}-${year}`;
+    };
+    
+    const formatDateToISO = (dateString: string) => {
         const date = new Date(dateString);
         const year = date.getFullYear();
         const month = (`0${date.getMonth() + 1}`).slice(-2);
         const day = (`0${date.getDate()}`).slice(-2);
         return `${year}-${month}-${day}`;
     };
-
-    const formatDateToISO = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toISOString().split('T')[0];
-    };
+    
 
 
     const formattedAnnouncementsData = announcementsData?.map(announcement => ({

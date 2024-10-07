@@ -20,6 +20,9 @@ const QRScanner = () => {
 
   const [productQrPoints, setProductQrPoints] = useState<string>('');
   useEffect(() => {
+    
+    document.title='QR Scanner';
+
     const fetchUserEmailAndInitScanner = async () => {
       try {
         const userResponse = await axios.get(`/api/method/frappe.auth.get_logged_user`, {

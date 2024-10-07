@@ -24,11 +24,12 @@ const ProductQRHistory: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [itemsPerPage] = useState<number>(15);
+    const [itemsPerPage] = useState<number>(150);
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState<string>('');
 
     useEffect(() => {
+        document.title='Product QR History';
         const fetchData = async () => {
             try {
                 const response = await axios.get('/api/method/reward_management.api.print_qr_code.print_qr_code');

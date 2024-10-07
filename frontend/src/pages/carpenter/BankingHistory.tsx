@@ -30,6 +30,7 @@ const BankingHistory: React.FC = () => {
     const [searchQuery , setSearchQuery] = useState('');
 
     useEffect(() => {
+        document.title='Banking History';
         const fetchUserData = async () => {
             try {
                 const response = await axios.get(`/api/method/frappe.auth.get_logged_user`,{

@@ -13,6 +13,7 @@ const SetRewardPointsDashboard: React.FC = () => {
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
     useEffect(() => {
+        document.title='Set Reward Points';
         if (showSuccessAlert) {
             const timer = setTimeout(() => {
                 setShowSuccessAlert(false);

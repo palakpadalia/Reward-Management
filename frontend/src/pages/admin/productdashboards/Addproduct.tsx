@@ -98,6 +98,7 @@ const AddProduct: React.FC = () => {
 
     // Calculate reward points whenever product price or reward percent changes
     useEffect(() => {
+        document.title='Add Product';
         if (productPrice && rewardPercent) {
             const calculatedPoints = (parseFloat(productPrice) * parseFloat(rewardPercent)) / 100;
             setRewardPoints(calculatedPoints.toFixed(2)); // Round to 2 decimal places

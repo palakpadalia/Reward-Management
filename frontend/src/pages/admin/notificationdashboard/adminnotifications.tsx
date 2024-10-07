@@ -50,6 +50,7 @@ const NotificationsDashboard = () => {
     }, []);
 
     useEffect(() => {
+        document.title='Notifications';
         if (data && Array.isArray(data.message)) {
             console.log("Fetched notifications data:", data.message);
 
