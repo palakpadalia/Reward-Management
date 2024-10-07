@@ -1,6 +1,5 @@
 import React, { useState, Fragment, useEffect } from 'react';
 
-// import desktoplogo from '../../assets/images/reward_management/frappe-framework-logo.svg';
 import { Box, Button, Callout, Card, Text } from '@radix-ui/themes';
 
 import { useNavigate } from 'react-router-dom';
@@ -367,11 +366,11 @@ const Login = () => {
                     }
                 } else {
                     console.error('API response was not successful:', response.data.message);
-                    setLogo(desktoplogo); // Set to default logo on failure
+                    setLogo("/assets/frappe/images/frappe-framework-logo.svg"); // Set to default logo on failure
                 }
             } catch (error) {
                 console.error('Error fetching website settings:', error);
-                setLogo(desktoplogo); // Set to default logo on error
+                setLogo("/assets/frappe/images/frappe-framework-logo.svg");// Set to default logo on error
             } finally {
                 setLoading(false); // End loading state
             }

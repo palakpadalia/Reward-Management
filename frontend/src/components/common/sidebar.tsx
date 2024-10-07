@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import '../../assets/css/style.css';
 import '../../assets/css/sidebar.css';
+import axios from 'axios';
 
-import sidebarLogo from '../../assets/images/Sanskar_Technolab_Logo-light.png';
+
+// import sidebarLogo from '../../assets/images/Sanskar_Technolab_Logo-light.png';
 import { SidebarData } from './sidebar/sidebardata';
 import SubMenu from './sidebar/submenu';
 import { Link } from 'react-router-dom';
@@ -12,6 +14,8 @@ console.log(SidebarData);
 const Sidebar = ({ isSidebarActive }: any) => {
     // State to manage hover state
     const [isHover, setIsHover] = useState(false);
+    const [logo, setLogo] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     // Retrieve roles from localStorage
     const storedRoles = localStorage.getItem('user_roles');
@@ -44,6 +48,38 @@ const Sidebar = ({ isSidebarActive }: any) => {
     console.log("itemsToRender---------------------------------->",itemsToRender);
 
     useEffect(() => {
+        const fetchWebsiteSettings = async () => {
+            try {
+                const response = await axios.get('/api/method/reward_management.api.website_settings.get_website_settings');
+                console.log('API Image Response:', response.data);
+
+                // Check if the response is successful and contains the expected structure
+                if (response && response.data && response.data.message && response.data.message.status === 'success') {
+                    const { banner_image } = response.data.message.data;
+
+                    // If banner_image exists, set it as the logo
+                    if (banner_image) {
+                        const fullBannerImageURL = `${window.origin}${banner_image}`;
+                        console.log("fullBannerImageURL",fullBannerImageURL)
+                        setLogo(fullBannerImageURL); // Set the banner image as the logo
+                        console.log('Banner Image Set:', fullBannerImageURL);
+                    } else {
+                        console.log('No banner_image found, using default logo.');
+                        setLogo("/assets/frappe/images/frappe-framework-logo.svg"); // Set to default logo if no banner_image found
+                    }
+                } else {
+                    console.error('API response was not successful:', response.data.message);
+                    setLogo("/assets/frappe/images/frappe-framework-logo.svg"); // Set to default logo on failure
+                }
+            } catch (error) {
+                console.error('Error fetching website settings:', error);
+                setLogo("/assets/frappe/images/frappe-framework-logo.svg");// Set to default logo on error
+            } finally {
+                setLoading(false); // End loading state
+            }
+        };
+
+        fetchWebsiteSettings();
         // Effect to handle cleanup of event listeners
         const sidebar = document.querySelector('.side-menu');
 
@@ -62,14 +98,17 @@ const Sidebar = ({ isSidebarActive }: any) => {
             }
         };
     }, []);
+    if (loading) {
+        return <div></div>; // Show loading message or spinner while fetching
+    }
 
     return (
         <div className={`side-menu ${isSidebarActive ? (isHover ? 'wide' : 'narrow') : 'wide'} text-white`}>
             <div className="main-sidebar-header">
                 <img 
-                    src={sidebarLogo} 
+                    src={logo} 
                     alt="logo" 
-                    className={`transition-all duration-300 ${isSidebarActive ?  (isHover ? 'w-32' : 'w-16') : 'w-32'}`} 
+                    className={`transition-all duration-300 object-contain max-h-[45px] ${isSidebarActive ?  (isHover ? 'w-32' : 'w-16') : 'w-32'}`} 
                 />
             </div>
             <div className='main-sidebar'>

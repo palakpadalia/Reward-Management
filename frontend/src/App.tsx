@@ -36,7 +36,7 @@ import RedeemRequest from './pages/carpenter/RewardRequest.tsx';
 import HelpAndSupport from './pages/carpenter/HelpAndSupport.tsx';
 import Announcement from './pages/carpenter/Announcements.tsx';
 import CustomerProfile from './pages/carpenter/CustomerProfile.tsx';
-// import favicon from '../src/assets/images/favicon.png'
+
 
 
 function App() {
@@ -74,7 +74,7 @@ function App() {
 
 
 // Function to set the favicon
-function setFavicons(favImg) {
+function setFavicons(favImg:any) {
   let headTitle = document.querySelector('head');
   
   // Remove existing favicon if it exists
@@ -98,12 +98,12 @@ useEffect(() => {
 
           // Check if the response is OK and parse the JSON
           if (response.ok) {
-              const data = await response.json(); // Parse the response data
+              const data = await response.json();
               console.log("Fetched data:", data);
 
               // Check if the response indicates success
               if (data && data.message && data.message.status === 'success') {
-                  const { favicon } = data.message.data || {}; // Safely destructure
+                  const { favicon } = data.message.data || {};
 
                   // Log the splash_image for debugging
                   console.log("Fetched splash_image:", favicon);
@@ -111,10 +111,10 @@ useEffect(() => {
                   if (favicon) {
                       // Prepend window.origin to the splash_image path
                       const absoluteFaviconUrl = `${window.origin}${favicon}`;
-                      console.log("Absolute favicon URL:", absoluteFaviconUrl); // Log the URL
-                      setFavicons(absoluteFaviconUrl); // Set the favicon using the function
+                      console.log("Absolute favicon URL:", absoluteFaviconUrl); L
+                      setFavicons(absoluteFaviconUrl); 
                   } else {
-                      const defaultFaviconUrl = "/assets/frappe/images/frappe-framework-logo.svg"; // Default favicon
+                      const defaultFaviconUrl = "/assets/frappe/images/frappe-framework-logo.svg";
                       setFavicons(defaultFaviconUrl);
                       console.log("Fallback favicon set to default.");
                   }
