@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import '../../assets/css/style.css';
 import '../../assets/css/sidebar.css';
-import axios from 'axios';
-
 
 // import sidebarLogo from '../../assets/images/Sanskar_Technolab_Logo-light.png';
 import { SidebarData } from './sidebar/sidebardata';
@@ -15,7 +13,7 @@ const Sidebar = ({ isSidebarActive }: any) => {
     // State to manage hover state
     const [isHover, setIsHover] = useState(false);
     const [logo, setLogo] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true); // Loading state
 
     // Retrieve roles from localStorage
     const storedRoles = localStorage.getItem('user_roles');
@@ -60,7 +58,6 @@ const Sidebar = ({ isSidebarActive }: any) => {
                     // If banner_image exists, set it as the logo
                     if (banner_image) {
                         const fullBannerImageURL = `${window.origin}${banner_image}`;
-                        console.log("fullBannerImageURL",fullBannerImageURL)
                         setLogo(fullBannerImageURL); // Set the banner image as the logo
                         console.log('Banner Image Set:', fullBannerImageURL);
                     } else {
@@ -98,8 +95,13 @@ const Sidebar = ({ isSidebarActive }: any) => {
             }
         };
     }, []);
+
     if (loading) {
-        return <div></div>; // Show loading message or spinner while fetching
+        // Use the same conditional properties as the main sidebar
+        const loadingClass = `${isSidebarActive ? (isHover ? 'wide' : 'narrow') : 'wide'} text-white`;
+        const loadingWidthClass = `${isSidebarActive ? (isHover ? 'w-32' : 'w-16') : 'w-32'}`;
+        
+        return <div className={`side-menu ${loadingClass} ${loadingWidthClass}`} ></div>; // Maintain sidebar properties
     }
 
     return (
@@ -108,7 +110,7 @@ const Sidebar = ({ isSidebarActive }: any) => {
                 <img 
                     src={logo} 
                     alt="logo" 
-                    className={`transition-all duration-300 object-contain max-h-[45px] ${isSidebarActive ?  (isHover ? 'w-32' : 'w-16') : 'w-32'}`} 
+                    className={`transition-all duration-300 max-h-[45px] ${isSidebarActive ?  (isHover ? 'w-32' : 'w-16') : 'w-32'}`} 
                 />
             </div>
             <div className='main-sidebar'>
