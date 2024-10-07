@@ -1,6 +1,6 @@
 import React, { useState, Fragment, useEffect } from 'react';
 
-import desktoplogo from '../../assets/images/reward_management/frappe-framework-logo.svg';
+// import desktoplogo from '../../assets/images/reward_management/frappe-framework-logo.svg';
 import { Box, Button, Callout, Card, Text } from '@radix-ui/themes';
 
 import { useNavigate } from 'react-router-dom';
@@ -363,7 +363,7 @@ const Login = () => {
                         console.log('Banner Image Set:', fullBannerImageURL);
                     } else {
                         console.log('No banner_image found, using default logo.');
-                        setLogo(desktoplogo); // Set to default logo if no banner_image found
+                        setLogo("/assets/frappe/images/frappe-framework-logo.svg"); // Set to default logo if no banner_image found
                     }
                 } else {
                     console.error('API response was not successful:', response.data.message);
@@ -402,7 +402,7 @@ const Login = () => {
                         <Card className="p-8 box-shadow-md border border-defaultborder shadow-md rounded-[10px] bg-white">
                             <div className="flex justify-center mb-8">
                                 {/* <img src={desktoplogo} alt="logo" className="w-28" /> */}
-                                <img src={logo } alt="logo" className="w-[60px]" />
+                                <img src={logo } alt="logo" className="w-20" />
                             </div>
                             <div className="text-center mb-5">
                                 <p className="text-lg font-semibold">

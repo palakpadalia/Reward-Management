@@ -1,5 +1,6 @@
 
 import { useState,useEffect  } from 'react';
+// import favicon from '../../assets/images/reward_management/frappe-framework-logo.svg';
 import { Outlet, Route, RouterProvider, createBrowserRouter, createRoutesFromElements, Navigate } from 'react-router-dom'
 import { FrappeProvider } from 'frappe-react-sdk';
 import '@radix-ui/themes/styles.css';
@@ -35,6 +36,7 @@ import RedeemRequest from './pages/carpenter/RewardRequest.tsx';
 import HelpAndSupport from './pages/carpenter/HelpAndSupport.tsx';
 import Announcement from './pages/carpenter/Announcements.tsx';
 import CustomerProfile from './pages/carpenter/CustomerProfile.tsx';
+// import favicon from '../src/assets/images/favicon.png'
 
 
 function App() {
@@ -101,18 +103,18 @@ useEffect(() => {
 
               // Check if the response indicates success
               if (data && data.message && data.message.status === 'success') {
-                  const { splash_image } = data.message.data || {}; // Safely destructure
+                  const { favicon } = data.message.data || {}; // Safely destructure
 
                   // Log the splash_image for debugging
-                  console.log("Fetched splash_image:", splash_image);
+                  console.log("Fetched splash_image:", favicon);
 
-                  if (splash_image) {
+                  if (favicon) {
                       // Prepend window.origin to the splash_image path
-                      const absoluteFaviconUrl = `${window.origin}${splash_image}`;
+                      const absoluteFaviconUrl = `${window.origin}${favicon}`;
                       console.log("Absolute favicon URL:", absoluteFaviconUrl); // Log the URL
                       setFavicons(absoluteFaviconUrl); // Set the favicon using the function
                   } else {
-                      const defaultFaviconUrl = "/src/assets/images/reward_management/favicon.ico"; // Default favicon
+                      const defaultFaviconUrl = "/assets/frappe/images/frappe-framework-logo.svg"; // Default favicon
                       setFavicons(defaultFaviconUrl);
                       console.log("Fallback favicon set to default.");
                   }

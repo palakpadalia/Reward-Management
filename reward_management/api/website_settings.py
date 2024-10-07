@@ -15,7 +15,7 @@ def get_website_settings():
                 "home_page": website_settings.home_page,
                 "brand_html": website_settings.brand_html,
                 "banner_image": website_settings.banner_image, 
-                "splash_image": website_settings.favicon
+                "favicon": website_settings.favicon
                 
             }
             return {"status": "success", "data": settings_data}
