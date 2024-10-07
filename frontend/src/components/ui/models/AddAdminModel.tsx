@@ -149,7 +149,7 @@ const AddAdminModel: React.FC<ViewModalProps> = ({
                             <div className="border-t border-defaultborder p-4 flex justify-end " >
                                 <button
                                     type="submit"
-                                    className="ti-btn ti-btn-primary bg-primary me-3"
+                                    className="ti-btn ti-btn-primary bg-primary me-3 "
                                     onClick = {onSubmit}
                                 > 
                                     Save

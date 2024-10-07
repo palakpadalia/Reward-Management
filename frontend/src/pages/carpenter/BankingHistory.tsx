@@ -129,7 +129,14 @@ const BankingHistory: React.FC = () => {
 
     return (
         <Fragment>
-            <Pageheader currentpage="Banking History" activepage="Transaction History" mainpage="Banking History" />
+              <Pageheader 
+                currentpage={"Banking History"} 
+                activepage={"/banking-history"} 
+                // mainpage={"/banking-history"} 
+                activepagename="Banking History"
+                // mainpagename="Banking History"
+            />
+            {/* <Pageheader currentpage="Banking History" activepage="Transaction History" mainpage="Banking History" /> */}
 
             <div className="grid grid-cols-12 gap-x-6 bg-white mt-5 rounded-lg shadow-lg">
                 <div className="xl:col-span-12 col-span-12">

@@ -210,7 +210,14 @@ const FAQDashboard: React.FC = () => {
 
     return (
         <Fragment>
-            <Pageheader currentpage="FAQ" activepage="Faq's" mainpage="Faq's" />
+             <Pageheader 
+                currentpage={"FAQ"} 
+                activepage={"/frequently-asked-question"} 
+                // mainpage={"/frequently-asked-question"} 
+                activepagename="FAQ's"
+                // mainpagename="FAQ's "
+            />
+            {/* <Pageheader currentpage="FAQ" activepage="Faq's" mainpage="Faq's" /> */}
             <div className="grid grid-cols-12 gap-x-6 bg-white mt-5 rounded-lg shadow-lg">
                 <div className="xl:col-span-12 col-span-12">
                     <div className="box">

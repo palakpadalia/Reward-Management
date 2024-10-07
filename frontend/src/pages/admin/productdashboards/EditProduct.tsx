@@ -7,6 +7,7 @@ import '../../../assets/css/style.css';
 import '../../../assets/css/pages/admindashboard.css';
 import axios from 'axios';
 import SuccessAlert from '../../../components/ui/alerts/SuccessAlert';
+import { useFrappeGetDocList, useFrappePostCall } from 'frappe-react-sdk';
 
 interface EditProduct {
     product_name?: string;
@@ -29,6 +30,41 @@ const EditProduct: React.FC = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('product');
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+    const [newCategory, setNewCategory] = useState('');
+    const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
+
+
+
+    const { call: createCategory } = useFrappePostCall('reward_management.api.product_master.add_category');
+
+
+    const handleAddCategory = async (event: any) => {
+        event.preventDefault();
+        console.log("first")
+        try {
+            const response = await createCategory({ productCategory: newCategory });
+            if (response) {
+                console.log("product category name:", response);
+                setProductCategory(response.category_name);
+                setNewCategory('');
+                window.location.reload();
+                setShowAddCategoryModal(false);
+            }
+        } catch (error) {
+            console.error("Error adding category:", error);
+        }
+    };
+
+
+
+
+
+
+      // Fetch the product categories
+      const { data: productcategoryData, error } = useFrappeGetDocList<ProductCategory>('Product Category', {
+        fields: ['name', 'category_name']
+    });
+
 
     useEffect(() => {
         if (productPrice && rewardPercent) {
@@ -164,9 +200,24 @@ const EditProduct: React.FC = () => {
         }
     };
 
+
+    const handleCloseModal = () => {
+        setShowAddCategoryModal(false);
+
+    };
+
+
     return (
         <Fragment>
-            <Pageheader currentpage="Edit Product" activepage="Product Master" mainpage="Edit Product" />
+
+            <Pageheader 
+                currentpage={"Edit Product"} 
+                activepage={"/product-master"} 
+                mainpage={"/product-master"} 
+                activepagename='Product Master' 
+                mainpagename='Edit Product' 
+            />
+            {/* <Pageheader currentpage="Edit Product" activepage="Product Master" mainpage="Edit Product" /> */}
             <div className="grid grid-cols-12 gap-6 bg-white mt-5 rounded-lg shadow-lg">
                 <div className="xl:col-span-12 col-span-12">
                     <div className="box">
@@ -238,17 +289,33 @@ const EditProduct: React.FC = () => {
                                         </div>
                                         <div className="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12 gap-4">
                                             <div className="grid grid-cols-12 gap-4">
+                                                {/* Product Category Dropdown */}
                                                 <div className="xl:col-span-12 col-span-12">
                                                     <label htmlFor="product-category-add" className="form-label text-sm font-semibold text-defaulttextcolor">Category</label>
-                                                    <input
-                                                        id="product-category-add"
-                                                        name="product-category-add"
-                                                        className="w-full border border-defaultborder text-defaultsize text-defaulttextcolor rounded-[0.5rem] mt-2 form-control"
-                                                        placeholder="Category"
-                                                        value={productCategory}
-                                                        onChange={(e) => setProductCategory(e.target.value)}
-                                                        required
-                                                    />
+                                                    <div className="flex items-center mt-[8px]">
+                                                        <select
+                                                            id="product-category-add"
+                                                            name="product-category-add"
+                                                            className="w-full border border-defaultborder text-defaultsize text-defaulttextcolor rounded-[0.5rem] mr-2" // added margin-right
+                                                            value={productCategory}
+                                                            onChange={(e) => setProductCategory(e.target.value)}
+                                                            required
+                                                        >
+                                                            <option value="">Select a category</option>
+                                                            {productcategoryData && productcategoryData.map((category) => (
+                                                                <option key={category.name} value={category.category_name}>
+                                                                    {category.category_name}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                        <button
+                                                            type="button"
+                                                            className="ti-btn ti-btn-primary bg-primary p-2 rounded-full" // styled as an icon button
+                                                            onClick={() => setShowAddCategoryModal(true)}
+                                                        >
+                                                            <i className="fas fa-plus" /> {/* Font Awesome icon for plus */}
+                                                        </button>
+                                                    </div>
                                                 </div>
                                                 <div className="xl:col-span-12 col-span-12">
                                                     <label htmlFor="reward-percent-add" className="form-label text-sm font-semibold text-defaulttextcolor">Set Reward Percent</label>
@@ -304,6 +371,45 @@ const EditProduct: React.FC = () => {
                                     </div>
                                 </div>
                             </form>
+
+                             {/* Add New Category Modal */}
+                             {showAddCategoryModal && (
+                                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                                    <div className="modal-overlay" onClick={handleCloseModal} />
+                                    <div className="modal-container bg-white rounded-lg shadow-lg w-full max-w-lg">
+                                        <div className="flex justify-between border-b p-4 ">
+                                            <h6 className="text-sm text-center text-defaulttextcolor font-semibold ">Add New Category</h6>
+                                            <button onClick={handleCloseModal} type="button" className="text-1rem font-semibold text-defaulttextcolor">
+                                                <span className="sr-only">Close</span>
+                                                <i className="ri-close-line"></i>
+                                            </button>
+                                        </div>
+                                        <div className="p-4 overflow-auto flex-1">
+                                            <input
+                                                type="text"
+                                                className="form-control w-full border border-defaultborder text-defaultsize text-defaulttextcolor rounded-[0.5rem] mt-2"
+                                                placeholder="Category Name"
+                                                value={newCategory}
+                                                onChange={(e) => setNewCategory(e.target.value)}
+                                            />
+                                            <div className="border-t border-defaultborder p-4 flex justify-end ">
+                                                <button
+                                                    className="ti-btn ti-btn-primary bg-primary me-3"
+                                                    onClick={handleAddCategory}
+                                                >
+                                                    Save
+                                                </button>
+                                                <button
+                                                    className="bg-defaulttextcolor ti-btn text-white"
+                                                    onClick={handleCloseModal}
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                             {showSuccessAlert && (
                                 <SuccessAlert
                                     showButton={false}

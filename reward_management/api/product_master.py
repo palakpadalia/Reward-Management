@@ -190,7 +190,23 @@ def get_product_details(product_id):
 
     return {"message": product_details}
 
+# Add New Category ------
+@frappe.whitelist(allow_guest=True)
+def add_category(productCategory):
+    try:
+        productcategory=frappe.new_doc("Product Category")
+        productcategory.category_name = productCategory
+        
+           # Save the Product document
+        productcategory.insert(ignore_permissions=True)
 
+        # Return success message
+        return {"success": True, "message": _("Product Category added successfully.")}
+
+    except Exception as e:
+        # Log error and raise exception
+        frappe.log_error(f"Error adding product category: {str(e)}")
+        frappe.throw(_("Failed to add product category. Please try again later."))
 
 # Add New Product--------
 @frappe.whitelist(allow_guest=True)

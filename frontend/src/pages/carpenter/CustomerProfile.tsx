@@ -251,7 +251,14 @@ const AdminProfile = () => {
 
     return (
         <Fragment>
-            <Pageheader currentpage="Profile Setting" activepage="Profile Setting" mainpage="Profile Setting" />
+               <Pageheader 
+                currentpage={"Profile Setting"} 
+                activepage={"/profile-setting"} 
+                // mainpage={"/profile-setting"} 
+                activepagename="Profile Setting"
+                // mainpagename="Profile Setting"
+            />
+            {/* <Pageheader currentpage="Profile Setting" activepage="Profile Setting" mainpage="Profile Setting" /> */}
             <div className='container sm:p-3 !p-0 mt-4'>
                 <div className="grid grid-cols-12 gap-6 mb-[3rem]">
                     <div className="xl:col-span-12 col-span-12">

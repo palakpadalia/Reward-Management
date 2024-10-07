@@ -101,7 +101,14 @@ const ProductQRHistory: React.FC = () => {
     if (error) return <div>{error}</div>;
     return (
         <Fragment>
-            <Pageheader currentpage="Product QR History" activepage="Product Dashboard" mainpage="Product QR History" />
+               <Pageheader 
+                currentpage={"Product QR History"} 
+                activepage={"/product-qr-history"} 
+                // mainpage={"/product-qr-history"} 
+                activepagename='Product QR History' 
+                // mainpagename='Product QR History' 
+            />
+            {/* <Pageheader currentpage="Product QR History" activepage="Product Dashboard" mainpage="Product QR History" /> */}
 
             <div className="grid grid-cols-12 gap-x-6 bg-white mt-5 rounded-lg shadow-lg">
                 <div className="xl:col-span-12 col-span-12">

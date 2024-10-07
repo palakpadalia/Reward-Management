@@ -41,7 +41,14 @@ const Faqs = () => {
 
   return(
   <Fragment>
-    <Pageheader currentpage="Faq's" activepage="" mainpage="Faq's" />
+        <Pageheader 
+                currentpage={"Faq's"} 
+                activepage={"/help-and-support"} 
+                // mainpage={"/help-and-support"} 
+                activepagename="Faq's"
+                // mainpagename="Faq's"
+            />
+    {/* <Pageheader currentpage="Faq's" activepage="" mainpage="Faq's" /> */}
       <div className="grid grid-cols-12 mb-[3rem] !mx-auto">
         <div className="xl:col-span-12 col-span-12">
           <div className="grid grid-cols-12 !mx-auto">

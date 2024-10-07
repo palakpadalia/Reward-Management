@@ -172,7 +172,14 @@ const CarpenterRewardRequest: React.FC = () => {
 
     return (
         <Fragment>
-            <Pageheader currentpage="Reward Request" activepage="Reward Request" mainpage="Reward Request" />
+              <Pageheader 
+                currentpage={"Reward Request"} 
+                activepage={"/redeemption-request"} 
+                // mainpage={"/redeemption-request"} 
+                activepagename="Reward Request"
+                // mainpagename="Reward Request "
+            />
+            {/* <Pageheader currentpage="Reward Request" activepage="Reward Request" mainpage="Reward Request" /> */}
 
             <div className="grid grid-cols-12 gap-x-6 bg-white mt-5 rounded-lg shadow-lg">
                 <div className="xl:col-span-12 col-span-12">

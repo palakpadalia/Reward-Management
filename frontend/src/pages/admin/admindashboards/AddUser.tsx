@@ -123,7 +123,14 @@ const AddUserDashboard: React.FC = () => {
 
     return (
         <Fragment>
-            <Pageheader currentpage="Add User" activepage="Add User" mainpage="Add User" />
+            <Pageheader 
+                currentpage={"Add User"} 
+                activepage={"/add-user"} 
+                // mainpage={"/add-user"} 
+                activepagename='Add User' 
+                // mainpagename='Add User' 
+            />
+            {/* <Pageheader currentpage="Add User" activepage="Add User" mainpage="Add User" /> */}
 
             <div className="grid grid-cols-12 gap-x-6 bg-white mt-5 rounded-lg shadow-lg">
                 <div className="xl:col-span-12 col-span-12">

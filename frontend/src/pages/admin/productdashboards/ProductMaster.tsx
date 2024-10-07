@@ -191,7 +191,14 @@ const ProductMaster: React.FC = () => {
 
     return (
         <Fragment>
-            <Pageheader currentpage="Product Master" activepage="Product Dashboard" mainpage="Product Master" />
+             <Pageheader 
+                currentpage={"Product Master"} 
+                activepage={"/product-master"} 
+                // mainpage={"/product-master"} 
+                activepagename='Product Master' 
+                // mainpagename='Product Master' 
+            />
+            {/* <Pageheader currentpage={pagecurrentPage} activepage={activePage} mainpage={mainPage}  /> */}
 
             <div className="grid grid-cols-12 gap-x-6 bg-white mt-5 rounded-lg shadow-lg">
                 <div className="xl:col-span-12 col-span-12">

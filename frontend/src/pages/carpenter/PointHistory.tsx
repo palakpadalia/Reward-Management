@@ -133,7 +133,15 @@ const PointHistory: React.FC = () => {
 
     return (
         <Fragment>
-            <Pageheader currentpage="Point History" activepage="Point History" mainpage="Point History" />
+
+           <Pageheader 
+                currentpage={"Point History"} 
+                activepage={"/point-history"} 
+                // mainpage={"/point-history"} 
+                activepagename="Point History"
+                // mainpagename="Point History"
+            />
+            {/* <Pageheader currentpage="Point History" activepage="Point History" mainpage="Point History" /> */}
 
             <div className="grid grid-cols-12 gap-x-6 mt-5">
                 <div className="xxl:col-span-12 xl:col-span-12 lg:col-span-12 col-span-12">

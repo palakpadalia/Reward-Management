@@ -75,7 +75,7 @@ const AdminProfile = () => {
                        
                     } 
                 );
-                console.log("userData----->", userResponse.data.message);
+                // console.log("userData----->", userResponse.data.message);
                 //   const userData = userResponse.data;
 
                 const userdata = await axios.get(`/api/resource/User/${userResponse.data.message}`,
@@ -84,7 +84,7 @@ const AdminProfile = () => {
                      
                     }
                 );
-                console.log("userData----->", userdata.data.data);
+                // console.log("userData----->", userdata.data.data);
                 //   document.getElementById('first-name').innerText = userdata.data.data.first_name || "";
                 setFirstName(userdata.data.data.first_name || "");
                 setLastName(userdata.data.data.last_name || "");
@@ -325,7 +325,14 @@ const AdminProfile = () => {
 
     return (
         <Fragment>
-            <Pageheader currentpage="Admin Profile" activepage="Admin Profile" mainpage="Admin Profile" />
+                <Pageheader 
+                currentpage={"Admin Profile"} 
+                activepage={"/admin-profile"} 
+                // mainpage={"/admin-profile"} 
+                activepagename="Admin Profile"
+                // mainpagename="Admin Profile"
+            />
+            {/* <Pageheader currentpage="Admin Profile" activepage="Admin Profile" mainpage="Admin Profile" /> */}
             <div className='container sm:p-3 !p-0 mt-4'>
                 <div className="grid grid-cols-12 gap-6 mb-[3rem]">
                     <div className="xl:col-span-12 col-span-12">

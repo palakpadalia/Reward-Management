@@ -6,6 +6,7 @@ import '../../assets/css/sidebar.css';
 import { SidebarData } from './sidebar/sidebardata';
 import SubMenu from './sidebar/submenu';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 console.log(SidebarData);
 
@@ -20,7 +21,7 @@ const Sidebar = ({ isSidebarActive }: any) => {
     const carpenterrole = localStorage.getItem('carpenterrole');
     console.log(carpenterrole);
     const roles = storedRoles ? JSON.parse(storedRoles) : [];
-    console.log("Roles from localStorage:", roles);
+    // console.log("Roles from localStorage:", roles);
 
     // Function to get the index of a specific item by title
     const getItemIndex = (title: any) => SidebarData.findIndex(item => item.title === title);
@@ -43,7 +44,7 @@ const Sidebar = ({ isSidebarActive }: any) => {
     };
 
     const itemsToRender = determineItemsToRender();
-    console.log("itemsToRender---------------------------------->",itemsToRender);
+    // console.log("itemsToRender---------------------------------->",itemsToRender);
 
     useEffect(() => {
         const fetchWebsiteSettings = async () => {

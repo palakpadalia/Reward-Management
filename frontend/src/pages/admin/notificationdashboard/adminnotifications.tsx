@@ -98,7 +98,14 @@ const NotificationsDashboard = () => {
 
     return (
         <Fragment>
-            <Pageheader currentpage="Notifications" activepage="Pages" mainpage="Notifications" />
+              <Pageheader 
+                currentpage={"Notifications"} 
+                activepage={"/notifications"} 
+                // mainpage={"/notifications"} 
+                activepagename="Notifications"
+                // mainpagename="Notifications "
+            />
+            {/* <Pageheader currentpage="Notifications" activepage="Pages" mainpage="Notifications" /> */}
             <div className="container">
                 <div className="grid grid-cols-12 !mx-auto">
                     <div className="xxl:col-span-2 col-span-12"></div>

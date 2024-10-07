@@ -6,6 +6,8 @@ import TableComponent from '../../../components/ui/tables/tablecompnent'; // Ens
 import TableBoxComponent from '../../../components/ui/tables/tableboxheader';
 import '../../../assets/css/style.css';
 import '../../../assets/css/pages/admindashboard.css';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 interface QRCodeImage {
     qr_code_image: string;
@@ -30,13 +32,13 @@ const DownloadQRCode: React.FC = () => {
     const productName = urlParams.get('product');
 
     useEffect(() => {
-        document.title='Download QR';
+        document.title = 'Download QR';
         const fetchData = async () => {
             if (!productName) {
                 setError('Product name is missing in the URL');
                 return;
             }
-        
+
             try {
                 const response = await axios.get(`/api/method/reward_management.api.print_qr_code.get_product_by_name`, {
                     params: { productName },
@@ -52,7 +54,7 @@ const DownloadQRCode: React.FC = () => {
                         points: item.qr_code_images.reduce((acc: number, img: any) => acc + img.points, 0),
                         qr_code_images: item.qr_code_images, // Include qr_code_images here
                     }));
-                    
+
                     setData(aggregatedData);
                 } else {
                     setData([]);
@@ -61,7 +63,7 @@ const DownloadQRCode: React.FC = () => {
                 setError(error instanceof Error ? error.message : 'Failed to fetch data');
             }
         };
-        
+
         fetchData();
     }, [productName]);
 
@@ -94,29 +96,60 @@ const DownloadQRCode: React.FC = () => {
     };
 
     // Function to handle QR code image download
-    const handleDownloadQR = (row: DownloadProductQRCode) => {
+    // const handleDownloadQR = (row: DownloadProductQRCode) => {
+    //     if (row.qr_code_images) {
+    //         row.qr_code_images.forEach((image) => {
+    //             const link = document.createElement('a');
+    //             link.href = image.qr_code_image;
+    //             link.download = image.qr_code_image.split('/').pop() || 'qr_code.png';
+    //             link.click();
+    //         });
+    //     }
+    // };
+
+    // Function to handle QR code image download as a zip file
+    const handleDownloadQR = async (row: DownloadProductQRCode) => {
         if (row.qr_code_images) {
-            row.qr_code_images.forEach((image) => {
-                const link = document.createElement('a');
-                link.href = image.qr_code_image;
-                link.download = image.qr_code_image.split('/').pop() || 'qr_code.png';
-                link.click();
+            const zip = new JSZip();
+            const imgFolder = zip.folder("qr_code_images");
+
+            // Fetch each QR code image and add it to the zip folder
+            const imageFetchPromises = row.qr_code_images.map(async (image) => {
+                const response = await fetch(image.qr_code_image);
+                const blob = await response.blob();
+                const imageName = image.qr_code_image.split('/').pop() || 'qr_code.png';
+                imgFolder?.file(imageName, blob); // Add image blob to zip folder
+            });
+
+            // Wait for all images to be fetched
+            await Promise.all(imageFetchPromises);
+
+            // Generate zip and trigger download
+            zip.generateAsync({ type: 'blob' }).then((blob) => {
+                saveAs(blob, `${row.product_name || 'qr_codes'}.zip`);
             });
         }
     };
 
     return (
         <Fragment>
-            <Pageheader currentpage="Download QR" activepage="Product Master" mainpage="Download QR" />
+             <Pageheader 
+                currentpage={"Download QR"} 
+                activepage={"/product-master"} 
+                mainpage={"/download-qr-code"} 
+                activepagename='Product Master' 
+                mainpagename='Download QR' 
+            />
+            {/* <Pageheader currentpage="Download QR" activepage="Product Master" mainpage="Download QR" /> */}
             <div className="grid grid-cols-12 gap-x-6 bg-white mt-5 rounded-lg shadow-lg">
                 <div className="xl:col-span-12 col-span-12">
                     <div className="box">
-                        <TableBoxComponent 
-                            title="Download Product QR" 
-                            onSearch={handleSearch} 
-                            onAddButtonClick={handleAddProductClick} 
-                            buttonText="Back" 
-                            showButton={true} 
+                        <TableBoxComponent
+                            title="Download Product QR"
+                            onSearch={handleSearch}
+                            onAddButtonClick={handleAddProductClick}
+                            buttonText="Back"
+                            showButton={true}
                             icon="ri-arrow-left-line"
                         />
 
@@ -134,7 +167,7 @@ const DownloadQRCode: React.FC = () => {
                                 handlePrevPage={handlePrevPage}
                                 handleNextPage={handleNextPage}
                                 handlePageChange={handlePageChange}
-                                showProductQR={false} 
+                                showProductQR={false}
                                 editHeader='Download QR'
                                 showEdit={true} // Adjust based on your needs
                                 iconsConfig={{

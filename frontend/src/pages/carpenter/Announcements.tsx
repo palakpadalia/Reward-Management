@@ -50,7 +50,14 @@ const Announcements = () => {
 
     return (
         <Fragment>
-            <Pageheader currentpage="Announcements" activepage="Pages" mainpage="Announcements" />
+              <Pageheader 
+                currentpage={"Announcement"} 
+                activepage={"/customer-announcement"} 
+                // mainpage={"/customer-announcement"} 
+                activepagename='Announcement' 
+                // mainpagename='Announcement' 
+            />
+            {/* <Pageheader currentpage="Announcements" activepage="Pages" mainpage="Announcements" /> */}
             <div className="container">
                 <div className="grid grid-cols-12 !mx-auto">
                     <div className="xxl:col-span-2 col-span-12"></div>

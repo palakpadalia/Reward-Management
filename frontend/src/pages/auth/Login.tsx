@@ -89,13 +89,13 @@ const Login = () => {
 
             // Fetch roles
             const rolesResponse = await fetchUserRoles(username);
-            console.log("rolesResponse----", rolesResponse);
+            // console.log("rolesResponse----", rolesResponse);
 
             // Extract roles from the response
             const roles = rolesResponse.message || []; // Assuming `message` contains the array of roles
             localStorage.setItem('user_roles', JSON.stringify(roles));
 
-            console.log('User roles:', roles);
+            // console.log('User roles:', roles);
 
             login({ username: username, password: password });
 
@@ -358,19 +358,19 @@ const Login = () => {
                     // If banner_image exists, set it as the logo
                     if (banner_image) {
                         const fullBannerImageURL = `${window.origin}${banner_image}`;
-                        setLogo(fullBannerImageURL); // Set the banner image as the logo
-                        console.log('Banner Image Set:', fullBannerImageURL);
+                        setLogo(fullBannerImageURL); 
+                        // console.log('Banner Image Set:', fullBannerImageURL);
                     } else {
-                        console.log('No banner_image found, using default logo.');
-                        setLogo("/assets/frappe/images/frappe-framework-logo.svg"); // Set to default logo if no banner_image found
+                        // console.log('No banner_image found, using default logo.');
+                        setLogo("/assets/frappe/images/frappe-framework-logo.svg"); 
                     }
                 } else {
-                    console.error('API response was not successful:', response.data.message);
-                    setLogo("/assets/frappe/images/frappe-framework-logo.svg"); // Set to default logo on failure
+                    // console.error('API response was not successful:', response.data.message);
+                    setLogo("/assets/frappe/images/frappe-framework-logo.svg"); 
                 }
             } catch (error) {
                 console.error('Error fetching website settings:', error);
-                setLogo("/assets/frappe/images/frappe-framework-logo.svg");// Set to default logo on error
+                setLogo("/assets/frappe/images/frappe-framework-logo.svg");
             } finally {
                 setLoading(false); // End loading state
             }
