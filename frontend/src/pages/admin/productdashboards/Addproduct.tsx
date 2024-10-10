@@ -30,6 +30,7 @@ const AddProduct: React.FC = () => {
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
     const navigate = useNavigate(); // Initialize navigate
     const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
+    const [showRewardPercent, setShowRewardPercent] = useState(false); 
 
 
 
@@ -181,7 +182,7 @@ const AddProduct: React.FC = () => {
     };
 
     return (
-        <Fragment>
+        <>
          <Pageheader 
                 currentpage={"Add Product"} 
                 activepage={"/product-master"} 
@@ -235,7 +236,7 @@ const AddProduct: React.FC = () => {
                                                         placeholder="Reward points"
                                                         value={rewardPoints}
                                                         onChange={(e) => setRewardPoints(e.target.value)}
-                                                        readOnly
+                                                        readOnly={showRewardPercent} // Make read-only if the checkbox is checked
                                                     />
                                                 </div>
 
@@ -271,7 +272,7 @@ const AddProduct: React.FC = () => {
                                                         <select
                                                             id="product-category-add"
                                                             name="product-category-add"
-                                                            className="w-full border border-defaultborder text-defaultsize text-defaulttextcolor rounded-[0.5rem] mr-2" // added margin-right
+                                                            className="w-full border border-defaultborder text-defaultsize text-defaulttextcolor rounded-[0.5rem] mr-1" // added margin-right
                                                             value={productCategory}
                                                             onChange={(e) => setProductCategory(e.target.value)}
                                                             required
@@ -285,27 +286,44 @@ const AddProduct: React.FC = () => {
                                                         </select>
                                                         <button
                                                             type="button"
-                                                            className="ti-btn ti-btn-primary bg-primary p-2 rounded-full" // styled as an icon button
+                                                            className="ti-btn ti-btn-primary bg-primary p-3 rounded-[0.5rem]" 
                                                             onClick={() => setShowAddCategoryModal(true)}
                                                         >
-                                                            <i className="fas fa-plus" /> {/* Font Awesome icon for plus */}
+                                                            <i className="fas fa-plus" /> 
                                                         </button>
                                                     </div>
                                                 </div>
 
 
-                                                <div className="xl:col-span-12 col-span-12 ">
-                                                    <label htmlFor="reward-percent-add" className="form-label text-sm font-semibold text-defaulttextcolor">Set Reward Percent</label>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control w-full text-defaultsize text-defaulttextcolor border border-defaultborder rounded-[0.5rem] mt-2"
-                                                        id="reward-percent-add"
-                                                        placeholder="Set Reward Percent"
-                                                        value={rewardPercent}
-                                                        onChange={(e) => setRewardPercent(e.target.value)}
-                                                        required
-                                                    />
+                                                    {/* Toggle Checkbox for Reward Percent */}
+                                                    <div className="xl:col-span-12 col-span-12 rounded-full">
+                                                    <label className="form-label text-sm font-semibold text-defaulttextcolor ">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="mr-2"
+                                                            checked={showRewardPercent}
+                                                            onChange={() => setShowRewardPercent(!showRewardPercent)}
+                                                        />
+                                                        Add Reward Percent
+                                                    </label>
                                                 </div>
+                                                {/* Conditionally render Reward Percent input */}
+                                                {showRewardPercent && (
+                                                    <div className="xl:col-span-12 col-span-12">
+                                                        <label htmlFor="reward-percent-add" className="form-label text-sm font-semibold text-defaulttextcolor">Set Reward Percent</label>
+                                                        <input
+                                                            type="text"
+                                                            className="form-control w-full text-defaultsize text-defaulttextcolor border border-defaultborder rounded-[0.5rem] mt-2"
+                                                            id="reward-percent-add"
+                                                            placeholder="Set Reward Percent"
+                                                            value={rewardPercent}
+                                                            onChange={(e) => setRewardPercent(e.target.value)}
+                                                            required
+                                                        /> 
+                                                    </div>
+                                                )}
+
+                                            
                                                 <div className="xl:col-span-12 col-span-12 product-documents-container ">
                                                     <p className="font-semibold mb-2 text-sm text-defaulttextcolor">Product Image</p>
                                                     <input
@@ -333,14 +351,14 @@ const AddProduct: React.FC = () => {
                                         <button
                                             type="button"
                                             className="ti-btn ti-btn-success bg-defaulttextcolor ti-btn text-white !font-medium m-1"
-                                            onClick={resetForm} // Add the onClick event to reset the form
+                                            onClick={resetForm} 
                                         >
                                             Cancel
                                         </button>
                                     </div>
                                 </div>
                             </form>
-                            {/* Add New Category Modal */}
+                          
                             {showAddCategoryModal && (
                                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                                     <div className="modal-overlay" onClick={handleCloseModal} />
@@ -389,7 +407,7 @@ const AddProduct: React.FC = () => {
                     </div>
                 </div>
             </div>
-        </Fragment>
+        </>
     );
 };
 

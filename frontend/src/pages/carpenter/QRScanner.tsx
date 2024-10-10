@@ -65,12 +65,15 @@ const QRScanner = () => {
 
     const initQRScanner = () => {
       const onScanSuccess = async (decodedText: string) => {
+        console.log("Decoded QR Code:", decodedText);
         try {
           const productResponse = await axios.get(`/api/method/reward_management.api.qr_code_product_detail.get_product_details_from_qr`, {
             params: { decode_text: decodedText },
           });
+       
 
           if (productResponse.data.message?.error) {
+            console.log("error message",productResponse.data.message?.error);
             setAlertMessage("This QR Code has already been scanned.");
             setIsError(true);
           } else {

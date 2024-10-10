@@ -117,8 +117,8 @@ const AddUserDashboard: React.FC = () => {
     };
 
     const handleSearch = (value: string) => {
-        setSearchQuery(value); // Update search query
-        setCurrentPage(1); // Reset to first page on new search
+        setSearchQuery(value);
+        setCurrentPage(1); 
     };
 
     return (
@@ -126,11 +126,11 @@ const AddUserDashboard: React.FC = () => {
             <Pageheader 
                 currentpage={"Add User"} 
                 activepage={"/add-user"} 
-                // mainpage={"/add-user"} 
+                
                 activepagename='Add User' 
-                // mainpagename='Add User' 
+               
             />
-            {/* <Pageheader currentpage="Add User" activepage="Add User" mainpage="Add User" /> */}
+           
 
             <div className="grid grid-cols-12 gap-x-6 bg-white mt-5 rounded-lg shadow-lg">
                 <div className="xl:col-span-12 col-span-12">

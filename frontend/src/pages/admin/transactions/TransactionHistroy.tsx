@@ -20,8 +20,12 @@ interface Transaction {
 
 const TransactionHistory: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(5); // Number of items per page
-    const [searchQuery, setSearchQuery] = useState(''); // State for search query
+     // Number of items per page
+    const [itemsPerPage] = useState(5);
+     // State for search query
+    const [searchQuery, setSearchQuery] = useState('');
+    const [fromDate, setFromDate] = useState<Date | null>(null);
+    const [toDate, setToDate] = useState<Date | null>(null);
 
     useEffect(()=>{
         document.title='Transaction History';
@@ -59,6 +63,12 @@ const TransactionHistory: React.FC = () => {
         console.log("Search value:", value);
     };
 
+    const handleDateFilter = (from: Date | null, to: Date | null) => {
+        setFromDate(from);
+        setToDate(to);
+        setCurrentPage(1);
+    };
+
     const handleAddProductClick = () => {
         console.log("Add Product button clicked");
     };
@@ -76,31 +86,60 @@ const TransactionHistory: React.FC = () => {
         transfer_date: transaction.transfer_date ? formatDate(transaction.transfer_date) : '',
     })) || [];
 
+
+
+    const parseDateString = (dateString: string): Date | null => {
+        if (typeof dateString !== 'string') {
+            console.error("Expected a string, but received:", dateString);
+            return null;
+        }
+        const parts = dateString.split('-');
+        if (parts.length !== 3) {
+            console.error("Invalid date format:", dateString);
+            return null;
+        }
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; 
+        const year = parseInt(parts[2], 10);
+        return new Date(year, month, day);
+    };
+
+
     const filteredData = formattedTransactionData.filter(transaction => {
         const query = searchQuery.toLowerCase();
-        return (
+        
+        // Parse the transfer_date for filtering
+        const transactionDateString = transaction.transfer_date;
+        const isDateValid = typeof transactionDateString === 'string' && transactionDateString.trim() !== '';
+        const transactionDate = isDateValid ? parseDateString(transactionDateString) : null;
+    
+        // Check if the transaction date is within the selected date range
+        const isWithinDateRange = (!fromDate || (transactionDate && transactionDate >= fromDate)) &&
+            (!toDate || (transactionDate && transactionDate <= toDate));
+    
+        const matchesSearchQuery = 
             (transaction.name && transaction.name.toLowerCase().includes(query)) ||
             (transaction.carpainter_id && transaction.carpainter_id.toLowerCase().includes(query)) ||
             (transaction.redeem_request_id && transaction.redeem_request_id.toString().toLowerCase().includes(query)) ||
             (transaction.carpainter_name && transaction.carpainter_name.toLowerCase().includes(query)) ||
             (transaction.transaction_id && transaction.transaction_id.toString().toLowerCase().includes(query)) ||
-            (transaction.transfer_date && transaction.transfer_date.toLowerCase().includes(query)) ||
             (transaction.amount !== undefined && transaction.amount.toString().toLowerCase().includes(query)) ||
             (transaction.mobile_number && transaction.mobile_number.toLowerCase().includes(query)) ||
-            (transaction.transfer_time && transaction.transfer_time.toLowerCase().includes(query))
-        );
+            (transaction.transfer_time && transaction.transfer_time.toLowerCase().includes(query));
+    
+        // Return true if it is within the date range and matches the search query
+        return isWithinDateRange && matchesSearchQuery;
     });
-
     return (
         <Fragment>
              <Pageheader 
                 currentpage={"Transaction History"} 
                 activepage={"/transaction-history"} 
-                // mainpage={"/transaction-history"} 
+        
                 activepagename="Transaction History"
-                // mainpagename="Transaction History"
+             
             />
-            {/* <Pageheader currentpage="Transaction History" activepage="Transaction History" mainpage="Transaction History" /> */}
+           
 
             <div className="grid grid-cols-12 gap-x-6 bg-white mt-5 rounded-lg shadow-lg">
                 <div className="xl:col-span-12 col-span-12">
@@ -111,6 +150,9 @@ const TransactionHistory: React.FC = () => {
                             onAddButtonClick={handleAddProductClick} 
                             buttonText="Add Announcement" 
                             showButton={false}
+                            showFromDate={true}
+                            showToDate={true}
+                            onDateFilter={handleDateFilter}
                         />
 
                         <div className="box-body m-5">

@@ -111,7 +111,7 @@ useEffect(() => {
                   if (favicon) {
                       // Prepend window.origin to the splash_image path
                       const absoluteFaviconUrl = `${window.origin}${favicon}`;
-                      console.log("Absolute favicon URL:", absoluteFaviconUrl); L
+                      console.log("Absolute favicon URL:", absoluteFaviconUrl); 
                       setFavicons(absoluteFaviconUrl); 
                   } else {
                       const defaultFaviconUrl = "/assets/frappe/images/frappe-framework-logo.svg";

@@ -24,26 +24,26 @@ const ProductQRHistory: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [itemsPerPage] = useState<number>(150);
+    const [itemsPerPage] = useState<number>(10);
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const [fromDate, setFromDate] = useState<Date | null>(null);
+    const [toDate, setToDate] = useState<Date | null>(null);
 
     useEffect(() => {
-        document.title='Product QR History';
+        document.title = 'Product QR History';
         const fetchData = async () => {
             try {
                 const response = await axios.get('/api/method/reward_management.api.print_qr_code.print_qr_code');
                 const fetchedData = response.data?.message ?? [];
-                console.log("Fetched Data:", fetchedData); // Log the raw fetched data
                 
                 const flattenedData = fetchedData.flatMap((item: any) =>
                     item.qr_table_data?.map((qrItem: any) => ({
                         ...qrItem,
-                        scanned: qrItem.scanned == '1' ? 'Scanned' : 'Not Scanned',
+                        scanned: qrItem.scanned === '1' ? 'Scanned' : 'Not Scanned',
                     })) ?? []
                 );
                 
-                console.log("Flattened Data:", flattenedData); // Log the flattened data
                 setData(flattenedData);
             } catch (error) {
                 setError(error instanceof Error ? error.message : 'Failed to fetch data');
@@ -54,32 +54,53 @@ const ProductQRHistory: React.FC = () => {
     
         fetchData();
     }, []);
-    
+
+    const parseDateString = (dateString: string): Date | null => {
+        console.log("Input dateString:", dateString); // Log the value
+        if (typeof dateString !== 'string') {
+            console.error("Expected a string, but received:", dateString);
+            return null; // or some default value
+        }
+        const parts = dateString.split('-'); // Assuming you're splitting by '-'
+        if (parts.length !== 3) {
+            console.error("Invalid date format:", dateString);
+            return null; // or some default value
+        }
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // Months are 0-based in JavaScript
+        const year = parseInt(parts[2], 10);
+        return new Date(year, month, day);
+    };
     const filteredData = data.filter(item => {
         const query = searchQuery.toLowerCase();
+        const generatedDateString = item.generated_date;
+        const isDateValid = typeof generatedDateString === 'string' && generatedDateString.trim() !== '';
+        const generatedDate = isDateValid ? parseDateString(generatedDateString) : null;
+    
+        // Check if generatedDate is valid
+        const isWithinDateRange = (!fromDate || (generatedDate && generatedDate >= fromDate)) &&
+                                  (!toDate || (generatedDate && generatedDate <= toDate));
+        
         return (
-            item.product_qr_name?.toLowerCase().includes(query) ||
-            item.product_table_name?.toLowerCase().includes(query) ||
-            item.carpenter_id?.toLowerCase().includes(query) ||
-            item.points?.toString().toLowerCase().includes(query) ||
-            item.scanned?.toLowerCase().includes(query) ||
-            item.generated_date?.toLowerCase().includes(query)
+            isWithinDateRange &&
+            (
+                item.product_qr_name?.toLowerCase().includes(query) ||
+                item.product_table_name?.toLowerCase().includes(query) ||
+                item.carpenter_id?.toLowerCase().includes(query) ||
+                item.points?.toString().toLowerCase().includes(query) ||
+                item.scanned?.toLowerCase().includes(query) ||
+                (isDateValid && generatedDateString.toLowerCase().includes(query))
+            )
         );
     });
-    
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-    console.log("total pages",totalPages);
-    const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-    console.log("data per page",paginatedData);
+
     const handlePrevPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
+        if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
+
     const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        }
+        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
     };
 
     const handlePageChange = (pageNumber: number) => {
@@ -91,25 +112,27 @@ const ProductQRHistory: React.FC = () => {
         setCurrentPage(1);
     };
 
+    const handleDateFilter = (from: Date | null, to: Date | null) => {
+        setFromDate(from);
+        setToDate(to);
+        setCurrentPage(1); // Reset to the first page
+    };
+
     const handleAddProductClick = () => {
         console.log("Add Product button clicked");
         navigate('/redeemption-history');
     };
 
-
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
+
     return (
         <Fragment>
-               <Pageheader 
+            <Pageheader 
                 currentpage={"Product QR History"} 
                 activepage={"/product-qr-history"} 
-                // mainpage={"/product-qr-history"} 
                 activepagename='Product QR History' 
-                // mainpagename='Product QR History' 
             />
-            {/* <Pageheader currentpage="Product QR History" activepage="Product Dashboard" mainpage="Product QR History" /> */}
-
             <div className="grid grid-cols-12 gap-x-6 bg-white mt-5 rounded-lg shadow-lg">
                 <div className="xl:col-span-12 col-span-12">
                     <div className="box">
@@ -119,6 +142,9 @@ const ProductQRHistory: React.FC = () => {
                             onAddButtonClick={handleAddProductClick}
                             buttonText="Add New Product"
                             showButton={false}
+                            showFromDate={true}
+                            showToDate={true}
+                            onDateFilter={handleDateFilter}
                         />
 
                         <div className="box-body m-5">
@@ -138,7 +164,7 @@ const ProductQRHistory: React.FC = () => {
                                         header: 'QR Image',
                                         accessor: 'qr_code_image',
                                         render: (imageUrl) => {
-                                            const imageSrc = imageUrl ? imageUrl : 'placeholder.png'; 
+                                            const imageSrc = imageUrl || 'placeholder.png'; 
                                             return (
                                                 <img
                                                     src={imageSrc}
@@ -152,7 +178,7 @@ const ProductQRHistory: React.FC = () => {
                                         }
                                     },
                                 ]}
-                                data={paginatedData}
+                                data={filteredData}
                                 currentPage={currentPage}
                                 itemsPerPage={itemsPerPage}
                                 handlePrevPage={handlePrevPage}

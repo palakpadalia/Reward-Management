@@ -107,29 +107,84 @@ const DownloadQRCode: React.FC = () => {
     //     }
     // };
 
-    // Function to handle QR code image download as a zip file
-    const handleDownloadQR = async (row: DownloadProductQRCode) => {
-        if (row.qr_code_images) {
-            const zip = new JSZip();
-            const imgFolder = zip.folder("qr_code_images");
+//   // Function to handle QR code image download as a zip file
+const handleDownloadQR = async (row: DownloadProductQRCode) => {
+    if (row.qr_code_images) {
+        const zip = new JSZip();
+        const imgFolder = zip.folder("qr_code_images");
 
-            // Fetch each QR code image and add it to the zip folder
-            const imageFetchPromises = row.qr_code_images.map(async (image) => {
-                const response = await fetch(image.qr_code_image);
-                const blob = await response.blob();
+        const imageFetchPromises = row.qr_code_images.map(async (image) => {
+            const response = await fetch(image.qr_code_image);
+            const blob = await response.blob();
+            const imageBitmap = await createImageBitmap(blob); 
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            if (ctx) {
+                const padding = 20; 
+                // const productQrNamePaddingLeft = 30;
+
+                const productName = row.product_name || 'Unknown Product';
+                const productQrId = image.qr_code_image.split('/').pop()?.replace('.png', '') || 'Unknown QR Code ID';
+
+                // Set font for product_name and measure its height
+                ctx.font = '20px Arial'; 
+                const productNameHeight = 20; 
+                const productNameWidth = ctx.measureText(productName).width; 
+
+                // Set font for product_qr_id and measure its width
+                ctx.font = '20px Arial'; 
+                const productQrIdHeight = 20; 
+                const productQrIdWidth = ctx.measureText(productQrId).width; 
+
+                // Calculate canvas dimensions
+                const canvasWidth = Math.max(imageBitmap.width, productNameWidth, productQrIdWidth) + 3 * padding;
+                const canvasHeight = imageBitmap.height + productNameHeight + productQrIdHeight + 60; 
+
+                // Set canvas dimensions
+                canvas.width = canvasWidth; 
+                canvas.height = canvasHeight;
+
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                const imageX = (canvasWidth - imageBitmap.width) / 2; 
+                const imageY = padding + 10; 
+                ctx.drawImage(imageBitmap, imageX, imageY);
+
+                // Draw product_name vertically on the left side of the QR code
+                ctx.save();
+                ctx.textAlign = 'center';
+                ctx.translate(padding - 10, (canvasHeight/2)); 
+                // Rotate 90 degrees counterclockwise
+                ctx.rotate(-Math.PI / 2); 
+                ctx.fillStyle = '#000000'; 
+
+               // Draw the product name vertically
+                ctx.fillText(productName, 0, 10);
+                ctx.restore();
+
+                // Draw product_qr_id centered horizontally below the QR code
+                ctx.fillStyle = '#000000'; 
+                ctx.font = '12px Arial'; 
+                // 5 pixels below the QR code image
+                const productQrIdY = imageY + imageBitmap.height + 5 + productQrIdHeight; 
+                ctx.fillText(productQrId, (canvasWidth - productQrIdWidth) / 2, productQrIdY); 
+
+                const finalImageBlob = await new Promise<Blob>((resolve) => canvas.toBlob(resolve));
                 const imageName = image.qr_code_image.split('/').pop() || 'qr_code.png';
-                imgFolder?.file(imageName, blob); // Add image blob to zip folder
-            });
+                imgFolder?.file(imageName, finalImageBlob!); 
+            }
+        });
 
-            // Wait for all images to be fetched
-            await Promise.all(imageFetchPromises);
+        await Promise.all(imageFetchPromises);
 
-            // Generate zip and trigger download
-            zip.generateAsync({ type: 'blob' }).then((blob) => {
-                saveAs(blob, `${row.product_name || 'qr_codes'}.zip`);
-            });
-        }
-    };
+        zip.generateAsync({ type: 'blob' }).then((blob) => {
+            saveAs(blob, `${row.product_name || 'qr_codes'}.zip`);
+        });
+    }
+};
 
     return (
         <Fragment>

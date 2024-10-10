@@ -34,6 +34,8 @@ const FAQDashboard: React.FC = () => {
     const [alertMessage, setAlertMessage] = useState('');
     const [alertTitle, setAlertTitle] = useState('');
     const [faqToDelete, setFaqToDelete] = useState<FAQ | null>(null);
+    const [fromDate, setFromDate] = useState<Date | null>(null);
+    const [toDate, setToDate] = useState<Date | null>(null);
 
     const { data } = useFrappeGetDocList<FAQ>('FAQ', {
         fields: ['name', 'question', 'status', 'created_date','answer'],
@@ -51,7 +53,7 @@ const FAQDashboard: React.FC = () => {
             const timer = setTimeout(() => {
                 setShowSuccessAlert(false);
                 window.location.reload();
-            }, 3000); // Hide alert after 3 seconds
+            }, 3000); 
             return () => clearTimeout(timer); // Cleanup timeout on component unmount
         }
     }, [data,showSuccessAlert]);
@@ -74,9 +76,17 @@ const FAQDashboard: React.FC = () => {
     };
 
     const handleSearch = (value: string) => {
-        setSearchQuery(value); // Update search query
+         // Update search query
+        setSearchQuery(value);
         setCurrentPage(1);
         console.log("Search value:", value);
+    };
+
+    // date filter---
+    const handleDateFilter = (from: Date | null, to: Date | null) => {
+        setFromDate(from);
+        setToDate(to);
+        setCurrentPage(1);
     };
 
     const { createDoc } = useFrappeCreateDoc();
@@ -193,31 +203,63 @@ const FAQDashboard: React.FC = () => {
         return `${day}-${month}-${year}`;
     };
 
+
+    const parseDateString = (dateString: string): Date | null => {
+        if (typeof dateString !== 'string') {
+            console.error("Expected a string, but received:", dateString);
+            return null;
+        }
+        const parts = dateString.split('-');
+        if (parts.length !== 3) {
+            console.error("Invalid date format:", dateString);
+            return null;
+        }
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; 
+        const year = parseInt(parts[2], 10);
+        return new Date(year, month, day);
+    };
+    
+ 
     const formattedFAQData = faqData?.map(faq => ({
         ...faq,
         created_date: faq.created_date ? formatDate(faq.created_date) : '',
     })) || [];
 
-    const filteredData = formattedFAQData.filter(faqData => {
-        const query = searchQuery.toLowerCase();
-        return (
-            (faqData.name && faqData.name.toLowerCase().includes(query)) ||
-            (faqData.question && faqData.question.toLowerCase().includes(query)) ||
-            (faqData.status && faqData.status.toString().toLowerCase().includes(query)) ||
-            (faqData.created_date && faqData.created_date.toLowerCase().includes(query))
-        );
-    });
+ 
+// Filter the FAQ data based on search query and date range
+const filteredData = formattedFAQData.filter(faq => {
+    const query = searchQuery.toLowerCase();
+    
+    
+    // Parse the created_date for filtering
+    const createdDateString = faq.created_date;
+    const isDateValid = typeof createdDateString === 'string' && createdDateString.trim() !== '';
+    const faqDate = isDateValid ? parseDateString(createdDateString) : null;
+
+    // Check if the created_date is within the selected date range
+    const isWithinDateRange = (!fromDate || (faqDate && faqDate >= fromDate)) &&
+                              (!toDate || (faqDate && faqDate <= toDate));
+
+    // Check for query matches
+    const isNameMatch = faq.name && faq.name.toLowerCase().includes(query);
+    const isQuestionMatch = faq.question && faq.question.toLowerCase().includes(query);
+    const isStatusMatch = faq.status && faq.status.toString().toLowerCase().includes(query);
+    
+    // Combine conditions
+    return isWithinDateRange && (isNameMatch || isQuestionMatch || isStatusMatch);
+});
 
     return (
         <Fragment>
              <Pageheader 
                 currentpage={"FAQ"} 
                 activepage={"/frequently-asked-question"} 
-                // mainpage={"/frequently-asked-question"} 
+             
                 activepagename="FAQ's"
-                // mainpagename="FAQ's "
+              
             />
-            {/* <Pageheader currentpage="FAQ" activepage="Faq's" mainpage="Faq's" /> */}
+          
             <div className="grid grid-cols-12 gap-x-6 bg-white mt-5 rounded-lg shadow-lg">
                 <div className="xl:col-span-12 col-span-12">
                     <div className="box">
@@ -227,6 +269,9 @@ const FAQDashboard: React.FC = () => {
                             onAddButtonClick={handleAddProductClick}
                             buttonText="Add New FAQ"
                             showButton={true}
+                            showFromDate={true}
+                            showToDate={true}
+                            onDateFilter={handleDateFilter}
                         />
                         <div className="box-body m-5">
                             <TableComponent<FAQ>

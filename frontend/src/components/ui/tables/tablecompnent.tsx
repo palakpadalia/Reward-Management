@@ -16,11 +16,16 @@ interface TableProps<T> {
     showDelete?: boolean;
     showView?: boolean;
     editHeader?: string;
-    columnStyles?: { [key: string]: string }; // Custom styles for columns
-    onEdit?: (item: T) => void; // Handler for edit action
-    onDelete?: (item: T) => void; // Handler for delete action
-    onView?: (item: T) => void; // Handler for view action
-    iconsConfig?: { // New prop for icon configuration
+    // Custom styles for columns
+    columnStyles?: { [key: string]: string }; 
+     // Handler for edit action
+    onEdit?: (item: T) => void;
+    // Handler for delete action
+    onDelete?: (item: T) => void; 
+    // Handler for view action
+    onView?: (item: T) => void; 
+    iconsConfig?: { 
+        // New prop for icon configuration
         editIcon?: string;
         deleteIcon?: string;
         viewIcon?: string;
@@ -50,7 +55,7 @@ const TableComponent = <T,>({
     onEdit,
     onDelete,
     onView,
-    iconsConfig = {} // Destructure iconsConfig
+    iconsConfig = {} 
 }: TableProps<T>) => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;

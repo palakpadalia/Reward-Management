@@ -31,19 +31,21 @@ const formatDate = (dateStr: string | undefined): string => {
     if (!dateStr) return '';
     const date = new Date(dateStr);
     const day = ('0' + date.getDate()).slice(-2);
-    const month = ('0' + (date.getMonth() + 1)).slice(-2); // Months are 0-based
+    const month = ('0' + (date.getMonth() + 1)).slice(-2); 
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
 };
 
 const CarpenterRewardRequest: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(5); // Number of items per page
-    const [selectedRewardRequest, setSelectedRewardRequest] = useState<RewardRequest | null>(null); // State for selected request
-    const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
-    const navigate = useNavigate(); // Initialize useNavigate
-    const [searchQuery, setSearchQuery] = useState(''); // State for search query
+    const [itemsPerPage] = useState(5); 
+    const [selectedRewardRequest, setSelectedRewardRequest] = useState<RewardRequest | null>(null); 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState('');
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+    const [fromDate, setFromDate] = useState<Date | null>(null);
+    const [toDate, setToDate] = useState<Date | null>(null);
 
     const { data: rewardrequestData } = useFrappeGetDocList<RewardRequest>('Redeem Request', {
         fields: ['name', 'customer_id', 'total_points', 'current_point_status', 'redeemed_points', 'received_date', 'received_time', 'request_status', 'approved_on', 'approve_time', 'transection_id', 'amount']
@@ -54,8 +56,8 @@ const CarpenterRewardRequest: React.FC = () => {
         if (showSuccessAlert) {
             const timer = setTimeout(() => {
                 setShowSuccessAlert(false);
-                window.location.reload(); // Reload the page after hiding the alert
-            }, 3000); // Hide alert after 3 seconds
+                window.location.reload(); 
+            }, 3000); 
             return () => clearTimeout(timer);
         }
     }, [showSuccessAlert]);
@@ -64,24 +66,54 @@ const CarpenterRewardRequest: React.FC = () => {
         ...request,
         received_date: formatDate(request.received_date),
         approved_on: formatDate(request.approved_on),
-        // Format other dates as needed
+        
     }));
 
     console.log("formattedData------->", formattedData);
 
+    const parseDateString = (dateString: string): Date | null => {
+        console.log("Input dateString:", dateString); 
+        if (typeof dateString !== 'string') {
+            console.error("Expected a string, but received:", dateString);
+            return null; 
+        }
+        //  splitting by '-'
+        const parts = dateString.split('-'); 
+        if (parts.length !== 3) {
+            console.error("Invalid date format:", dateString);
+            return null; 
+        }
+        const day = parseInt(parts[0], 10);
+        // Months are 0-based 
+        const month = parseInt(parts[1], 10) - 1; 
+        const year = parseInt(parts[2], 10);
+        return new Date(year, month, day);
+    };
+
 
     // Filter data based on search query
-    const filteredData = formattedData?.filter(request =>
-        request.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        request.customer_id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (request.redeemed_points !== undefined && request.redeemed_points.toString().toLowerCase().includes(searchQuery)) ||
-        (request.total_points !== undefined && request.total_points.toString().toLowerCase().includes(searchQuery)) ||
-        (request.received_date !== undefined && request.received_date.toString().toLowerCase().includes(searchQuery)) ||
-        (request.received_time !== undefined && request.received_time.toString().toLowerCase().includes(searchQuery)) ||
-        (request.current_point_status !== undefined && request.current_point_status.toString().toLowerCase().includes(searchQuery)) ||
-        (request.mobile_number !== undefined && request.mobile_number.toString().toLowerCase().includes(searchQuery)) ||
-        request.request_status?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredData = formattedData?.filter(request => {
+        const recivedDateString = request.received_date;
+        const isDateValid = typeof recivedDateString === 'string' && recivedDateString.trim() !== '';
+        const recivedDate = isDateValid ? parseDateString(recivedDateString) : null;
+    
+        // Check if the received date is within the selected date range
+        const isWithinDateRange = (!fromDate || (recivedDate && recivedDate >= fromDate)) &&
+                                  (!toDate || (recivedDate && recivedDate <= toDate));
+    
+        return (
+            isWithinDateRange && 
+            (request.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            request.customer_id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (request.redeemed_points !== undefined && request.redeemed_points.toString().toLowerCase().includes(searchQuery)) ||
+            (request.total_points !== undefined && request.total_points.toString().toLowerCase().includes(searchQuery)) ||
+            (request.received_date !== undefined && request.received_date.toString().toLowerCase().includes(searchQuery)) ||
+            (request.received_time !== undefined && request.received_time.toString().toLowerCase().includes(searchQuery)) ||
+            (request.current_point_status !== undefined && request.current_point_status.toString().toLowerCase().includes(searchQuery)) ||
+            (request.mobile_number !== undefined && request.mobile_number.toString().toLowerCase().includes(searchQuery)) ||
+            request.request_status?.toLowerCase().includes(searchQuery.toLowerCase()))
+        );
+    });
 
     const totalPages = Math.ceil((filteredData?.length || 0) / itemsPerPage);
 
@@ -107,17 +139,22 @@ const CarpenterRewardRequest: React.FC = () => {
         console.log("Search value:", value);
         // Implement search logic here
     };
+    const handleDateFilter = (from: Date | null, to: Date | null) => {
+        setFromDate(from);
+        setToDate(to);
+        setCurrentPage(1); // Reset to the first page
+    };
 
     const handleAddProductClick = () => {
         console.log("Add Product button clicked");
         navigate('/redeem-history');
-        // Implement add product logic here
+      
     };
 
     // handle edit modal----
     const handleEdit = (rewardRequest: RewardRequest) => {
-        setSelectedRewardRequest(rewardRequest); // Set the selected request
-        setIsModalOpen(true); // Show the modal
+        setSelectedRewardRequest(rewardRequest);
+        setIsModalOpen(true); 
     }
 
     const handleCloseModal = () => {
@@ -139,8 +176,8 @@ const CarpenterRewardRequest: React.FC = () => {
             approve_time: currentTime,
             transaction_id: selectedRewardRequest.transection_id,
             amount: selectedRewardRequest.amount,
-            action: selectedRewardRequest.request_status,  // This is your 'action' parameter
-            request_id: selectedRewardRequest.name, // This is your 'request_id' parameter
+            action: selectedRewardRequest.request_status,  
+            request_id: selectedRewardRequest.name,
         };
 
         try {
@@ -148,8 +185,7 @@ const CarpenterRewardRequest: React.FC = () => {
 
             if (response.status === 200) {
                 console.log("Redeem Request updated successfully");
-                // alert('Redeem Request updated successfully!');
-                // Set the success alert and trigger page reload
+             
                 setShowSuccessAlert(true);
                 handleCloseModal();
                 // Optionally, you can re-fetch the data here or use a state update to reflect changes.
@@ -165,7 +201,7 @@ const CarpenterRewardRequest: React.FC = () => {
 
     const handleCancel = () => {
         console.log('Cancel clicked');
-        setIsModalOpen(false); // Close the modal on cancel
+        setIsModalOpen(false); 
     }
 
     const isApproved = selectedRewardRequest?.request_status === 'Approved';
@@ -175,11 +211,11 @@ const CarpenterRewardRequest: React.FC = () => {
               <Pageheader 
                 currentpage={"Reward Request"} 
                 activepage={"/redeemption-request"} 
-                // mainpage={"/redeemption-request"} 
+              
                 activepagename="Reward Request"
-                // mainpagename="Reward Request "
+               
             />
-            {/* <Pageheader currentpage="Reward Request" activepage="Reward Request" mainpage="Reward Request" /> */}
+           
 
             <div className="grid grid-cols-12 gap-x-6 bg-white mt-5 rounded-lg shadow-lg">
                 <div className="xl:col-span-12 col-span-12">
@@ -188,10 +224,13 @@ const CarpenterRewardRequest: React.FC = () => {
                             title="Redeemption Requests"
                             onSearch={handleSearch}
                             onAddButtonClick={handleAddProductClick}
-                            buttonText="View Redeemption History" // Custom button text
-                            showButton={true} // Show the button
-                            icon="" // Empty icon
-                            buttonOnClick={handleAddProductClick} // Handle button click
+                            buttonText="View Redeemption History"
+                            showButton={true} 
+                            showFromDate={true}
+                            showToDate={true}
+                            onDateFilter={handleDateFilter}
+                            icon="" 
+                            buttonOnClick={handleAddProductClick} 
                         />
 
                         <div className="box-body m-5">

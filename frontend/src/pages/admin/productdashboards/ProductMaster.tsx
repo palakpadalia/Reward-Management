@@ -26,13 +26,13 @@ const ProductMaster: React.FC = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
-    const [loading, setLoading] = useState(false); // Loading state
+    const [loading, setLoading] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
     const [alertTitle, setAlertTitle] = useState('');
-    const [searchQuery, setSearchQuery] = useState(''); // State for search query
-    const [itemsPerPage] = useState(5); // Number of items per page
+    const [searchQuery, setSearchQuery] = useState(''); 
+    const [itemsPerPage] = useState(5); 
     const [productToDelete, setProductToDelete] = useState<Product| null>(null);
-    const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false); // Track the announcement to delete // Number of items per page
+    const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false); 
     const { data: productsData ,mutate: mutateProducts} = useFrappeGetDocList<Product>('Product', {
         fields: ['name', 'product_name', 'category', 'reward_points', 'product_price']
     });
@@ -45,7 +45,7 @@ const ProductMaster: React.FC = () => {
         const qrData = productQRData?.find(qr => qr.product_name === product.name);
         return {
             ...product,
-            quantity: qrData?.quantity || 0  // Add the quantity from Product QR data
+            quantity: qrData?.quantity || 0  
         };
     });
     const navigate = useNavigate();
@@ -54,8 +54,8 @@ const ProductMaster: React.FC = () => {
         document.title='Products Dashboard';
         if (showSuccessAlert) {
             const timer = setTimeout(() => {
-                setShowSuccessAlert(false); // Hide alert after 3 seconds
-                window.location.reload(); // Reload the page
+                setShowSuccessAlert(false); 
+                window.location.reload(); 
             }, 3000);
             return () => clearTimeout(timer);
         }
@@ -113,7 +113,7 @@ const ProductMaster: React.FC = () => {
 
     const handleConfirm = async (quantity: number) => {
         if (selectedProduct) {
-            setLoading(true); // Start loading
+            setLoading(true); 
             try {
                 const response = await axios.post(`/api/method/reward_management.api.print_qr_code.create_product_qr`, {
                     product_name: selectedProduct.name,
@@ -123,24 +123,24 @@ const ProductMaster: React.FC = () => {
                 setAlertMessage('QR Codes created successfully!');
                 setShowSuccessAlert(true);
                 console.log('QR Codes created successfully:', response.data);
-                // Optionally, close the modal or perform other actions here
+              
 
                 closeModal();
             } catch (error) {
                 console.error('Error creating QR codes:', error);
-                // Handle error, e.g., show an error message to the user
+               
             }
             finally {
-                setLoading(false); // End loading
+                setLoading(false); 
             }
         } else {
             console.error('No product selected');
-            // Handle the case where no product is selectedAC
+          
         }
     };
 
     const handleSearch = (value: string) => {
-        setSearchQuery(value); // Update search query
+        setSearchQuery(value);
         setCurrentPage(1);
     };
 
@@ -148,7 +148,7 @@ const ProductMaster: React.FC = () => {
     const handleAddProductClick = () => {
         console.log("Add Product button clicked");
         navigate('/add-product');
-        // Implement add product logic here
+       
     };
 
     const handleDeleteProduct = (item: Product) => {
@@ -168,8 +168,8 @@ const ProductMaster: React.FC = () => {
             });
 
             if (!response.ok) {
-                const responseData = await response.json(); // Add this line
-                throw new Error(`Error: ${responseData.message || response.statusText}`); // Use response data for detailed error
+                const responseData = await response.json();
+                throw new Error(`Error: ${responseData.message || response.statusText}`); 
             }
 
             setAlertTitle('Success');
@@ -208,10 +208,10 @@ const ProductMaster: React.FC = () => {
                             title="Products"
                             onSearch={handleSearch}
                             onAddButtonClick={handleAddProductClick}
-                            buttonText="Add Product" // Custom button text
-                            showButton={true} // Show the button
-                            icon="" // Empty icon
-                            buttonOnClick={handleAddProductClick} // Handle button click
+                            buttonText="Add Product" 
+                            showButton={true} 
+                            icon="" 
+                            buttonOnClick={handleAddProductClick} 
                         />
                         <div className="box-body m-5">
                             <div className="table-responsive pt-2">
@@ -262,11 +262,12 @@ const ProductMaster: React.FC = () => {
                                                         className={`link-icon bg-[var(--bg-primary)] hover:bg-[var(--primaries)] py-2 px-[10px] rounded-full mr-2 ${product.quantity === 0 ? '' : 'opacity-50 cursor-not-allowed'}`}
                                                         onClick={(e) => {
                                                             if (product.quantity <= 0) {
-                                                                e.preventDefault(); // Prevent default action if quantity is 0
+                                                                e.preventDefault(); 
                                                                 handleDeleteProduct(product);
-                                                            } else {
-                                                                // Implement delete functionality here
-                                                            }
+                                                            } 
+                                                            // else {
+                                                            //     // Implement delete functionality here
+                                                            // }
                                                         }}
                                                     >
                                                         <i className="ri-delete-bin-line"></i>

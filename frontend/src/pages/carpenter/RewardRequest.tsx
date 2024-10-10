@@ -33,6 +33,8 @@ const RedeemRequest: React.FC = () => {
     const [customerId, setCustomerId] = useState<string>('');
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [fromDate, setFromDate] = useState<Date | null>(null);
+    const [toDate, setToDate] = useState<Date | null>(null);
 
     useEffect(() => {
         if (showSuccessAlert) {
@@ -127,10 +129,17 @@ const RedeemRequest: React.FC = () => {
     };
 
     const handleSearch = (value: string) => {
-        setSearchQuery(value); // Update search query
+        setSearchQuery(value); 
         setCurrentPage(1);
         console.log("Search value:", value);
     };
+
+    const handleDateFilter = (from: Date | null, to: Date | null) => {
+        setFromDate(from);
+        setToDate(to);
+        setCurrentPage(1);
+    };
+
 
 
     const handleAddRedeemRequestClick = () => {
@@ -193,24 +202,59 @@ const RedeemRequest: React.FC = () => {
         return `${day}-${month}-${year}`;
     };
 
+    const parseDateString = (dateString: string): Date | null => {
+        if (typeof dateString !== 'string') {
+            console.error("Expected a string, but received:", dateString);
+            return null;
+        }
+        const parts = dateString.split('-');
+        if (parts.length !== 3) {
+            console.error("Invalid date format:", dateString);
+            return null;
+        }
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; 
+        const year = parseInt(parts[2], 10);
+        return new Date(year, month, day);
+    };
+
+
     const formattedRedeemRequestData = Array.isArray(transactionData) ? transactionData.map(transaction => ({
         ...transaction,
         received_date: transaction.received_date ? formatDate(transaction.received_date) : '',
     })) : [];
 
-
     const filteredData = formattedRedeemRequestData.filter(transactionData => {
         const query = searchQuery.toLowerCase();
+        
+        // Parse received_date and approved_on for filtering
+        const receivedDateString = transactionData.received_date;
+        const isReceivedDateValid = typeof receivedDateString === 'string' && receivedDateString.trim() !== '';
+        const receivedDate = isReceivedDateValid ? parseDateString(receivedDateString) : null;
+    
+        const approvedDateString = transactionData.approved_on;
+        const isApprovedDateValid = typeof approvedDateString === 'string' && approvedDateString.trim() !== '';
+        const approvedDate = isApprovedDateValid ? parseDateString(approvedDateString) : null;
+    
+        // Check if receivedDate falls within the specified date range
+        // Check if the announcement date is within the selected date range
+        const isWithinDateRange = ((!fromDate || (receivedDate && receivedDate >= fromDate)) &&
+                                  (!toDate || (receivedDate && receivedDate <= toDate)) || (!fromDate || (approvedDate && approvedDate >= fromDate)) &&
+                                  (!toDate || (approvedDate && approvedDate <= toDate)));
+    
+        // Add date filtering conditions to the return statement
         return (
-            (transactionData.name && transactionData.name.toLowerCase().includes(query)) ||
-            (transactionData.received_date && transactionData.received_date.toLowerCase().includes(query)) ||
-            (transactionData.received_time && transactionData.received_time.toString().toLowerCase().includes(query)) ||
-            (transactionData.redeemed_points !== undefined && transactionData.redeemed_points.toString().toLowerCase().includes(searchQuery)) ||
-            (transactionData.request_status !== undefined && transactionData.request_status.toString().toLowerCase().includes(searchQuery)) ||
-            (transactionData.approved_on && transactionData.approved_on.toLowerCase().includes(query)) ||
-            (transactionData.approve_time && transactionData.approve_time.toLowerCase().includes(query))
+            isWithinDateRange &&
+            (
+                (transactionData.name && transactionData.name.toLowerCase().includes(query)) ||
+                (transactionData.received_time && transactionData.received_time.toString().toLowerCase().includes(query)) ||
+                (transactionData.redeemed_points !== undefined && transactionData.redeemed_points.toString().toLowerCase().includes(query)) ||
+                (transactionData.request_status !== undefined && transactionData.request_status.toString().toLowerCase().includes(query)) ||
+                (transactionData.approve_time && transactionData.approve_time.toLowerCase().includes(query))
+            )
         );
     });
+    
 
 
     if (loading) return <div>Loading...</div>;
@@ -236,6 +280,9 @@ const RedeemRequest: React.FC = () => {
                             onAddButtonClick={handleAddRedeemRequestClick}
                             buttonText="Redeem Now"
                             showButton={true}
+                            showFromDate={true}
+                            showToDate={true}
+                            onDateFilter={handleDateFilter}
                         />
 
                         <div className="box-body m-5">

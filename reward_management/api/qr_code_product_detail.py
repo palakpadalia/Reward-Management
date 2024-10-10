@@ -2,8 +2,6 @@ from __future__ import unicode_literals
 import frappe
 from datetime import datetime
 
-
-# get product qr table---------------
 @frappe.whitelist()
 def get_product_details_from_qr(decode_text):
     try:
@@ -11,47 +9,66 @@ def get_product_details_from_qr(decode_text):
 
         if len(components) < 3:
             return {"error": "Invalid QR code format"}
+        
+        name = components[0]
+        product_table_name = components[1]  # No need to strip yet, it should be a string
+        product_qr_id = components[2]  # No need to strip yet, it should be a string
 
-        product_qr_id = components[0]
-        product_table_name = components[1]
-        row_index = int(components[2])  # Convert row_index to integer
+        product_qr = frappe.get_doc("Product QR", name)
+        print(f"Retrieved Product QR Document: {product_qr}")
 
-        product_qr = frappe.get_doc("Product QR", product_qr_id)
+        if not product_qr:
+            return {"error": "Product QR document not found"}
 
-        if product_qr:
-            matched_row = None
-            for row in product_qr.qr_table:
-                if row.product_table_name == product_table_name and row.idx == row_index:
-                    matched_row = row
-                    break
+        matched_row = None
+        row_number = 0  # Initialize row number
+
+        print("QR Table Data:")
+        for row in product_qr.qr_table:
+            row_number += 1
+            row_product_table_name = row.product_table_name  # Assuming this is a string
+            row_product_qr_id = row.product_qr_id  # Assuming this is an int
+
+            print(f"Checking row {row_number} (idx: {row.idx}): {row_product_table_name}, {row_product_qr_id}")
+
+            # Log the values being compared for debugging
+            print(f"Comparing '{row_product_table_name}' with '{product_table_name}' and '{row_product_qr_id}' with '{product_qr_id}'")
             
-            if matched_row:
-                if matched_row.scanned:
-                    return {"error": "This QR code has already been scanned."}
+            # Match the product_table_name and product_qr_id
+            # Convert row_product_qr_id to string for comparison
+            if row_product_table_name == product_table_name and str(row_product_qr_id) == product_qr_id:
+                matched_row = row
+                print(f"Match found in row number: {row_number}, idx: {row.idx}")  # Print matched row number
+                break
 
-                product_name = frappe.get_value("Product", {"name": matched_row.product_table_name}, "product_name")
+        if matched_row:
+            if matched_row.scanned:
+                return {"error": "This QR code has already been scanned."}
 
-                if not product_name:
-                    return {"error": "Product not found for the given product_table_name"}
+            product_name = frappe.get_value("Product", {"name": matched_row.product_table_name}, "product_name")
+            if not product_name:
+                return {"error": "Product not found for the given product_table_name"}
 
-                return {
-                    "product_name": product_name,
-                    "product_table_name": matched_row.product_table_name,
-                    "product_qr_id": matched_row.product_qr_id,
-                    "points": matched_row.points,
-                    "qr_code_image": matched_row.qr_code_image,
-                    "scanned": matched_row.scanned
-                }
-            else:
-                return {"error": "No matching product_table_name and row_index found in the Product QR document"}
+            return {
+                "product_name": product_name,
+                "product_table_name": matched_row.product_table_name,
+                "product_qr_id": matched_row.product_qr_id,
+                "points": matched_row.points,
+                "qr_code_image": matched_row.qr_code_image,
+                "scanned": matched_row.scanned,
+                "row_number": row_number,  # Include the matched row number in the return data
+                "row_idx": matched_row.idx  # Include idx of the matched row
+            }
 
         else:
-            return {"error": "Product QR document not found"}
+            return {"error": "No matching product_table_name and product_qr_id found in the Product QR document"}
 
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), f"Error in get_product_details_from_qr: {e}")
         return {"error": f"Server error: {e}"}
-    
+
+
+
     
 #Update Product QR table after scanned---------- 
 @frappe.whitelist()

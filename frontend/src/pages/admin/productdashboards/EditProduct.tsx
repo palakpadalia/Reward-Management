@@ -15,6 +15,10 @@ interface EditProduct {
     points?: number;
     product_image?: string;
 }
+interface ProductCategory {
+    name: string,
+    category_name: string
+}
 
 const EditProduct: React.FC = () => {
     const [files, setFiles] = useState<File[]>([]);
@@ -56,10 +60,6 @@ const EditProduct: React.FC = () => {
     };
 
 
-
-
-
-
       // Fetch the product categories
       const { data: productcategoryData, error } = useFrappeGetDocList<ProductCategory>('Product Category', {
         fields: ['name', 'category_name']
@@ -69,7 +69,7 @@ const EditProduct: React.FC = () => {
     useEffect(() => {
         if (productPrice && rewardPercent) {
             const calculatedPoints = (parseFloat(productPrice) * parseFloat(rewardPercent)) / 100;
-            setRewardPoints(calculatedPoints.toFixed(2)); // Round to 2 decimal places
+            setRewardPoints(calculatedPoints.toFixed(2)); 
         } else {
             setRewardPoints(rewardPoints);
         }
@@ -77,8 +77,8 @@ const EditProduct: React.FC = () => {
         if (showSuccessAlert) {
             const timer = setTimeout(() => {
                 setShowSuccessAlert(false);
-                navigate('/product-master'); // Navigate after success alert is hidden
-            }, 3000); // Hide alert after 3 seconds
+                navigate('/product-master'); 
+            }, 3000); 
             return () => clearTimeout(timer);
         }
     }, [showSuccessAlert, navigate, productPrice, rewardPercent]);
@@ -261,7 +261,8 @@ const EditProduct: React.FC = () => {
                                                         placeholder="Reward points"
                                                         value={rewardPoints}
                                                         onChange={(e) => setRewardPoints(e.target.value)}
-                                                        required
+                                                        
+                                                        readOnly
                                                     />
                                                 </div>
                                                 <div className="xl:col-span-12 col-span-12 mb-4">
@@ -296,7 +297,7 @@ const EditProduct: React.FC = () => {
                                                         <select
                                                             id="product-category-add"
                                                             name="product-category-add"
-                                                            className="w-full border border-defaultborder text-defaultsize text-defaulttextcolor rounded-[0.5rem] mr-2" // added margin-right
+                                                            className="w-full border border-defaultborder text-defaultsize text-defaulttextcolor rounded-[0.5rem] mr-1" 
                                                             value={productCategory}
                                                             onChange={(e) => setProductCategory(e.target.value)}
                                                             required
@@ -310,10 +311,10 @@ const EditProduct: React.FC = () => {
                                                         </select>
                                                         <button
                                                             type="button"
-                                                            className="ti-btn ti-btn-primary bg-primary p-2 rounded-full" // styled as an icon button
+                                                            className="ti-btn ti-btn-primary bg-primary p-3 rounded-[0.5rem]" 
                                                             onClick={() => setShowAddCategoryModal(true)}
                                                         >
-                                                            <i className="fas fa-plus" /> {/* Font Awesome icon for plus */}
+                                                            <i className="fas fa-plus" /> 
                                                         </button>
                                                     </div>
                                                 </div>
@@ -358,7 +359,7 @@ const EditProduct: React.FC = () => {
                                         <button
                                             type="button"
                                             className="ti-btn ti-btn-success bg-defaulttextcolor ti-btn text-white !font-medium m-1"
-                                            onClick={resetForm} // Add the onClick event to reset the form
+                                            onClick={resetForm} 
                                         >
                                             Cancel
                                         </button>
@@ -372,7 +373,7 @@ const EditProduct: React.FC = () => {
                                 </div>
                             </form>
 
-                             {/* Add New Category Modal */}
+                            
                              {showAddCategoryModal && (
                                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                                     <div className="modal-overlay" onClick={handleCloseModal} />
